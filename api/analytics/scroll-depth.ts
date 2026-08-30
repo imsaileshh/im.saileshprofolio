@@ -1,1 +1,0 @@
-export const logScrollDepth = async () => {};
