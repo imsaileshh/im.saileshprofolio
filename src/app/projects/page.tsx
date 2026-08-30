@@ -9,6 +9,8 @@ export const metadata = {
   description: 'A collection of selected works and technical projects.',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProjectsPage() {
   const projects = await prisma.project.findMany({
     where: { published: true, archived: false },

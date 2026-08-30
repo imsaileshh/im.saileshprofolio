@@ -7,6 +7,8 @@ function formatYearRange(startDate: Date, endDate?: Date | null) {
   return `${start} - ${end}`;
 }
 
+export const dynamic = 'force-dynamic';
+
 export default async function ExperiencePage() {
   const [experiences, education] = await Promise.all([
     prisma.experience.findMany({

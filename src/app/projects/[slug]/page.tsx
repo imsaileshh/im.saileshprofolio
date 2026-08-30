@@ -7,6 +7,8 @@ import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { PdfPagesViewer } from '@/components/case-study/PdfPagesViewerDynamic';
 import { SteeGoCaseStudyContent } from '@/components/case-study/SteeGoCaseStudyContent';
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
   
