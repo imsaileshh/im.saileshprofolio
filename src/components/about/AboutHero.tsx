@@ -1,0 +1,54 @@
+'use client';
+
+import Image from 'next/image';
+import { SectionReveal } from '@/components/ui/SectionReveal';
+
+export function AboutHero() {
+  return (
+    <SectionReveal className="pt-6 md:pt-8 pb-10 md:pb-12 relative">
+      <div className="flex flex-col lg:flex-row justify-between gap-8 lg:gap-10 items-start">
+        
+        {/* LEFT SIDE */}
+        <div className="flex-1 flex flex-col">
+          <h2 className="text-[11px] font-mono tracking-[0.2em] text-muted uppercase mb-5">
+            ABOUT / 01
+          </h2>
+          
+          <h1 className="text-3xl md:text-4xl lg:text-[3rem] font-display font-medium leading-[1.1] tracking-tight mb-6">
+            <span className="block mb-2">Designing.</span>
+            <span className="block mb-2">Building.</span>
+            <span className="block text-accent">Improving digital experiences.</span>
+          </h1>
+          
+          <div className="flex flex-col gap-4 max-w-xl">
+            <p className="text-lg md:text-xl text-foreground leading-[1.6] font-medium">
+              I'm a UI/UX Designer, Frontend Developer, Shopify Developer and Vibe Coder.
+            </p>
+            <p className="text-[15px] md:text-[16px] text-muted leading-[1.7] font-light">
+              I combine design thinking, frontend development, e-commerce expertise and AI-assisted workflows to create intuitive interfaces, responsive websites and scalable digital products.
+            </p>
+          </div>
+        </div>
+
+        {/* RIGHT SIDE (Premium Profile Frame) */}
+        <div className="flex flex-col gap-4 lg:w-[320px] shrink-0 mx-auto lg:mx-0 w-full max-w-[340px]">
+          <div className="group relative w-full aspect-[4/5] rounded-[18px] border border-border-subtle bg-[var(--sidebar)] overflow-hidden transition-all duration-500 hover:-translate-y-2 shadow-sm hover:shadow-[0_10px_40px_rgba(var(--accent-rgb),0.08)] cursor-default">
+            <Image 
+              src="/images/profile/IMG_0871.jpg"
+              alt="Sailesh P"
+              fill
+              className="object-cover grayscale opacity-90 transition-all duration-500 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-[1.02]"
+              priority
+            />
+          </div>
+          <div className="flex justify-between items-center text-[10px] font-mono tracking-[0.1em] text-muted uppercase px-2">
+            <span>SAILESH P</span>
+            <span>UI/UX + FRONTEND</span>
+            <span>2026</span>
+          </div>
+        </div>
+
+      </div>
+    </SectionReveal>
+  );
+}

@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="rbg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1B1715" />
+      <stop offset="100%" stop-color="#241E1B" />
+    </linearGradient>
+  </defs>
+  <rect width="1100" height="800" fill="url(#rbg1)" />
+  <g transform="translate(50, 50)">
+    <rect width="1000" height="700" rx="4" fill="#24201D" stroke="rgba(255,255,255,0.08)" />
+    <rect width="1000" height="48" rx="4" fill="#1B1816" />
+    <circle cx="24" cy="24" r="4" fill="#E05B4C" />
+    <circle cx="40" cy="24" r="4" fill="#E5A642" />
+    <circle cx="56" cy="24" r="4" fill="#57A773" />
+    <text x="500" y="29" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="11" text-anchor="middle">RADIANCE // 3D GARMENT CUSTOMIZER &amp; PATTERN STUDIO</text>
+
+    <!-- Studio Layout -->
+    <g transform="translate(30, 75)">
+      <!-- Left 3D Viewport Mockup -->
+      <g>
+        <rect width="640" height="570" rx="3" fill="#191614" stroke="rgba(255,255,255,0.06)" />
+        
+        <!-- Center Garment Wireframe Silhouette -->
+        <g transform="translate(180, 70)">
+          <!-- Hoodie outline -->
+          <path d="M140,20 C180,10 220,20 240,40 L340,110 L290,200 L240,160 L240,420 L40,420 L40,160 L-10,200 L-60,110 L40,40 Z" fill="#2A2420" stroke="#A68020" stroke-width="2" />
+          <!-- Hood detail -->
+          <path d="M70,40 C100,0 180,0 210,40 C170,90 110,90 70,40 Z" fill="#1C1816" stroke="#FAF8F3" stroke-width="1.5" />
+          <!-- Pocket -->
+          <path d="M80,260 L200,260 L220,350 L60,350 Z" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="3" />
+          <!-- Embroidered Custom Stamp Logo -->
+          <circle cx="140" cy="180" r="30" fill="#B84F38" opacity="0.8" />
+          <text x="140" y="185" fill="#FAF8F3" font-family="serif" font-size="12" font-weight="bold" text-anchor="middle">ARCHIVE</text>
+        </g>
+
+        <!-- Viewport Controls -->
+        <g transform="translate(24, 24)">
+          <rect width="130" height="32" rx="2" fill="#26211E" stroke="rgba(255,255,255,0.1)" />
+          <text x="65" y="20" fill="#FAF8F3" font-family="monospace" font-size="10" text-anchor="middle">WEBGL 3D ROTATE</text>
+        </g>
+        <g transform="translate(480, 24)">
+          <rect width="130" height="32" rx="2" fill="#A68020" />
+          <text x="545" y="20" fill="#1C1816" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">VECTOR EXPORT ↗</text>
+        </g>
+      </g>
+
+      <!-- Right Inspector Toolbar -->
+      <g transform="translate(670, 0)">
+        <rect width="270" height="570" rx="3" fill="#1D1A17" stroke="rgba(255,255,255,0.06)" />
+        <text x="20" y="36" fill="#FAF8F3" font-family="sans-serif" font-size="14" font-weight="600">Garment Properties</text>
+        
+        <g transform="translate(20, 60)">
+          <!-- Fabric selector -->
+          <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">FABRIC WEIGHT</text>
+          <rect y="10" width="230" height="36" rx="2" fill="#27221E" />
+          <text x="14" y="33" fill="#FAF8F3" font-family="sans-serif" font-size="12">450 GSM Heavy French Terry</text>
+
+          <text x="0" y="75" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">THREAD COMPOSITION</text>
+          <rect y="85" width="230" height="36" rx="2" fill="#27221E" />
+          <text x="14" y="108" fill="#A68020" font-family="sans-serif" font-size="12">100% Organic Cotton Loopback</text>
+
+          <text x="0" y="150" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">COLORWAY</text>
+          <g transform="translate(0, 165)">
+            <circle cx="16" cy="16" r="16" fill="#F5F1E8" stroke="#FAF8F3" stroke-width="2" />
+            <circle cx="58" cy="16" r="16" fill="#2C2825" />
+            <circle cx="100" cy="16" r="16" fill="#6E5A47" />
+            <circle cx="142" cy="16" r="16" fill="#3B4F48" />
+            <circle cx="184" cy="16" r="16" fill="#8C3F35" />
+          </g>
+
+          <text x="0" y="235" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">PRINT METHOD</text>
+          <rect y="245" width="230" height="36" rx="2" fill="#27221E" />
+          <text x="14" y="268" fill="#FAF8F3" font-family="sans-serif" font-size="12">Direct-to-Film (DTF) HD</text>
+
+          <g transform="translate(0, 320)">
+            <rect width="230" height="150" rx="3" fill="#161311" />
+            <text x="16" y="28" fill="#FAF8F3" font-family="sans-serif" font-size="12" font-weight="600">Live Print Readiness</text>
+            <text x="16" y="52" fill="#57A773" font-family="monospace" font-size="10">✓ 300 DPI VECTOR OK</text>
+            <text x="16" y="74" fill="#57A773" font-family="monospace" font-size="10">✓ CMYK SEPARATION OK</text>
+            <text x="16" y="96" fill="#57A773" font-family="monospace" font-size="10">✓ SHOPIFY PLUS SYNC OK</text>
+            <rect x="16" y="110" width="198" height="28" rx="2" fill="#FAF8F3" />
+            <text x="115" y="128" fill="#1C1816" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">ORDER BATCH #941</text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

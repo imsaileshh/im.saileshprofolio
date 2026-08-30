@@ -1,0 +1,589 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  email        String     @unique
+  name         String?
+  role         String     @default("ADMIN")
+  passkeys     Passkey[]
+  sessions     Session[]
+  activityLogs ActivityLog[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Passkey {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  credentialId String   @unique
+  publicKey    Bytes
+  counter      BigInt   @default(0)
+  deviceType   String?
+  backedUp     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token        String   @unique
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+}
+
+model Project {
+  id                       String         @id @default(cuid())
+  slug                     String         @unique
+  title                    String
+  description              String
+  longText                 String?
+  projectType              String         @default("Personal Project")
+  category                 String?
+  tags                     String[]       @default([])
+  technologies             String[]
+  featured                 Boolean        @default(false)
+  published                Boolean        @default(true)
+  archived                 Boolean        @default(false)
+  showOnHomepage           Boolean        @default(true)
+  publishedAt              DateTime?
+  client                   String?
+  role                     String?
+  team                     String?
+  duration                 String?
+  year                     String?
+  liveUrl                  String?
+  githubUrl                String?
+  coverImageUrl            String?
+  thumbnailUrl             String?
+  galleryImages            String[]       @default([])
+  demoVideoUrl             String?
+  seoTitle                 String?
+  seoDescription           String?
+  seoKeywords              String[]       @default([])
+  ogImage                  String?
+  orderIndex               Int            @default(0)
+  images                   ProjectImage[]
+  caseStudy                CaseStudy?
+  createdAt                DateTime       @default(now())
+  updatedAt                DateTime       @updatedAt
+
+  @@index([published, archived, orderIndex])
+  @@index([featured, published])
+  @@index([projectType, category])
+}
+
+model ProjectImage {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  isCover   Boolean  @default(false)
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model CaseStudy {
+  id          String              @id @default(cuid())
+  projectId   String              @unique
+  project     Project             @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  slug        String              @unique
+  description String?
+  coverImage  String?
+  sourceType  CaseStudySourceType @default(MANUAL)
+  sourcePdf   String?
+  status      CaseStudyStatus     @default(DRAFT)
+  sections    CaseStudySection[]
+  metadata    Json?
+  publishedAt DateTime?
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+
+  @@index([status])
+}
+
+model CaseStudySection {
+  id          String    @id @default(cuid())
+  caseStudyId String
+  caseStudy   CaseStudy @relation(fields: [caseStudyId], references: [id], onDelete: Cascade)
+  title       String
+  slug        String
+  order       Int       @default(0)
+  content     String?
+  images      String[]  @default([])
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([caseStudyId, order])
+}
+
+model ProjectTaxonomy {
+  id          String   @id @default(cuid())
+  type        String
+  name        String
+  slug        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([type, slug])
+  @@index([type, name])
+}
+
+model Experience {
+  id          String    @id @default(cuid())
+  role        String
+  company     String
+  employmentType String?
+  location    String?
+  startDate   DateTime
+  endDate     DateTime?
+  current     Boolean   @default(false)
+  description String[]
+  technologies String[] @default([])
+  companyLogo String?
+  featured   Boolean   @default(false)
+  visible    Boolean   @default(true)
+  orderIndex  Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([visible, featured, orderIndex])
+}
+
+model Education {
+  id          String    @id @default(cuid())
+  institution String
+  degree      String
+  field       String?
+  startDate   DateTime
+  endDate     DateTime?
+  score       String?
+  description String?
+  logo        String?
+  visible     Boolean   @default(true)
+  orderIndex  Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([visible, orderIndex])
+}
+
+model Skill {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  proficiency Int      @default(80)
+  level       SkillLevel @default(Advanced)
+  icon        String?
+  yearsOfExperience Decimal? @db.Decimal(4, 1)
+  description String?
+  visible     Boolean  @default(true)
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([visible, category, orderIndex])
+}
+
+model Resume {
+  id              String                @id @default(cuid())
+  version         String
+  name            String?
+  fileUrl         String
+  fileName        String
+  fileType        String?
+  originalFilePath String?
+  originalText    String?
+  parsedText      String?
+  activeVersionId String?
+  status          ResumeStatus          @default(Active)
+  isActive        Boolean               @default(true)
+  downloads       Int                   @default(0)
+  versions        ResumeVersion[]
+  sections        ResumeSection[]
+  skills          ResumeSkill[]
+  experiences     ResumeExperience[]
+  projects        ResumeProject[]
+  educationItems  ResumeEducation[]
+  certifications  ResumeCertification[]
+  jobDescriptions JobDescription[]
+  analyses        ResumeAnalysis[]
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+
+  @@index([isActive, createdAt])
+  @@index([status, createdAt])
+}
+
+model ResumeVersion {
+  id             String           @id @default(cuid())
+  resumeId       String
+  resume         Resume           @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  versionNumber  Int
+  name           String?
+  changeSummary  String?
+  filePath       String?
+  fileName       String?
+  fileType       String?
+  contentText    String
+  structuredData Json?
+  atsScore       Int?
+  isActive       Boolean          @default(false)
+  analyses       ResumeAnalysis[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([resumeId, versionNumber])
+  @@index([resumeId, createdAt])
+  @@index([resumeId, isActive])
+}
+
+model ResumeSection {
+  id          String   @id @default(cuid())
+  resumeId    String
+  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  sectionType String
+  title       String
+  content     String
+  orderIndex  Int      @default(0)
+  metadata    Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([resumeId, sectionType, orderIndex])
+}
+
+model ResumeSkill {
+  id          String   @id @default(cuid())
+  resumeId    String
+  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  name        String
+  category    String?
+  proficiency Int?
+  years       Decimal? @db.Decimal(4, 1)
+  source      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([resumeId, name])
+  @@index([resumeId, category])
+}
+
+model ResumeExperience {
+  id          String    @id @default(cuid())
+  resumeId    String
+  resume      Resume    @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  role        String
+  company     String?
+  location    String?
+  startDate   String?
+  endDate     String?
+  current     Boolean   @default(false)
+  description String[]
+  technologies String[] @default([])
+  orderIndex  Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([resumeId, orderIndex])
+}
+
+model ResumeProject {
+  id           String   @id @default(cuid())
+  resumeId     String
+  resume       Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  title        String
+  description  String?
+  technologies String[] @default([])
+  url          String?
+  orderIndex   Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([resumeId, orderIndex])
+}
+
+model ResumeEducation {
+  id          String   @id @default(cuid())
+  resumeId    String
+  resume      Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  institution String
+  degree      String?
+  field       String?
+  startDate   String?
+  endDate     String?
+  score       String?
+  orderIndex  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([resumeId, orderIndex])
+}
+
+model ResumeCertification {
+  id           String   @id @default(cuid())
+  resumeId     String
+  resume       Resume   @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  name         String
+  issuer       String?
+  issuedAt     String?
+  credentialUrl String?
+  orderIndex   Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([resumeId, orderIndex])
+}
+
+model JobDescription {
+  id          String           @id @default(cuid())
+  resumeId    String
+  resume      Resume           @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  title       String
+  company     String?
+  industry    String?
+  description String
+  analyses    ResumeAnalysis[]
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([resumeId, createdAt])
+}
+
+model ResumeAnalysis {
+  id               String              @id @default(cuid())
+  resumeId         String
+  resume           Resume              @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  versionId        String?
+  version          ResumeVersion?      @relation(fields: [versionId], references: [id], onDelete: SetNull)
+  jobDescriptionId String?
+  jobDescription   JobDescription?     @relation(fields: [jobDescriptionId], references: [id], onDelete: SetNull)
+  label            String              @default("ATS Compatibility Estimate")
+  overallScore     Int?
+  keywordScore     Int?
+  sectionScore     Int?
+  formattingScore  Int?
+  readabilityScore Int?
+  contactScore     Int?
+  summary          Json?
+  keywordAnalysis  KeywordAnalysis[]
+  suggestions      ResumeSuggestion[]
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+
+  @@index([resumeId, createdAt])
+  @@index([versionId, createdAt])
+  @@index([jobDescriptionId, createdAt])
+}
+
+model KeywordAnalysis {
+  id                    String              @id @default(cuid())
+  analysisId            String
+  analysis              ResumeAnalysis      @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  keyword               String
+  importance            KeywordImportance   @default(Important)
+  foundInResume         Boolean             @default(false)
+  foundInJobDescription Boolean             @default(false)
+  frequency             Int                 @default(0)
+  suggestion            String?
+  createdAt             DateTime            @default(now())
+
+  @@unique([analysisId, keyword])
+  @@index([analysisId, importance])
+}
+
+model ResumeSuggestion {
+  id           String           @id @default(cuid())
+  analysisId   String
+  analysis     ResumeAnalysis   @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  section      String
+  issue        String
+  severity     AnalysisSeverity @default(Medium)
+  whyItMatters String
+  suggestedFix String
+  acceptedAt   DateTime?
+  rejectedAt   DateTime?
+  createdAt    DateTime         @default(now())
+
+  @@index([analysisId, severity])
+}
+
+model Visitor {
+  id              String           @id @default(cuid())
+  visitorHash     String           @unique
+  firstSeen       DateTime         @default(now())
+  lastSeen        DateTime         @default(now())
+  deviceType      String?
+  browser         String?
+  os              String?
+  country         String?
+  city            String?
+  referrer        String?
+  source          String?
+  events          AnalyticsEvent[]
+  visitorSessions VisitorSession[]
+
+  @@index([firstSeen])
+  @@index([lastSeen])
+  @@index([deviceType])
+}
+
+model VisitorSession {
+  id          String           @id @default(cuid())
+  visitorId   String
+  visitor     Visitor          @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  sessionHash String           @unique
+  startedAt   DateTime         @default(now())
+  lastSeenAt  DateTime         @default(now())
+  entryPage   String
+  exitPage    String?
+  referrer    String?
+  userAgent   String?
+  deviceType  String?
+  browser     String?
+  os          String?
+  events      AnalyticsEvent[]
+
+  @@index([visitorId, startedAt])
+  @@index([lastSeenAt])
+  @@index([deviceType])
+}
+
+model AnalyticsEvent {
+  id        String          @id @default(cuid())
+  visitorId String
+  visitor   Visitor         @relation(fields: [visitorId], references: [id], onDelete: Cascade)
+  sessionId String?
+  session   VisitorSession? @relation(fields: [sessionId], references: [id], onDelete: SetNull)
+  eventType String
+  pagePath  String
+  metadata  Json?
+  projectId String?
+  timestamp DateTime        @default(now())
+
+  @@index([visitorId, timestamp])
+  @@index([sessionId, timestamp])
+  @@index([eventType, timestamp])
+  @@index([pagePath, timestamp])
+  @@index([projectId, timestamp])
+}
+
+model ContactMessage {
+  id         String               @id @default(cuid())
+  name       String
+  email      String
+  subject    String?
+  message    String
+  status     ContactMessageStatus @default(New)
+  priority   MessagePriority      @default(Normal)
+  isRead     Boolean              @default(false)
+  isArchived Boolean              @default(false)
+  createdAt  DateTime             @default(now())
+  updatedAt  DateTime             @updatedAt
+
+  @@index([status, createdAt])
+  @@index([priority, createdAt])
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  title     String
+  body      String
+  type      String    @default("INFO")
+  isRead    Boolean   @default(false)
+  readAt    DateTime?
+  linkUrl   String?
+  metadata  Json?
+  createdAt DateTime  @default(now())
+
+  @@index([type, createdAt])
+  @@index([readAt])
+}
+
+model SiteSettings {
+  id             String   @id @default("singleton")
+  isHiringOpen   Boolean  @default(true)
+  availabilityMsg String?
+  maintenanceMode Boolean @default(false)
+  analyticsEnabled Boolean @default(true)
+  sessionTimeoutMinutes Int @default(5)
+  updatedAt      DateTime @updatedAt
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action     String
+  entityType String
+  entityId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([entityType, entityId])
+  @@index([action, createdAt])
+}
+
+enum SkillLevel {
+  Beginner
+  Intermediate
+  Advanced
+  Expert
+}
+
+enum CaseStudySourceType {
+  MANUAL
+  PDF
+}
+
+enum CaseStudyStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum ContactMessageStatus {
+  New
+  Read
+  Replied
+  Archived
+}
+
+enum MessagePriority {
+  Low
+  Normal
+  High
+  Urgent
+}
+
+enum ResumeStatus {
+  Active
+  Inactive
+  Archived
+  Deleted
+}
+
+enum AnalysisSeverity {
+  Low
+  Medium
+  High
+  Critical
+}
+
+enum KeywordImportance {
+  Required
+  Important
+  Optional
+}

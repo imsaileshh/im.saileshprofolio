@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="rbg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1A1715" />
+      <stop offset="100%" stop-color="#211E1B" />
+    </linearGradient>
+  </defs>
+  <rect width="750" height="800" fill="url(#rbg2)" />
+  <g transform="translate(40, 40)">
+    <rect width="670" height="720" rx="4" fill="#24211D" stroke="rgba(255,255,255,0.08)" />
+    <rect width="670" height="48" rx="4" fill="#1A1816" />
+    <circle cx="24" cy="24" r="4" fill="#E05B4C" />
+    <circle cx="40" cy="24" r="4" fill="#E5A642" />
+    <circle cx="56" cy="24" r="4" fill="#57A773" />
+    <text x="335" y="29" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="11" text-anchor="middle">THREAD_TEXTURE_INSPECTOR // 4K MACRO</text>
+
+    <!-- Content -->
+    <g transform="translate(30, 75)">
+      <rect width="610" height="340" rx="3" fill="#171513" stroke="rgba(255,255,255,0.06)" />
+      
+      <!-- Weave pattern visual -->
+      <g stroke="#A68020" stroke-width="1.5" opacity="0.6">
+        <line x1="20" y1="40" x2="590" y2="40" stroke-dasharray="8 4" />
+        <line x1="20" y1="80" x2="590" y2="80" stroke-dasharray="6 6" />
+        <line x1="20" y1="120" x2="590" y2="120" stroke-dasharray="8 4" />
+        <line x1="20" y1="160" x2="590" y2="160" stroke-dasharray="6 6" />
+        <line x1="20" y1="200" x2="590" y2="200" stroke-dasharray="8 4" />
+        <line x1="20" y1="240" x2="590" y2="240" stroke-dasharray="6 6" />
+        <line x1="20" y1="280" x2="590" y2="280" stroke-dasharray="8 4" />
+      </g>
+      
+      <!-- Macro Loupe -->
+      <circle cx="300" cy="170" r="80" fill="#201C19" stroke="#FAF8F3" stroke-width="2" />
+      <text x="300" y="165" fill="#FAF8F3" font-family="monospace" font-size="14" font-weight="bold" text-anchor="middle">24x ZOOM</text>
+      <text x="300" y="185" fill="#A68020" font-family="monospace" font-size="10" text-anchor="middle">CROSS-WEAVE DENSITY</text>
+
+      <!-- Stats Grid -->
+      <g transform="translate(0, 370)">
+        <rect width="610" height="240" rx="3" fill="#1D1A17" />
+        <text x="24" y="36" fill="#FAF8F3" font-family="sans-serif" font-size="14" font-weight="600">Production Specs for Direct-To-Print</text>
+        
+        <g transform="translate(24, 65)">
+          <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">RESOLUTION</text>
+          <text x="0" y="24" fill="#FAF8F3" font-family="sans-serif" font-size="18" font-weight="bold">300 DPI Vector</text>
+
+          <text x="200" y="0" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">INK CURING</text>
+          <text x="200" y="24" fill="#FAF8F3" font-family="sans-serif" font-size="18" font-weight="bold">160°C Thermoset</text>
+
+          <text x="400" y="0" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">COLOR GAMUT</text>
+          <text x="400" y="24" fill="#57A773" font-family="sans-serif" font-size="18" font-weight="bold">100% CMYK HD</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

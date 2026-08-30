@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 800" width="100%" height="100%">
+  <defs>
+    <linearGradient id="rbg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#181514" />
+      <stop offset="100%" stop-color="#231F1C" />
+    </linearGradient>
+  </defs>
+  <rect width="900" height="800" fill="url(#rbg3)" />
+  <g transform="translate(40, 40)">
+    <rect width="820" height="720" rx="4" fill="#221E1B" stroke="rgba(255,255,255,0.08)" />
+    <rect width="820" height="48" rx="4" fill="#1A1816" />
+    <circle cx="24" cy="24" r="4" fill="#E05B4C" />
+    <circle cx="40" cy="24" r="4" fill="#E5A642" />
+    <circle cx="56" cy="24" r="4" fill="#57A773" />
+    <text x="410" y="29" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="11" text-anchor="middle">FULFILLMENT_BATCH_ENGINE // SHOPIFY DISPATCH</text>
+
+    <!-- Table of Orders -->
+    <g transform="translate(30, 75)">
+      <rect width="760" height="590" rx="3" fill="#181514" />
+      <text x="24" y="36" fill="#FAF8F3" font-family="sans-serif" font-size="15" font-weight="600">Automated Direct-to-Garment Queue (Live Sync)</text>
+      
+      <!-- Table Rows -->
+      <g transform="translate(24, 70)" font-family="monospace" font-size="11">
+        <text x="0" y="0" fill="rgba(255,255,255,0.3)">ORDER ID</text>
+        <text x="120" y="0" fill="rgba(255,255,255,0.3)">GARMENT TYPE</text>
+        <text x="320" y="0" fill="rgba(255,255,255,0.3)">PRINT MESH</text>
+        <text x="480" y="0" fill="rgba(255,255,255,0.3)">STATUS</text>
+        <text x="620" y="0" fill="rgba(255,255,255,0.3)">DISPATCH</text>
+
+        <line x1="0" y1="15" x2="710" y2="15" stroke="rgba(255,255,255,0.08)" />
+
+        <!-- Row 1 -->
+        <g transform="translate(0, 45)">
+          <text x="0" y="0" fill="#A68020">#RD-9821</text>
+          <text x="120" y="0" fill="#FAF8F3">Heavyweight Hoodie [Onyx / L]</text>
+          <text x="320" y="0" fill="rgba(255,255,255,0.6)">Back Vector Graphic (30cm)</text>
+          <text x="480" y="0" fill="#57A773">PRINTING</text>
+          <text x="620" y="0" fill="rgba(255,255,255,0.4)">DHL Express</text>
+        </g>
+        <line x1="0" y1="65" x2="710" y2="65" stroke="rgba(255,255,255,0.04)" />
+
+        <!-- Row 2 -->
+        <g transform="translate(0, 95)">
+          <text x="0" y="0" fill="#A68020">#RD-9820</text>
+          <text x="120" y="0" fill="#FAF8F3">Vintage Oversized Tee [Cream / M]</text>
+          <text x="320" y="0" fill="rgba(255,255,255,0.6)">Chest Embroidery Logo</text>
+          <text x="480" y="0" fill="#57A773">DISPATCHED</text>
+          <text x="620" y="0" fill="rgba(255,255,255,0.4)">FedEx Priority</text>
+        </g>
+        <line x1="0" y1="115" x2="710" y2="115" stroke="rgba(255,255,255,0.04)" />
+
+        <!-- Row 3 -->
+        <g transform="translate(0, 145)">
+          <text x="0" y="0" fill="#A68020">#RD-9819</text>
+          <text x="120" y="0" fill="#FAF8F3">Loopback Sweatpants [Moss / S]</text>
+          <text x="320" y="0" fill="rgba(255,255,255,0.6)">Hip Mono Patch</text>
+          <text x="480" y="0" fill="#57A773">DISPATCHED</text>
+          <text x="620" y="0" fill="rgba(255,255,255,0.4)">Royal Mail Tracked</text>
+        </g>
+      </g>
+
+      <!-- Metric stats -->
+      <g transform="translate(24, 320)">
+        <rect width="712" height="150" rx="3" fill="#201C19" />
+        <text x="24" y="36" fill="#FAF8F3" font-family="sans-serif" font-size="13" font-weight="600">Daily Production Volume</text>
+        <text x="24" y="80" fill="#FAF8F3" font-family="sans-serif" font-size="34" font-weight="bold">1,420 <tspan font-size="14" font-weight="normal" fill="#A68020">units/day across 6 print facilities</tspan></text>
+      </g>
+    </g>
+  </g>
+</svg>

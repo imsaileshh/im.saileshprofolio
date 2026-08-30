@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#191716" />
+      <stop offset="100%" stop-color="#141312" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="750" fill="url(#bg4)" />
+  
+  <g transform="translate(80, 70)">
+    <rect width="1040" height="610" rx="6" fill="#201E1C" stroke="rgba(255,255,255,0.08)" stroke-width="1.5" />
+    
+    <!-- Top Bar -->
+    <rect width="1040" height="48" rx="6" fill="#181615" />
+    <circle cx="28" cy="24" r="5" fill="#E05B4C" />
+    <circle cx="46" cy="24" r="5" fill="#E5A642" />
+    <circle cx="64" cy="24" r="5" fill="#57A773" />
+    <text x="520" y="29" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="12" text-anchor="middle" letter-spacing="1.5">SCRIBE EDITORIAL // WRITING WORKSPACE</text>
+
+    <!-- Editorial Layout -->
+    <g transform="translate(60, 80)">
+      <!-- Left Document View -->
+      <rect width="600" height="480" rx="3" fill="#F5F1E8" />
+      
+      <!-- Paper Header -->
+      <g transform="translate(48, 50)">
+        <text x="0" y="0" fill="#8C887B" font-family="monospace" font-size="10" letter-spacing="2">ESSAY // VOL. 08 — ISSUE 14</text>
+        <text x="0" y="38" fill="#1C1917" font-family="serif" font-size="28" font-weight="bold">The Tactile Architecture of Digital Interfaces</text>
+        
+        <line x1="0" y1="58" x2="504" y2="58" stroke="rgba(28,25,23,0.15)" stroke-width="1" />
+        
+        <!-- Text lines -->
+        <g transform="translate(0, 84)" font-family="serif" font-size="14" fill="#3D3A37" opacity="0.9">
+          <text x="0" y="0">In an era of hyper-synthetic flat surfaces, tactile digital interfaces</text>
+          <text x="0" y="24">restore physical weight, texture, and deliberate craft to human</text>
+          <text x="0" y="48">interaction. By combining archival paper tones, restrained ink weight,</text>
+          <text x="0" y="72">and micro-transitions, we bridge the gap between engineering and</text>
+          <text x="0" y="96">editorial publication design.</text>
+        </g>
+
+        <!-- Pull quote -->
+        <g transform="translate(20, 220)">
+          <line x1="-12" y1="0" x2="-12" y2="46" stroke="#A68020" stroke-width="2.5" />
+          <text x="0" y="16" fill="#1C1917" font-family="serif" font-style="italic" font-size="15">"Design is not merely visual ornament; it is the medium</text>
+          <text x="0" y="38" fill="#1C1917" font-family="serif" font-style="italic" font-size="15">through which complex systems become intelligible."</text>
+        </g>
+      </g>
+
+      <!-- Right Tool Inspector -->
+      <g transform="translate(630, 0)">
+        <rect width="290" height="480" rx="3" fill="#191817" stroke="rgba(255,255,255,0.05)" />
+        <text x="24" y="36" fill="#FAF8F3" font-family="sans-serif" font-size="13" font-weight="600">Typography Inspector</text>
+        
+        <g transform="translate(24, 60)">
+          <text x="0" y="0" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">BODY FONT</text>
+          <rect y="10" width="242" height="34" rx="2" fill="#22201E" />
+          <text x="12" y="32" fill="#FAF8F3" font-family="monospace" font-size="11">Newsreader 16pt / 1.7</text>
+
+          <text x="0" y="70" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">HEADING SERIF</text>
+          <rect y="80" width="242" height="34" rx="2" fill="#22201E" />
+          <text x="12" y="102" fill="#A68020" font-family="monospace" font-size="11">Playfair Display 32pt</text>
+
+          <text x="0" y="140" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">PAPER GRAIN DENSITY</text>
+          <rect y="150" width="242" height="6" rx="3" fill="#2E2C29" />
+          <rect y="150" width="160" height="6" rx="3" fill="#388A9E" />
+          <circle cx="160" cy="153" r="6" fill="#FAF8F3" />
+
+          <text x="0" y="195" fill="rgba(255,255,255,0.4)" font-family="monospace" font-size="10">EXPORT PRESETS</text>
+          <g transform="translate(0, 205)">
+            <rect width="115" height="32" rx="2" fill="#242220" stroke="rgba(255,255,255,0.1)" />
+            <text x="57" y="20" fill="#FAF8F3" font-family="monospace" font-size="10" text-anchor="middle">MARKDOWN</text>
+
+            <rect x="125" width="115" height="32" rx="2" fill="#FAF8F3" />
+            <text x="182" y="20" fill="#1C1917" font-family="monospace" font-size="10" font-weight="bold" text-anchor="middle">EPUB / PDF</text>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
