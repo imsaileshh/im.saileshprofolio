@@ -2,99 +2,53 @@
 
 import { motion, useReducedMotion } from 'framer-motion';
 import { Layers } from 'lucide-react';
-import {
-  ReactLogo,
-  NextjsLogo,
-  TypeScriptLogo,
-  JavaScriptLogo,
-  TailwindLogo,
-  HtmlLogo,
-  CssLogo,
-  NodeLogo,
-  RestApiLogo,
-  PostgreSqlLogo,
-  MongoDbLogo,
-  FigmaLogo,
-  PhotoshopLogo,
-  IllustratorLogo,
-  LightroomLogo,
-  FramerLogo,
-  VsCodeLogo,
-  GitLogo,
-  GitHubLogo,
-  DockerLogo,
-  VercelLogo,
-} from '@/components/ui/BrandLogos';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-const stackCategories = [
-  {
-    category: 'FRONTEND',
-    technologies: [
-      { name: 'React', Icon: ReactLogo },
-      { name: 'Next.js', Icon: NextjsLogo },
-      { name: 'TypeScript', Icon: TypeScriptLogo },
-      { name: 'JavaScript', Icon: JavaScriptLogo },
-      { name: 'Tailwind CSS', Icon: TailwindLogo },
-      { name: 'HTML5', Icon: HtmlLogo },
-      { name: 'CSS3', Icon: CssLogo },
-    ],
-  },
-  {
-    category: 'BACKEND',
-    technologies: [
-      { name: 'Node.js', Icon: NodeLogo },
-      { name: 'REST API', Icon: RestApiLogo },
-      { name: 'PostgreSQL', Icon: PostgreSqlLogo },
-      { name: 'MongoDB', Icon: MongoDbLogo },
-    ],
-  },
-  {
-    category: 'DESIGN',
-    technologies: [
-      { name: 'Figma', Icon: FigmaLogo },
-      { name: 'Adobe Photoshop', Icon: PhotoshopLogo },
-      { name: 'Adobe Illustrator', Icon: IllustratorLogo },
-      { name: 'Adobe Lightroom', Icon: LightroomLogo },
-      { name: 'Framer', Icon: FramerLogo },
-    ],
-  },
-  {
-    category: 'SOFTWARE',
-    technologies: [
-      { name: 'VS Code', Icon: VsCodeLogo },
-      { name: 'Git', Icon: GitLogo },
-      { name: 'GitHub', Icon: GitHubLogo },
-      { name: 'Docker', Icon: DockerLogo },
-      { name: 'Vercel', Icon: VercelLogo },
-    ],
-  },
-];
-
-export function StackPreview() {
+export function StackPreview({ skillSections = [] }: { skillSections?: any[] }) {
   const shouldReduceMotion = useReducedMotion();
+  
+  // Use fallback if empty
+  const categories = skillSections.length > 0 ? skillSections : [
+    {
+      title: 'FRONTEND',
+      skills: [{ name: 'React.js' }, { name: 'Next.js' }, { name: 'TypeScript' }, { name: 'JavaScript' }, { name: 'Tailwind CSS' }, { name: 'HTML5' }, { name: 'CSS3' }]
+    },
+    {
+      title: 'BACKEND',
+      skills: [{ name: 'Node.js' }, { name: 'Express.js' }, { name: 'PostgreSQL' }, { name: 'MongoDB' }, { name: 'REST API' }]
+    },
+    {
+      title: 'DESIGN',
+      skills: [{ name: 'Figma' }, { name: 'Framer' }, { name: 'Adobe Photoshop' }, { name: 'Illustrator' }, { name: 'Lightroom' }]
+    },
+    {
+      title: 'SOFTWARE',
+      skills: [{ name: 'VS Code' }, { name: 'Git' }, { name: 'GitHub' }, { name: 'Docker' }, { name: 'Vercel' }]
+    }
+  ];
 
   const rowVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 15 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.5,
         ease,
-        staggerChildren: shouldReduceMotion ? 0 : 0.05,
+        staggerChildren: shouldReduceMotion ? 0 : 0.08,
       },
     },
   };
 
-  const logoVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 16 },
+  const textVariants = {
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 10 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.45,
+        duration: 0.4,
         ease,
       },
     },
@@ -103,51 +57,44 @@ export function StackPreview() {
   return (
     <section id="stack-preview" className="py-10 md:py-14 lg:py-16 relative px-5 sm:px-6 md:px-10 lg:px-16">
       
-      {/* HEADER — Exact icon & heading preserved */}
-      <motion.div 
-        initial={{ opacity: 0, y: 14 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.5, ease }}
-        className="flex items-center gap-3 mb-2 md:mb-3"
-      >
-        <div className="p-2 rounded-lg bg-[var(--card)] border border-border-subtle text-muted">
-          <Layers size={20} />
-        </div>
-        <h2 className="text-3xl font-display font-medium tracking-tight text-foreground">
+      {/* HEADER */}
+      <SectionHeader icon={Layers} label="TOOLS & TECHNOLOGIES">
+        <h2 className="text-3xl md:text-4xl lg:text-[40px] font-display font-medium tracking-tight text-foreground leading-[1.15]">
           Tools & Technologies
         </h2>
-      </motion.div>
+      </SectionHeader>
 
       {/* ONE COLUMN FULL-WIDTH EDITORIAL STACK LIST (4 ROWS ONLY) */}
       <div className="w-full flex flex-col">
-        {stackCategories.map((item) => (
+        {categories.map((item) => (
           <motion.div
-            key={item.category}
+            key={item.title}
             variants={rowVariants}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
-            className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 py-7 md:py-8 lg:py-9 border-b border-border-subtle/70 relative cursor-default"
+            className="flex flex-col lg:flex-row lg:items-start justify-between gap-6 py-7 md:py-8 lg:py-10 border-b border-border-subtle/70 relative cursor-default"
           >
-            {/* LEFT: Category Name (vertically centered with icons) */}
-            <div className="w-full sm:w-auto shrink-0">
-              <span className="text-[14px] md:text-[15px] lg:text-[16px] font-mono tracking-[0.22em] text-foreground font-semibold uppercase">
-                {item.category}
+            {/* LEFT: Category Name */}
+            <motion.div variants={textVariants} className="w-full lg:w-48 shrink-0 pt-1">
+              <span className="text-[13px] md:text-[14px] font-mono tracking-[0.2em] text-foreground font-semibold uppercase">
+                {item.title}
               </span>
-            </div>
+            </motion.div>
 
-            {/* RIGHT: Official Brand Logos (floating directly, no borders/cards/boxes/tooltips) */}
-            <div className="flex flex-wrap items-center justify-start sm:justify-end gap-6 sm:gap-7 md:gap-8 lg:gap-9">
-              {item.technologies.map((tech) => (
+            {/* RIGHT: Text Technologies */}
+            <div className="flex flex-wrap items-center justify-start lg:justify-end gap-x-8 md:gap-x-12 gap-y-4 lg:gap-y-6 flex-1">
+              {item.skills.map((tech: any) => (
                 <motion.div
                   key={tech.name}
-                  variants={logoVariants}
-                  whileHover={shouldReduceMotion ? undefined : { scale: 1.07, y: -3 }}
-                  transition={{ duration: 0.25, ease }}
-                  className="flex items-center justify-center cursor-pointer opacity-90 hover:opacity-100 hover:brightness-110 hover:drop-shadow-[0_4px_16px_rgba(255,255,255,0.12)] transition-[filter,opacity] duration-250 shrink-0"
+                  variants={textVariants}
+                  className="group relative flex items-center cursor-pointer py-1"
                 >
-                  <tech.Icon size={38} />
+                  <span className="text-[15px] md:text-[17px] font-medium text-muted group-hover:text-accent transition-all duration-300 group-hover:translate-x-1 block">
+                    {tech.name}
+                  </span>
+                  {/* Subtle animated accent dot on hover */}
+                  <div className="absolute -left-4 opacity-0 group-hover:opacity-100 scale-0 group-hover:scale-100 group-hover:translate-x-1 transition-all duration-300 w-1.5 h-1.5 rounded-full bg-accent" />
                 </motion.div>
               ))}
             </div>

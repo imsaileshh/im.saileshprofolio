@@ -14,10 +14,15 @@ export default async function EditProjectPage({ params }: { params: Promise<{ id
   });
 
   if (!project) notFound();
+  
+  const categories = await prisma.projectTaxonomy.findMany({
+    where: { type: 'category' },
+    orderBy: { name: 'asc' },
+  });
 
   return (
     <main className="space-y-6 pb-24">
-      <ProjectForm project={project} action={updateProjectAction} submitLabel="Save Changes" isNew={false} />
+      <ProjectForm project={project} action={updateProjectAction} submitLabel="Save Changes" isNew={false} categories={categories.map(c => c.name)} />
     </main>
   );
 }

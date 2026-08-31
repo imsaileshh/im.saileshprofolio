@@ -1,27 +1,35 @@
+import { prisma } from '@/lib/database/prisma';
+import { StackClient } from '@/components/stack/StackClient';
 import { StackHero } from '@/components/stack/StackHero';
-import { StackNav } from '@/components/stack/StackNav';
-import { FrontendGrid } from '@/components/stack/FrontendGrid';
-import { BackendFlow } from '@/components/stack/BackendFlow';
-import { DatabaseBlocks } from '@/components/stack/DatabaseBlocks';
-import { ToolsWorkflow } from '@/components/stack/ToolsWorkflow';
-import { SoftwareEditorial } from '@/components/stack/SoftwareEditorial';
-import { TechMarquee } from '@/components/stack/TechMarquee';
 
-export default function StackPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function StackPage() {
+  const settings = await prisma.siteSettings.findUnique({
+    where: { id: 'singleton' },
+    select: { stackTitle: true, stackDescription: true }
+  });
+
+  const sections = await prisma.skillSection.findMany({
+    where: { visible: true },
+    orderBy: { orderIndex: 'asc' },
+    include: {
+      skills: {
+        where: { visible: true },
+        orderBy: { orderIndex: 'asc' }
+      }
+    }
+  });
+
   return (
     <div className="flex flex-col p-5 sm:p-6 md:p-10 lg:p-14 pb-24 max-w-7xl mx-auto w-full relative">
-      <StackHero />
-      <StackNav />
+      <StackHero title={settings?.stackTitle} description={settings?.stackDescription} sections={sections} />
       
-      {/* Sections */}
-      <FrontendGrid />
-      <BackendFlow />
-      <DatabaseBlocks />
-      
-      <TechMarquee />
-      
-      <ToolsWorkflow />
-      <SoftwareEditorial />
+      {sections.length > 0 ? (
+        <StackClient sections={sections} />
+      ) : (
+        <p className="text-muted text-center mt-20">Stack technologies will appear here.</p>
+      )}
     </div>
   );
 }

@@ -3,16 +3,17 @@
 import { motion } from 'framer-motion';
 import { SectionReveal } from '@/components/ui/SectionReveal';
 import { ArrowUpRight } from 'lucide-react';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 
-const capabilities = [
-  { num: '01', title: 'Frontend Development', desc: 'Responsive and interactive web experiences.' },
-  { num: '02', title: 'UI/UX Focus', desc: 'Clear, intuitive and user-focused interfaces.' },
-  { num: '03', title: 'AI-Assisted Development', desc: 'Faster ideation, prototyping and implementation.' },
-  { num: '04', title: 'Shopify Development', desc: 'Customized and conversion-focused e-commerce.' },
-  { num: '05', title: 'Continuous Learning', desc: 'Constantly exploring new tools and workflows.' },
-];
+export function AboutCapabilities({ data }: { data?: any[] }) {
+  const capabilities = data || [
+    { category: '01', title: 'Frontend Development', desc: 'Responsive and interactive web experiences.' },
+    { category: '02', title: 'UI/UX Focus', desc: 'Clear, intuitive and user-focused interfaces.' },
+    { category: '03', title: 'AI-Assisted Development', desc: 'Faster ideation, prototyping and implementation.' },
+    { category: '04', title: 'Shopify Development', desc: 'Customized and conversion-focused e-commerce.' },
+    { category: '05', title: 'Continuous Learning', desc: 'Constantly exploring new tools and workflows.' },
+  ];
 
-export function AboutCapabilities() {
   return (
     <SectionReveal className="py-16 md:py-24">
       <div className="mb-10 md:mb-16">
@@ -40,7 +41,7 @@ export function AboutCapabilities() {
                 {/* Number & Title */}
                 <div className="flex items-center gap-6 md:w-[40%] shrink-0">
                   <span className="font-mono text-sm text-muted group-hover:text-accent transition-colors duration-300">
-                    {cap.num}
+                    {cap.category}
                   </span>
                   <h3 className="text-[17px] md:text-xl font-medium text-foreground group-hover:text-accent transition-colors duration-300">
                     {cap.title}
@@ -54,15 +55,6 @@ export function AboutCapabilities() {
                   </p>
                 </div>
               </div>
-
-              {/* Arrow */}
-              <div className="shrink-0 ml-4">
-                <ArrowUpRight 
-                  size={20} 
-                  className="text-muted opacity-50 group-hover:opacity-100 group-hover:text-accent transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" 
-                />
-              </div>
-
             </div>
           </motion.div>
         ))}

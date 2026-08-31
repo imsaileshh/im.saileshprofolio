@@ -14,6 +14,7 @@ import Link from 'next/link';
 import { getDashboardOverview, resolveDashboardDateRange } from '@/lib/dashboard/overview';
 import { prisma } from '@/lib/database/prisma';
 import { getProjectStatus } from '@/lib/dashboard/projects';
+import { seedDefaultContentAction } from './seed-actions';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,17 +29,31 @@ function formatPercent(value: number) {
 export default async function DashboardOverviewPage() {
   const overview = await getDashboardOverview(resolveDashboardDateRange('last7'));
   
-  // Fetch recent projects and unread messages for the action-oriented view
-  const recentProjects = await prisma.project.findMany({
-    orderBy: { updatedAt: 'desc' },
-    take: 4,
-    select: { id: true, title: true, published: true, archived: true, updatedAt: true }
-  });
+  // Fetch dynamic counts
+  const projectsCount = await prisma.project.count();
+  const skillSectionsCount = await prisma.skillSection.count();
+  const skillsCount = await prisma.skill.count();
+  const experienceCount = await prisma.experience.count();
+  const educationCount = await prisma.education.count();
+  const hasResume = (await prisma.resume.count()) > 0;
 
+  // Check configs for Hero/About
+  const settings = await prisma.siteSettings.findUnique({ where: { id: 'singleton' } });
+  const heroConfigured = !!settings?.heroContent;
+  const aboutConfigured = !!(settings?.aboutPageIntro || settings?.aboutContent);
+
+  // Unread messages
   const unreadMessages = await prisma.contactMessage.findMany({
     where: { isRead: false },
     orderBy: { createdAt: 'desc' },
     take: 5
+  });
+
+  // Recent projects for the analytics sidebar
+  const recentProjects = await prisma.project.findMany({
+    orderBy: { updatedAt: 'desc' },
+    take: 4,
+    select: { id: true, title: true, published: true, archived: true, updatedAt: true }
   });
 
   const hasTrendData = overview.trends.some(
@@ -49,21 +64,26 @@ export default async function DashboardOverviewPage() {
     ...overview.trends.map((point) => point.pageViews + point.conversions + point.cvDownloads),
   );
 
+  const contentItems = [
+    { name: 'Hero', status: heroConfigured ? 'Configured' : 'Not configured', link: '/dashboard/hero', action: 'Edit →' },
+    { name: 'About', status: aboutConfigured ? 'Configured' : 'Not configured', link: '/dashboard/about', action: 'Edit →' },
+    { name: 'Stack', status: `${skillsCount} skills · ${skillSectionsCount} sections`, link: '/dashboard/stack', action: 'Manage →' },
+    { name: 'Projects', status: `${projectsCount} projects`, link: '/dashboard/projects', action: 'Manage →' },
+    { name: 'Experience', status: `${experienceCount} positions`, link: '/dashboard/experience', action: 'Manage →' },
+    { name: 'Education', status: `${educationCount} entries`, link: '/dashboard/education', action: 'Manage →' },
+    { name: 'Resume', status: hasResume ? 'Available' : 'Not configured', link: '/dashboard/resume', action: 'Manage →' },
+  ];
+
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-12">
+    <div className="space-y-12 max-w-7xl mx-auto pb-12">
       
       {/* Header */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Dashboard</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Dashboard Overview</h1>
           <p className="text-sm text-zinc-400 mt-1">
-            Welcome back. Here's what's happening with your portfolio today.
+            Your portfolio content is managed here.
           </p>
-        </div>
-        <div className="flex gap-3 mt-4 sm:mt-0">
-          <Link href="/dashboard/projects/new" className="px-4 py-2 bg-[#4F8CFF] text-white text-sm font-semibold rounded-lg hover:bg-[#3B78EB] transition-colors flex items-center gap-2">
-            <FolderGit2 size={16} /> New Project
-          </Link>
         </div>
       </div>
 
@@ -85,37 +105,51 @@ export default async function DashboardOverviewPage() {
         </div>
       )}
 
-      {/* Core KPIs - Simplified from 11 down to 4 critical metrics */}
-      <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          { name: 'Unique Visitors', value: formatNumber(overview.kpis.uniqueVisitors.value), icon: Users, change: overview.kpis.uniqueVisitors.percentChange },
-          { name: 'Page Views', value: formatNumber(overview.kpis.pageViews.value), icon: Eye, change: overview.kpis.pageViews.percentChange },
-          { name: 'Conversion Rate', value: formatPercent(overview.kpis.conversionRate.value), icon: TrendingUp, change: overview.kpis.conversionRate.percentChange },
-          { name: 'Active Sessions', value: formatNumber(overview.kpis.activeSessions.value), icon: Activity, change: overview.kpis.activeSessions.percentChange },
-        ].map((item) => (
-          <div key={item.name} className="bg-[#0e0e10] border border-white/5 rounded-xl p-5 flex flex-col">
-            <div className="flex justify-between items-start mb-4">
-              <div className="p-2 bg-white/5 rounded-lg text-zinc-400">
-                <item.icon size={18} />
-              </div>
-              {item.change !== null && (
-                <span className={`text-xs font-semibold px-2 py-1 rounded-md ${item.change > 0 ? 'bg-green-500/10 text-green-400' : item.change < 0 ? 'bg-red-500/10 text-red-400' : 'bg-white/5 text-zinc-400'}`}>
-                  {item.change > 0 ? '+' : ''}{formatPercent(item.change)}
-                </span>
-              )}
-            </div>
-            <div className="mt-auto">
-              <p className="text-sm font-medium text-zinc-400 mb-1">{item.name}</p>
-              <p className="text-2xl font-bold text-white">{item.value}</p>
-            </div>
+      {/* One-time content initializer — only shown when heroContent has never been saved */}
+      {!heroConfigured && (
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 sm:p-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          <div>
+            <h3 className="text-base font-semibold text-white">Portfolio content not yet initialised</h3>
+            <p className="text-sm text-amber-400/80 mt-1">Click to load the existing portfolio defaults into the CMS so you can edit them from the dashboard.</p>
           </div>
-        ))}
-      </dl>
+          <form action={seedDefaultContentAction}>
+            <button
+              type="submit"
+              className="px-4 py-2 bg-amber-500/20 text-amber-400 text-sm font-semibold rounded-lg hover:bg-amber-500/30 transition-colors whitespace-nowrap"
+            >
+              Initialize Content
+            </button>
+          </form>
+        </div>
+      )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* PORTFOLIO CONTENT OVERVIEW */}
+      <section>
+        <h2 className="text-lg font-semibold text-white mb-6">Portfolio Content</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {contentItems.map(item => (
+            <div key={item.name} className="flex flex-col justify-between rounded-xl border border-white/5 bg-[#0e0e10] p-5 hover:border-white/10 transition-colors">
+              <div>
+                <h3 className="text-base font-semibold text-white">{item.name}</h3>
+                <p className="mt-1 text-sm text-zinc-400">{item.status}</p>
+              </div>
+              <div className="mt-6 flex">
+                <Link href={item.link} className="text-sm font-medium text-[#4F8CFF] hover:text-[#3B78EB] transition-colors">
+                  {item.action}
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Analytics Section */}
+      <section className="pt-8 border-t border-white/5">
+        <h2 className="text-lg font-semibold text-white mb-6">Analytics Overview</h2>
         
-        {/* Main Chart Area */}
-        <div className="lg:col-span-2 bg-[#0e0e10] border border-white/5 rounded-xl p-6 flex flex-col">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Main Chart Area */}
+          <div className="lg:col-span-2 bg-[#0e0e10] border border-white/5 rounded-xl p-6 flex flex-col">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-base font-bold text-white">Traffic Overview</h2>
             <span className="text-xs font-semibold uppercase tracking-widest text-zinc-500">Last 7 Days</span>
@@ -176,7 +210,7 @@ export default async function DashboardOverviewPage() {
           </div>
         </div>
       </div>
-      
+      </section>
     </div>
   );
 }

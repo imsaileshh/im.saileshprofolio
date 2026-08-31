@@ -213,7 +213,7 @@ export function Preloader() {
 
           {/* Bottom subtle bar indicator */}
           <div className="w-full flex justify-between items-center text-[10px] font-mono tracking-[0.2em] text-[#9A9CA2]/40 uppercase">
-            <span>DESIGN · CODE · COMMERCE</span>
+            <span>UI/UX Designer │ Product Designer</span>
             <span className="text-[#2DD4BF]/80 font-semibold">INITIALIZING</span>
           </div>
 

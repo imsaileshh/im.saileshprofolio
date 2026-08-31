@@ -3,16 +3,18 @@
 import { motion } from 'framer-motion';
 import { SectionReveal } from '@/components/ui/SectionReveal';
 
-const processSteps = [
-  { step: '01', title: 'UNDERSTAND', desc: 'Problem · Users · Goals' },
-  { step: '02', title: 'DESIGN', desc: 'Structure · UX · Interface' },
-  { step: '03', title: 'BUILD', desc: 'Components · Interactions · Logic' },
-  { step: '04', title: 'TEST', desc: 'Usability · Quality · Performance' },
-  { step: '05', title: 'OPTIMIZE', desc: 'Speed · Accessibility · Experience' },
-  { step: '06', title: 'LAUNCH', desc: 'Polish · Deploy · Improve' },
-];
 
-export function AboutApproach() {
+
+export function AboutApproach({ data }: { data?: any[] }) {
+  const processSteps = data || [
+    { step: '01', title: 'UNDERSTAND', desc: 'Problem · Users · Goals' },
+    { step: '02', title: 'DESIGN', desc: 'Structure · UX · Interface' },
+    { step: '03', title: 'BUILD', desc: 'Components · Interactions · Logic' },
+    { step: '04', title: 'TEST', desc: 'Usability · Quality · Performance' },
+    { step: '05', title: 'OPTIMIZE', desc: 'Speed · Accessibility · Experience' },
+    { step: '06', title: 'LAUNCH', desc: 'Polish · Deploy · Improve' },
+  ];
+
   return (
     <SectionReveal id="approach" className="py-16 md:py-24">
       <div className="mb-12 md:mb-20">
@@ -23,34 +25,6 @@ export function AboutApproach() {
 
       <div className="relative max-w-4xl mx-auto">
         
-        {/* Desktop Connected Lines */}
-        <div className="hidden md:block absolute inset-0 z-0 pointer-events-none">
-          {/* Top Horizontal Line (01 to 03) */}
-          <motion.div 
-            className="absolute top-[28px] left-[15%] right-[15%] h-px bg-border-subtle origin-left"
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 1, ease: 'circOut' }}
-          />
-          {/* Vertical Drop Line (03 to 04) */}
-          <motion.div 
-            className="absolute top-[28px] bottom-[28px] right-[15%] w-px bg-border-subtle origin-top"
-            initial={{ scaleY: 0 }}
-            whileInView={{ scaleY: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5, delay: 1, ease: 'circOut' }}
-          />
-          {/* Bottom Horizontal Line (04 to 06) */}
-          <motion.div 
-            className="absolute bottom-[28px] left-[15%] right-[15%] h-px bg-border-subtle origin-right"
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 1, delay: 1.5, ease: 'circOut' }}
-          />
-        </div>
-
         {/* Mobile Connected Line */}
         <div className="block md:hidden absolute left-[30px] top-[40px] bottom-[40px] w-px bg-border-subtle z-0">
           <motion.div 
@@ -64,24 +38,34 @@ export function AboutApproach() {
 
         {/* Grid Layout */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-y-10 md:gap-y-32 gap-x-8 relative z-10">
-          {/* Top Row: 1, 2, 3 */}
-          {[processSteps[0], processSteps[1], processSteps[2]].map((item, i) => (
-            <ProcessNode key={item.step} item={item} delay={0.2 + (i * 0.3)} />
-          ))}
           
-          {/* Bottom Row: 6, 5, 4 (Reversed for desktop visual flow) */}
-          <div className="hidden md:contents">
-            {[processSteps[5], processSteps[4], processSteps[3]].map((item, i) => (
-              <ProcessNode key={item.step} item={item} delay={1.8 + (i * 0.3)} />
-            ))}
-          </div>
+          {processSteps.map((item, index) => {
+            // For desktop, alternate row direction to create the snake effect
+            // We apply a custom order logic: row 0 (L->R), row 1 (R->L), row 2 (L->R)
+            const row = Math.floor(index / 3);
+            const isReversedRow = row % 2 !== 0;
+            const positionInRow = index % 3;
+            // E.g., for index 3,4,5 (row 1), the visual order should be 5, 4, 3
+            // In a CSS grid with 3 columns, we can set the `order` property
+            const visualOrderDesktop = isReversedRow ? (row * 3) + (2 - positionInRow) : index;
 
-          {/* Mobile bottom row order (4, 5, 6) */}
-          <div className="contents md:hidden">
-            {[processSteps[3], processSteps[4], processSteps[5]].map((item, i) => (
-              <ProcessNode key={item.step} item={item} delay={1.1 + (i * 0.3)} />
-            ))}
-          </div>
+            return (
+              <div 
+                key={index} 
+                className="contents md:block" 
+                style={{ order: visualOrderDesktop } as any}
+              >
+                {/* Wrap ProcessNode so we can handle responsive ordering */}
+                <div className="md:hidden">
+                  <ProcessNode item={item} delay={0.2 + (index * 0.2)} />
+                </div>
+                <div className="hidden md:block">
+                  <ProcessNode item={item} delay={0.2 + (visualOrderDesktop * 0.2)} />
+                </div>
+              </div>
+            );
+          })}
+
         </div>
         
       </div>

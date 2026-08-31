@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, KeyboardEvent, ReactNode, useEffect } from 'react';
-import { X, Image as ImageIcon } from 'lucide-react';
+import { useState, KeyboardEvent, ReactNode, useEffect, useActionState } from 'react';
+import { X, Image as ImageIcon, AlertCircle } from 'lucide-react';
 import { projectStatusLabels, projectTypeLabels, getProjectStatus } from '@/lib/dashboard/projects';
+import { ActionState } from '@/app/dashboard/(protected)/projects/actions';
+import { GalleryInput } from './GalleryInput';
 
 type ProjectFormProject = {
   id?: string;
@@ -104,6 +106,7 @@ function TagInput({ name, initialTags = [] }: { name: string; initialTags?: stri
 // Media URL Preview Component
 function MediaUrlInput({ label, name, defaultValue, placeholder }: { label: string; name: string; defaultValue: string; placeholder?: string }) {
   const [url, setUrl] = useState(defaultValue);
+  const [hasError, setHasError] = useState(false);
 
   return (
     <div className="space-y-2">
@@ -112,15 +115,20 @@ function MediaUrlInput({ label, name, defaultValue, placeholder }: { label: stri
           className={inputClass} 
           name={name} 
           value={url} 
-          onChange={(e) => setUrl(e.target.value)} 
+          onChange={(e) => { setUrl(e.target.value); setHasError(false); }} 
           placeholder={placeholder || 'https://...'} 
           type="url" 
         />
       </Field>
-      {url ? (
+      {url && !hasError ? (
         <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-white/10 bg-black/50">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={url} alt="Preview" className="h-full w-full object-cover" onError={(e) => (e.currentTarget.style.display = 'none')} />
+          <img src={url} alt="Preview" className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; setHasError(true); }} />
+        </div>
+      ) : url && hasError ? (
+        <div className="flex aspect-video w-full flex-col items-center justify-center rounded-lg border border-dashed border-red-500/30 bg-red-500/5 text-red-400">
+          <AlertCircle size={24} className="mb-2 opacity-50" />
+          <span className="text-xs">Failed to load image</span>
         </div>
       ) : (
         <div className="flex aspect-video w-full flex-col items-center justify-center rounded-lg border border-dashed border-white/10 bg-white/5 text-zinc-500">
@@ -137,18 +145,21 @@ export function ProjectForm({
   action,
   submitLabel,
   isNew = false,
+  categories = [],
 }: {
   project?: ProjectFormProject;
-  action: (formData: FormData) => Promise<void>;
+  action: (prevState: ActionState, formData: FormData) => Promise<ActionState>;
   submitLabel: string;
   isNew?: boolean;
+  categories?: string[];
 }) {
   const status = project?.published === undefined || project?.archived === undefined
     ? 'Draft'
     : getProjectStatus({ published: project.published, archived: project.archived });
 
+  const [state, formAction, isPending] = useActionState(action, { success: false });
+
   const [showSlug, setShowSlug] = useState(!isNew);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [title, setTitle] = useState(value(project, 'title'));
   const [slug, setSlug] = useState(value(project, 'slug'));
@@ -160,19 +171,14 @@ export function ProjectForm({
   }, [title, isNew, showSlug]);
 
   useEffect(() => {
-    if (!isDirty || isSubmitting) return;
+    if (!isDirty || isPending) return;
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
       e.preventDefault();
       e.returnValue = '';
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [isDirty, isSubmitting]);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    setIsSubmitting(true);
-    // Let native form submission handle it
-  };
+  }, [isDirty, isPending]);
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8 lg:flex-row lg:items-start">
@@ -188,9 +194,15 @@ export function ProjectForm({
         </div>
       </nav>
 
-      <form action={action} onSubmit={handleSubmit} onChange={() => setIsDirty(true)} className="flex-1 space-y-12 pb-24">
+      <form action={formAction} onChange={() => setIsDirty(true)} className="flex-1 space-y-12 pb-24">
         {project?.id && <input type="hidden" name="id" value={project.id} />}
       
+      {state.error && (
+        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+          {state.error}
+        </div>
+      )}
+
       {/* SECTION 1 - BASIC INFORMATION */}
       <section id="basic" className="scroll-mt-24 space-y-6 rounded-xl border border-white/5 bg-[#111113] p-6 shadow-xl">
         <h2 className="text-lg font-semibold text-white">Basic Information</h2>
@@ -227,7 +239,10 @@ export function ProjectForm({
             </Field>
             
             <Field label="Category" name="category">
-              <input className={inputClass} name="category" defaultValue={value(project, 'category')} placeholder="e.g. Mobile App, E-commerce" />
+              <input list="category-options" className={inputClass} name="category" defaultValue={value(project, 'category')} placeholder="e.g. Mobile App, E-commerce" />
+              <datalist id="category-options">
+                {categories.map((cat) => <option key={cat} value={cat} />)}
+              </datalist>
             </Field>
           </div>
 
@@ -266,15 +281,12 @@ export function ProjectForm({
           <MediaUrlInput label="Cover Image URL" name="coverImageUrl" defaultValue={value(project, 'coverImageUrl')} />
           
           <div className="space-y-2">
-            <Field label="Gallery Images (URLs)" name="galleryImages" optional>
-              <textarea 
-                className={`${textareaClass} min-h-[160px]`} 
-                name="galleryImages" 
-                defaultValue={(project?.galleryImages || []).join('\n')} 
-                placeholder="Paste one image URL per line.&#10;Order matters." 
-              />
-            </Field>
-            <p className="text-xs text-zinc-500">Thumbnails will be loaded automatically on the project page.</p>
+            <label className="block text-sm">
+              <span className="mb-1.5 flex items-center justify-between font-medium text-zinc-300">
+                Gallery Images (URLs) <span className="text-xs font-normal text-zinc-500">Optional</span>
+              </span>
+            </label>
+            <GalleryInput initialUrls={project?.galleryImages || []} />
           </div>
         </div>
       </section>
@@ -284,16 +296,6 @@ export function ProjectForm({
         <h2 className="text-lg font-semibold text-white">Publishing</h2>
         
         <div className="grid gap-8 md:grid-cols-2">
-          <div className="space-y-3">
-            <label className="block text-sm font-medium text-zinc-300">Status</label>
-            <select name="status" defaultValue={status} className={inputClass}>
-              <option value="Draft">Draft</option>
-              <option value="Published">Published</option>
-              <option value="Archived">Archived</option>
-            </select>
-            <p className="text-xs text-zinc-500 mt-2">Publishing makes the project visible on your portfolio.</p>
-          </div>
-          
           <div className="space-y-3">
             <label className="block text-sm font-medium text-zinc-300">Visibility</label>
             <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
@@ -340,30 +342,30 @@ export function ProjectForm({
             type="submit" 
             name="action"
             value="save_changes"
-            disabled={isSubmitting}
+            disabled={isPending}
             className="rounded-lg bg-white/10 px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-white/20 disabled:opacity-50"
           >
-            {isSubmitting ? 'Saving...' : 'Save Changes'}
+            {isPending ? 'Saving...' : 'Save Changes'}
           </button>
         ) : (
           <button 
             type="submit" 
             name="action"
             value="save_draft"
-            disabled={isSubmitting}
+            disabled={isPending}
             className="rounded-lg bg-white/10 px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-white/20 disabled:opacity-50"
           >
-            {isSubmitting ? 'Saving...' : 'Save Draft'}
+            {isPending ? 'Saving...' : 'Save Draft'}
           </button>
         )}
         <button 
           type="submit"
           name="action"
           value="publish" 
-          disabled={isSubmitting}
+          disabled={isPending}
           className="rounded-lg bg-[#4F8CFF] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#4F8CFF]/20 transition-all hover:bg-[#3B78EB] disabled:opacity-50"
         >
-          {isSubmitting ? 'Saving...' : (isNew ? 'Create Project' : (status === 'Published' ? 'Publish Changes' : 'Publish Project'))}
+          {isPending ? 'Saving...' : (isNew ? 'Create & Publish' : (status === 'Published' ? 'Publish Changes' : 'Publish Project'))}
         </button>
       </div>
     </form>

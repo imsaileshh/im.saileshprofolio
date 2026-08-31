@@ -38,7 +38,7 @@ export function Sidebar({ mobile = false, onOpenResume, onOpenHireMe }: { mobile
             </h2>
             <div className="flex flex-col mt-0.5 gap-0.5">
               <span className="text-[10px] font-mono font-medium text-muted tracking-[0.12em] uppercase">
-                DESIGN · CODE · COMMERCE
+                UI/UX Designer │ Product Designer
               </span>
             </div>
           </div>

@@ -181,21 +181,31 @@ model Education {
   @@index([visible, orderIndex])
 }
 
+model SkillSection {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  visible     Boolean  @default(true)
+  orderIndex  Int      @default(0)
+  skills      Skill[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 model Skill {
   id          String   @id @default(cuid())
   name        String
-  category    String
-  proficiency Int      @default(80)
-  level       SkillLevel @default(Advanced)
+  sectionId   String
+  section     SkillSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  type        String?
   icon        String?
-  yearsOfExperience Decimal? @db.Decimal(4, 1)
   description String?
   visible     Boolean  @default(true)
   orderIndex  Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@index([visible, category, orderIndex])
+  @@index([visible, sectionId, orderIndex])
 }
 
 model Resume {
@@ -520,6 +530,20 @@ model SiteSettings {
   maintenanceMode Boolean @default(false)
   analyticsEnabled Boolean @default(true)
   sessionTimeoutMinutes Int @default(5)
+  
+  heroContent    Json?
+  aboutContent   Json?
+
+  aboutPageIntro  Json?
+  aboutApproach   Json?
+  aboutBring      Json?
+  aboutEnjoy      Json?
+  aboutPhilosophy Json?
+  aboutValues     Json?
+  
+  stackTitle      String?
+  stackDescription String?
+
   updatedAt      DateTime @updatedAt
 }
 

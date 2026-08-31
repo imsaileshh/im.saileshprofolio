@@ -2,10 +2,16 @@ import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 import { ProjectForm } from '@/components/dashboard/projects/ProjectForm';
 import { createProjectAction } from '../actions';
+import { prisma } from '@/lib/database/prisma';
 
 export const dynamic = 'force-dynamic';
 
-export default function NewProjectPage() {
+export default async function NewProjectPage() {
+  const categories = await prisma.projectTaxonomy.findMany({
+    where: { type: 'category' },
+    orderBy: { name: 'asc' },
+  });
+
   return (
     <main className="space-y-6 pb-24">
       <header className="flex flex-col gap-4 border-b border-white/10 pb-6">
@@ -20,7 +26,7 @@ export default function NewProjectPage() {
         </div>
       </header>
 
-      <ProjectForm action={createProjectAction} submitLabel="Create Project" isNew={true} />
+      <ProjectForm action={createProjectAction} submitLabel="Create Project" isNew={true} categories={categories.map(c => c.name)} />
     </main>
   );
 }

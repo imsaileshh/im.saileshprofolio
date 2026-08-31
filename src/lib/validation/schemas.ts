@@ -177,6 +177,21 @@ export const projectMutationSchema = z.object({
   seoKeywords: stringListSchema,
   ogImage: optionalUrl,
   orderIndex: z.coerce.number().int().min(0).max(9999).optional().default(0),
+  submitAction: z.enum(['publish', 'save_draft', 'save_changes']).optional().default('save_draft'),
+}).superRefine((data, ctx) => {
+  const isPublishing = data.submitAction === 'publish' || data.submitAction === 'save_changes';
+  
+  if (isPublishing) {
+    if (!data.slug) {
+      ctx.addIssue({ code: 'custom', path: ['slug'], message: 'Slug is required to publish.' });
+    }
+    if (!data.description || data.description.length < 10 || data.description.length > 160) {
+      ctx.addIssue({ code: 'custom', path: ['description'], message: 'Short description must be between 10 and 160 characters to publish.' });
+    }
+    if (!data.coverImageUrl) {
+      ctx.addIssue({ code: 'custom', path: ['coverImageUrl'], message: 'Cover Image is required to publish.' });
+    }
+  }
 });
 
 export const projectBulkMutationSchema = z.object({

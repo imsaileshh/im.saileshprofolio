@@ -3,7 +3,16 @@
 import Image from 'next/image';
 import { SectionReveal } from '@/components/ui/SectionReveal';
 
-export function AboutHero() {
+export function AboutHero({ data }: { data?: any }) {
+  const intro = data || {
+    eyebrow: 'ABOUT / 01',
+    heading1: 'Designing.',
+    heading2: 'Building.',
+    heading3: 'Improving digital experiences.',
+    role: "I'm a UI/UX Designer, Frontend Developer, Shopify Developer and Vibe Coder.",
+    paragraph: 'I combine design thinking, frontend development, e-commerce expertise and AI-assisted workflows to create intuitive interfaces, responsive websites and scalable digital products.'
+  };
+
   return (
     <SectionReveal className="pt-6 md:pt-8 pb-10 md:pb-12 relative">
       <div className="flex flex-col lg:flex-row justify-between gap-8 lg:gap-10 items-start">
@@ -11,21 +20,21 @@ export function AboutHero() {
         {/* LEFT SIDE */}
         <div className="flex-1 flex flex-col">
           <h2 className="text-[11px] font-mono tracking-[0.2em] text-muted uppercase mb-5">
-            ABOUT / 01
+            {intro.eyebrow}
           </h2>
           
           <h1 className="text-3xl md:text-4xl lg:text-[3rem] font-display font-medium leading-[1.1] tracking-tight mb-6">
-            <span className="block mb-2">Designing.</span>
-            <span className="block mb-2">Building.</span>
-            <span className="block text-accent">Improving digital experiences.</span>
+            <span className="block mb-2">{intro.heading1}</span>
+            <span className="block mb-2">{intro.heading2}</span>
+            <span className="block text-accent">{intro.heading3}</span>
           </h1>
           
           <div className="flex flex-col gap-4 max-w-xl">
             <p className="text-lg md:text-xl text-foreground leading-[1.6] font-medium">
-              I'm a UI/UX Designer, Frontend Developer, Shopify Developer and Vibe Coder.
+              {intro.role}
             </p>
             <p className="text-[15px] md:text-[16px] text-muted leading-[1.7] font-light">
-              I combine design thinking, frontend development, e-commerce expertise and AI-assisted workflows to create intuitive interfaces, responsive websites and scalable digital products.
+              {intro.paragraph}
             </p>
           </div>
         </div>

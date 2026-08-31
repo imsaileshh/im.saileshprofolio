@@ -6,11 +6,23 @@ import Link from 'next/link';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const rotatingRoles = ['SHOPIFY DEVELOPER', 'VIBE CODER', 'E-COMMERCE'];
 const ease = [0.22, 1, 0.36, 1] as const;
 
-export function HomeHero() {
-  const [roleIndex, setRoleIndex] = useState(0);
+export function HomeHero({ heroContent }: { heroContent?: any }) {
+  const content = heroContent || {
+    eyebrow: 'UI/UX DESIGNER',
+    heading1: "Hey, I'm",
+    heading2: 'Sailesh.',
+    description1: "I'm a UI/UX designer and frontend developer based in Kerala, India.",
+    description2: 'I craft digital experiences that balance aesthetic precision with robust engineering.',
+    primaryCtaText: 'View Projects',
+    primaryCtaLink: '/projects',
+    secondaryCtaText: 'Hire Me',
+    secondaryCtaLink: '/hire-me',
+    profileLabels: 'AVAILABLE FOR WORK · BASED IN KERALA',
+    supportingText: 'Passionate about creating intuitive, engaging, and accessible user experiences.'
+  };
+
   const [isMobile, setIsMobile] = useState(true); // default to true to prevent hydration mismatch on parallax
 
   useEffect(() => {
@@ -18,13 +30,6 @@ export function HomeHero() {
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRoleIndex((prev) => (prev + 1) % rotatingRoles.length);
-    }, 3000);
-    return () => clearInterval(interval);
   }, []);
 
   // Parallax setup
@@ -83,21 +88,7 @@ export function HomeHero() {
             className="w-1.5 h-1.5 rounded-full bg-accent shrink-0"
           />
           <div className="text-[10px] sm:text-xs font-semibold text-muted uppercase tracking-[0.06em] flex items-center overflow-hidden">
-            <span>UI/UX DESIGNER · FRONTEND DEVELOPER ·&nbsp;</span>
-            <div className="relative h-[1.2em] w-[140px] sm:w-[160px]">
-              <AnimatePresence mode="popLayout">
-                <motion.span
-                  key={roleIndex}
-                  initial={{ opacity: 0, y: 6 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -6 }}
-                  transition={{ duration: 0.3 }}
-                  className="absolute left-0 text-foreground"
-                >
-                  {rotatingRoles[roleIndex]}
-                </motion.span>
-              </AnimatePresence>
-            </div>
+            <span>{content.eyebrow}</span>
           </div>
         </motion.div>
         
@@ -109,7 +100,7 @@ export function HomeHero() {
             transition={{ duration: 0.65, delay: 0.15, ease }}
             className="block text-[clamp(40px,11vw,68px)] lg:text-[clamp(56px,6vw,92px)] leading-[0.98] mb-1"
           >
-            Hey, I'm
+            {content.heading1}
           </motion.div>
           <motion.div 
             initial={{ opacity: 0, y: 28, filter: 'blur(6px)' }}
@@ -117,7 +108,7 @@ export function HomeHero() {
             transition={{ duration: 0.65, delay: 0.23, ease }}
             className="block text-[clamp(48px,13vw,76px)] lg:text-[clamp(64px,7vw,104px)] leading-[0.98] text-accent"
           >
-            Sailesh.
+            {content.heading2}
           </motion.div>
         </h1>
         
@@ -128,10 +119,10 @@ export function HomeHero() {
           transition={{ duration: 0.5, delay: 0.32, ease }}
           className="text-base md:text-[19px] text-muted leading-[1.58] font-light mb-8 max-w-[580px]"
         >
-          I design and build modern digital experiences — from intuitive interfaces and <HoverWord>Shopify</HoverWord> storefronts to scalable web products.
+          {parseHoverText(content.description1)}
           <br className="hidden md:block" />
           <br className="hidden md:block" />
-          Blending <HoverWord>UI/UX</HoverWord>, <HoverWord>Frontend</HoverWord> development, e-commerce and <HoverWord>AI</HoverWord>-assisted workflows.
+          {parseHoverText(content.description2)}
         </motion.p>
 
         {/* Buttons */}
@@ -143,10 +134,10 @@ export function HomeHero() {
             className="w-full min-[440px]:w-auto"
           >
             <Link 
-              href="/projects" 
+              href={content.primaryCtaLink} 
               className="group relative flex items-center justify-center gap-2 bg-foreground text-[var(--bg)] px-6 py-3.5 rounded-xl text-[15px] font-semibold hover:brightness-95 hover:-translate-y-[2px] hover:scale-[1.015] active:scale-[0.98] transition-all duration-[220ms] overflow-hidden w-full"
             >
-              <span className="relative z-10">View Projects</span>
+              <span className="relative z-10">{content.primaryCtaText}</span>
               <ArrowUpRight size={18} className="relative z-10 transition-transform duration-[220ms] group-hover:translate-x-1 group-hover:-translate-y-1" />
               <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-[220ms] ease-out" />
             </Link>
@@ -158,13 +149,23 @@ export function HomeHero() {
             transition={{ duration: 0.5, delay: 0.53, ease }}
             className="w-full min-[440px]:w-auto"
           >
-            <button 
-              onClick={() => window.dispatchEvent(new CustomEvent('open-hire-me'))}
-              className="group flex items-center justify-center gap-2 bg-transparent text-foreground px-6 py-3.5 rounded-xl text-[15px] font-semibold border border-border-subtle hover:bg-border-subtle/20 active:scale-[0.98] transition-all duration-200 w-full"
-            >
-              <span className="transition-transform duration-[220ms] group-hover:translate-x-1">Let's Talk</span>
-              <ArrowRight size={18} className="transition-transform duration-[220ms] group-hover:translate-x-1" />
-            </button>
+            {content.secondaryCtaLink === '#hire' ? (
+              <button 
+                onClick={() => window.dispatchEvent(new CustomEvent('open-hire-me'))}
+                className="group flex items-center justify-center gap-2 bg-transparent text-foreground px-6 py-3.5 rounded-xl text-[15px] font-semibold border border-border-subtle hover:bg-border-subtle/20 active:scale-[0.98] transition-all duration-200 w-full"
+              >
+                <span className="transition-transform duration-[220ms] group-hover:translate-x-1">{content.secondaryCtaText}</span>
+                <ArrowRight size={18} className="transition-transform duration-[220ms] group-hover:translate-x-1" />
+              </button>
+            ) : (
+              <Link 
+                href={content.secondaryCtaLink}
+                className="group flex items-center justify-center gap-2 bg-transparent text-foreground px-6 py-3.5 rounded-xl text-[15px] font-semibold border border-border-subtle hover:bg-border-subtle/20 active:scale-[0.98] transition-all duration-200 w-full"
+              >
+                <span className="transition-transform duration-[220ms] group-hover:translate-x-1">{content.secondaryCtaText}</span>
+                <ArrowRight size={18} className="transition-transform duration-[220ms] group-hover:translate-x-1" />
+              </Link>
+            )}
           </motion.div>
         </div>
       </motion.div>
@@ -204,7 +205,10 @@ export function HomeHero() {
           <span className="text-[9px] font-mono tracking-widest uppercase text-muted">PROFILE</span>
         </motion.div>
         <div className="mt-1 px-1">
-          <span className="text-[9px] font-mono tracking-[0.15em] uppercase text-muted/60">DESIGN · CODE · COMMERCE</span>
+          <span className="text-[9px] font-mono tracking-[0.15em] uppercase text-muted/60">{content.profileLabels}</span>
+        </div>
+        <div className="mt-4 px-1">
+          <p className="text-xs text-muted/70 leading-relaxed font-light">{content.supportingText}</p>
         </div>
 
         {/* Background Radial Glow */}
@@ -238,4 +242,15 @@ function HoverWord({ children }: { children: React.ReactNode }) {
       <span className="absolute left-0 bottom-0 h-px w-0 bg-accent transition-all duration-300 group-hover:w-full" />
     </span>
   );
+}
+
+function parseHoverText(text: string) {
+  if (!text) return null;
+  const parts = text.split(/(\[[^\]]+\])/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('[') && part.endsWith(']')) {
+      return <HoverWord key={i}>{part.slice(1, -1)}</HoverWord>;
+    }
+    return <span key={i}>{part}</span>;
+  });
 }

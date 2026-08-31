@@ -55,32 +55,30 @@ export function validateResumeFile(file: Pick<ResumeFileLike, 'name' | 'type' | 
 }
 
 export async function extractResumeText(buffer: Buffer, mimeType: string) {
-  try {
-    if (mimeType === 'application/pdf') {
-      const { PDFParse } = await import('pdf-parse');
-      const parser = new PDFParse({ data: buffer });
-      try {
-        const result = await parser.getText();
-        const text = String(result.text ?? '').trim();
-        if (text.length < 20) throw new Error(extractionFailureMessage);
-        return text;
-      } finally {
-        await parser.destroy();
-      }
-    }
-
-    if (mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
-      const mammoth = await import('mammoth');
-      const result = await mammoth.extractRawText({ buffer });
-      const text = String(result.value ?? '').trim();
-      if (text.length < 20) throw new Error(extractionFailureMessage);
+  if (mimeType === 'application/pdf') {
+    const pdfModule = await import('pdf-parse');
+    const PDFParse = (pdfModule as any).PDFParse;
+    const parser = new PDFParse({ data: buffer });
+    try {
+      const result = await parser.getText();
+      const text = String(result.text ?? '').trim();
+      if (text.length < 20) throw new Error('Extracted text is too short. Please upload a valid resume.');
       return text;
+    } finally {
+      await parser.destroy();
     }
-  } catch {
-    throw new Error(extractionFailureMessage);
   }
 
-  throw new Error(extractionFailureMessage);
+  if (mimeType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+    const mammothModule = await import('mammoth');
+    const mammoth = mammothModule.default || mammothModule;
+    const result = await mammoth.extractRawText({ buffer });
+    const text = String(result.value ?? '').trim();
+    if (text.length < 20) throw new Error('Extracted text is too short. Please upload a valid resume.');
+    return text;
+  }
+
+  throw new Error('Unsupported file type for extraction.');
 }
 
 export async function persistResumeUpload(file: ResumeFileLike, resumeId: string) {

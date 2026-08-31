@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/database/prisma';
 import { updateSettingsAction } from './actions';
 
+import { HomeContentForm } from '@/components/dashboard/settings/HomeContentForm';
+
 export const dynamic = 'force-dynamic';
 
 export default async function DashboardSettingsPage() {
@@ -10,14 +12,22 @@ export default async function DashboardSettingsPage() {
     maintenanceMode: false,
     analyticsEnabled: true,
     sessionTimeoutMinutes: 5,
+    heroContent: null,
+    aboutContent: null,
   };
 
   return (
-    <main className="space-y-6">
+    <main className="space-y-8">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight text-white">Settings</h1>
-        <p className="mt-1 text-sm text-zinc-400">Manage site configuration and preferences.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-white">Settings & Content</h1>
+        <p className="mt-1 text-sm text-zinc-400">Manage site configuration and homepage content.</p>
       </header>
+
+      {/* HOMEPAGE CONTENT FORM */}
+      <HomeContentForm 
+        heroContent={settings.heroContent} 
+        aboutContent={settings.aboutContent} 
+      />
 
       <section className="max-w-3xl rounded-lg border border-white/10 bg-[#111113] p-6">
         <form action={updateSettingsAction} className="space-y-8">

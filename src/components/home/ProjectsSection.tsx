@@ -4,8 +4,9 @@ import { useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { AnimatePresence, motion, useInView, useScroll, useTransform } from 'framer-motion';
-import { ArrowUpRight, ExternalLink } from 'lucide-react';
+import { ArrowUpRight, Briefcase } from 'lucide-react';
 import { ProjectModal } from '@/components/projects/ProjectModal';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 
 function CinematicStickyCard({
   project,
@@ -120,26 +121,15 @@ export function ProjectsSection({ projects }: { projects: any[] }) {
       className="relative py-12 md:py-20 lg:py-24 px-5 sm:px-6 md:px-10 lg:px-16"
     >
       {/* ── Section header ── */}
-      <div ref={headerRef} className="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-12 md:mb-16">
-        <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 28 }}
-          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {/* Label */}
-          <div className="flex items-center gap-2.5 mb-3">
-            <div className="w-[18px] h-px bg-[var(--accent)]" />
-            <span className="font-mono text-[10px] tracking-[0.18em] text-[var(--accent)] uppercase font-semibold">
-              Selected Work
-            </span>
-          </div>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-12 md:mb-16">
+        <SectionHeader icon={Briefcase} label="SELECTED WORK" className="!mb-0">
           <h2 className="text-3xl md:text-4xl lg:text-[44px] font-display font-semibold tracking-tight text-[var(--text)] leading-[1.1]">
             Projects
           </h2>
           <p className="text-[var(--muted)] text-[15px] md:text-base mt-2 max-w-sm">
             A curated collection of work that tells a story.
           </p>
-        </motion.div>
+        </SectionHeader>
 
         <motion.div
           initial={{ opacity: 0, x: 20 }}

@@ -4,14 +4,14 @@ import { motion } from 'framer-motion';
 import { SectionReveal } from '@/components/ui/SectionReveal';
 import { ArrowUpRight } from 'lucide-react';
 
-const philosophy = [
-  { num: '01', title: 'CLEAN DESIGN', desc: 'Simple, purposeful interfaces with clear visual hierarchy.' },
-  { num: '02', title: 'QUALITY CODE', desc: 'Maintainable, scalable and performance-focused development.' },
-  { num: '03', title: 'USER FIRST', desc: 'Every design and technical decision should improve the experience.' },
-  { num: '04', title: 'KEEP IMPROVING', desc: 'Technology evolves, and so do my skills and workflow.' },
-];
+export function AboutPhilosophy({ data }: { data?: any[] }) {
+  const philosophies = data || [
+    { num: '01', title: 'CLEAN DESIGN', desc: 'Simple, purposeful interfaces with clear visual hierarchy.' },
+    { num: '02', title: 'QUALITY CODE', desc: 'Maintainable, scalable and performance-focused development.' },
+    { num: '03', title: 'USER FIRST', desc: 'Every design and technical decision should improve the experience.' },
+    { num: '04', title: 'KEEP IMPROVING', desc: 'Technology evolves, and so do my skills and workflow.' },
+  ];
 
-export function AboutPhilosophy() {
   return (
     <SectionReveal className="py-24">
       <div className="mb-16">
@@ -21,7 +21,7 @@ export function AboutPhilosophy() {
       </div>
 
       <div className="flex flex-col border-t border-border-subtle">
-        {philosophy.map((item, i) => (
+        {philosophies.map((item, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
@@ -54,14 +54,6 @@ export function AboutPhilosophy() {
                 <p className="text-[15px] text-muted leading-relaxed">
                   {item.desc}
                 </p>
-              </div>
-
-              {/* Arrow */}
-              <div className="hidden md:flex shrink-0 w-8 justify-end">
-                <ArrowUpRight 
-                  size={20} 
-                  className="text-muted opacity-50 group-hover:opacity-100 group-hover:text-accent transition-all duration-300 group-hover:-translate-y-1 group-hover:translate-x-1" 
-                />
               </div>
 
             </div>

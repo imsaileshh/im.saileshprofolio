@@ -3,6 +3,7 @@ import { Archive, CheckCircle2, FileText, FolderGit2, Search, Star, Trash2 } fro
 import { ConfirmSubmitButton } from '@/components/dashboard/ConfirmSubmitButton';
 import { ProjectRows } from '@/components/dashboard/projects/ProjectRows';
 import { TaxonomyManager } from '@/components/dashboard/projects/TaxonomyManager';
+import { ProjectSearchForm } from '@/components/dashboard/projects/ProjectSearchForm';
 import { bulkProjectAction } from './actions';
 import { getDashboardProjects, projectStatusLabels } from '@/lib/dashboard/projects';
 import { pickParam } from '@/lib/dashboard/data';
@@ -92,31 +93,7 @@ export default async function DashboardProjectsPage({ searchParams }: PageProps)
       </section>
 
       <section className="rounded-lg border border-white/10 bg-[#111113] p-2">
-        <form className="flex flex-col gap-2 md:flex-row md:items-center">
-          <div className="relative flex-1">
-            <Search className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-zinc-500" />
-            <input
-              name="search"
-              defaultValue={parsed.search}
-              placeholder="Search projects by title, description, or tags..."
-              className="h-12 w-full rounded-md border-none bg-black/20 pl-12 pr-4 text-sm text-white outline-none transition focus:bg-black/40 focus:ring-1 focus:ring-[#4F8CFF]"
-            />
-          </div>
-          <div className="flex gap-2">
-            <select name="view" defaultValue={parsed.view} className="h-12 rounded-md border border-white/5 bg-black/40 px-4 text-sm text-zinc-300 outline-none focus:border-[#4F8CFF]">
-              <option value="all">All Projects</option>
-              <option value="caseStudies">Case Studies</option>
-              <option value="featured">Featured</option>
-              <option value="clientWork">Client Work</option>
-              <option value="personalProjects">Personal Projects</option>
-              <option value="openSource">Open Source</option>
-            </select>
-            <button type="button" className="flex h-12 items-center gap-2 rounded-md border border-white/5 bg-black/40 px-4 text-sm font-medium text-zinc-300 hover:bg-white/5">
-              Filters
-            </button>
-            <button type="submit" className="h-12 rounded-md bg-[#4F8CFF] px-6 text-sm font-semibold text-white shadow-lg shadow-[#4F8CFF]/20 transition-all hover:bg-[#3B78EB]">Search</button>
-          </div>
-        </form>
+        <ProjectSearchForm initialSearch={parsed.search} initialView={parsed.view} />
       </section>
 
       <section className="rounded-lg border border-white/10 bg-[#111113]">
@@ -128,11 +105,17 @@ export default async function DashboardProjectsPage({ searchParams }: PageProps)
               <FolderGit2 className="h-8 w-8 text-[#4F8CFF]" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-white">Build your portfolio</h2>
-              <p className="mt-1 text-sm text-zinc-500 mb-4">Add your first project to showcase your work, case studies, and technical experience.</p>
-              <Link href="/dashboard/projects/new" className="inline-flex h-10 items-center justify-center rounded-lg bg-[#4F8CFF] px-4 text-sm font-semibold text-white shadow-lg shadow-[#4F8CFF]/20 transition-all hover:bg-[#3B78EB]">
-                + Add Project
-              </Link>
+              <h2 className="text-lg font-semibold text-white">No projects found</h2>
+              <p className="mt-1 text-sm text-zinc-500 mb-4">
+                {data.stats.total === 0 
+                  ? "Add your first project to showcase your work, case studies, and technical experience." 
+                  : "No projects match your current search filters."}
+              </p>
+              {data.stats.total === 0 && (
+                <Link href="/dashboard/projects/new" className="inline-flex h-10 items-center justify-center rounded-lg bg-[#4F8CFF] px-4 text-sm font-semibold text-white shadow-lg shadow-[#4F8CFF]/20 transition-all hover:bg-[#3B78EB]">
+                  + Add Project
+                </Link>
+              )}
             </div>
           </div>
         )}

@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { verifySession } from '@/lib/auth/session';
+import { prisma } from '@/lib/database/prisma';
 import {
   bulkUpdateProjects,
   createProjectRecord,
@@ -78,6 +79,7 @@ function projectPayload(formData: FormData) {
     seoKeywords: formData.get('seoKeywords'),
     ogImage: optionalString(formData.get('ogImage')),
     orderIndex: formData.get('orderIndex') ?? 0,
+    submitAction: formData.get('action'),
   };
 }
 
@@ -91,22 +93,98 @@ function revalidateProjects() {
   revalidatePath('/');
 }
 
-export async function createProjectAction(formData: FormData) {
-  await requireProjectAdmin();
-  const payload = projectMutationSchema.parse(projectPayload(formData));
-  const project = await createProjectRecord(payload);
-  revalidateProjects();
-  redirect(`/dashboard/projects/${project.id}/success`);
+export type ActionState = {
+  success?: boolean;
+  error?: string;
+  message?: string;
+};
+
+function applyAutoSeo(payload: any) {
+  if (!payload.seoTitle && payload.title) {
+    payload.seoTitle = `${payload.title} | Sailesh P.`;
+  }
+  if (!payload.seoDescription && payload.description) {
+    payload.seoDescription = payload.description.substring(0, 300);
+  }
+  if (!payload.ogImage && payload.coverImageUrl) {
+    payload.ogImage = payload.coverImageUrl;
+  }
+  return payload;
 }
 
-export async function updateProjectAction(formData: FormData) {
-  await requireProjectAdmin();
-  const id = String(formData.get('id') ?? '');
-  if (!id) throw new Error('Missing project id');
-  const payload = projectMutationSchema.parse(projectPayload(formData));
-  await updateProjectRecord(id, payload);
-  revalidateProjects();
-  redirect('/dashboard/projects?saved=updated');
+export async function createProjectAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
+  try {
+    await requireProjectAdmin();
+    const validated = projectMutationSchema.safeParse(projectPayload(formData));
+    
+    if (!validated.success) {
+      return { error: validated.error.errors[0]?.message || 'Validation failed' };
+    }
+    
+    let payload = validated.data;
+    // Set published/draft status based on action button clicked
+    if (payload.submitAction === 'publish') {
+      payload.status = 'Published';
+      if (!payload.publishedAt) payload.publishedAt = new Date();
+    } else if (payload.submitAction === 'save_draft') {
+      payload.status = 'Draft';
+    }
+    
+    payload = applyAutoSeo(payload);
+    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { submitAction, ...dataPayload } = payload;
+    const project = await createProjectRecord(dataPayload);
+    revalidateProjects();
+    
+    redirect(`/dashboard/projects/${project.id}/success`);
+  } catch (error: any) {
+    if (error.message === 'NEXT_REDIRECT') throw error;
+    console.error('Project creation failed:', error);
+    if (error?.code === 'P2002' && error?.meta?.target?.includes('slug')) {
+      return { error: 'This slug is already in use by another project.' };
+    }
+    return { error: error.message || 'An unexpected error occurred.' };
+  }
+}
+
+export async function updateProjectAction(prevState: ActionState, formData: FormData): Promise<ActionState> {
+  try {
+    await requireProjectAdmin();
+    const id = String(formData.get('id') ?? '');
+    if (!id) return { error: 'Missing project id' };
+    
+    const validated = projectMutationSchema.safeParse(projectPayload(formData));
+    
+    if (!validated.success) {
+      return { error: validated.error.errors[0]?.message || 'Validation failed' };
+    }
+    
+    let payload = validated.data;
+    // Set published/draft status based on action button clicked
+    if (payload.submitAction === 'publish' || payload.submitAction === 'save_changes') {
+      payload.status = 'Published';
+      if (!payload.publishedAt) payload.publishedAt = new Date();
+    } else if (payload.submitAction === 'save_draft') {
+      payload.status = 'Draft';
+    }
+    
+    payload = applyAutoSeo(payload);
+    
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { submitAction, ...dataPayload } = payload;
+    await updateProjectRecord(id, dataPayload);
+    revalidateProjects();
+    
+    redirect('/dashboard/projects?saved=updated');
+  } catch (error: any) {
+    if (error.message === 'NEXT_REDIRECT') throw error;
+    console.error('Project update failed:', error);
+    if (error?.code === 'P2002' && error?.meta?.target?.includes('slug')) {
+      return { error: 'This slug is already in use by another project.' };
+    }
+    return { error: error.message || 'An unexpected error occurred.' };
+  }
 }
 
 export async function duplicateProjectAction(formData: FormData) {
@@ -131,6 +209,14 @@ export async function quickProjectAction(formData: FormData) {
   const action = String(formData.get('action') ?? '');
   if (!id) throw new Error('Missing project id');
   const parsed = projectBulkMutationSchema.parse({ ids: [id], action });
+  
+  if (parsed.action === 'markFeatured') {
+    const featuredCount = await prisma.project.count({ where: { featured: true } });
+    if (featuredCount >= 6) {
+      throw new Error('Maximum of 6 featured projects allowed. Please remove one first.');
+    }
+  }
+  
   await bulkUpdateProjects(parsed.ids, parsed.action);
   revalidateProjects();
 }
@@ -141,6 +227,14 @@ export async function bulkProjectAction(formData: FormData) {
     ids: selectedIds(formData),
     action: formData.get('action'),
   });
+  
+  if (parsed.action === 'markFeatured') {
+    const featuredCount = await prisma.project.count({ where: { featured: true } });
+    if (featuredCount + parsed.ids.length > 6) {
+      throw new Error(`Cannot feature ${parsed.ids.length} projects. Maximum of 6 allowed (currently ${featuredCount}).`);
+    }
+  }
+  
   await bulkUpdateProjects(parsed.ids, parsed.action);
   revalidateProjects();
 }

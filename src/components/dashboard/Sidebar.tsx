@@ -15,7 +15,8 @@ import {
   LogOut,
   BarChart3,
   Activity,
-  Route
+  Route,
+  LayoutTemplate
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -31,9 +32,11 @@ const navigationGroups = [
     items: [
       { name: 'Projects', href: '/dashboard/projects', icon: FolderGit2, exact: false },
       { name: 'Resumes', href: '/dashboard/resume', icon: FileText, exact: false },
-      { name: 'Skills', href: '/dashboard/skills', icon: Code2, exact: false },
+      { name: 'Hero', href: '/dashboard/hero', icon: LayoutTemplate, exact: false },
+      { name: 'Stack', href: '/dashboard/stack', icon: Code2, exact: false },
       { name: 'Experience', href: '/dashboard/experience', icon: Briefcase, exact: false },
       { name: 'Education', href: '/dashboard/education', icon: GraduationCap, exact: false },
+      { name: 'About', href: '/dashboard/about', icon: Users, exact: false },
     ]
   },
   {

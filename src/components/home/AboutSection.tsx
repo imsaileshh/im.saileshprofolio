@@ -3,29 +3,28 @@
 import { motion } from 'framer-motion';
 import { User } from 'lucide-react';
 import Link from 'next/link';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 
-const capabilities = [
-  {
-    category: 'DESIGN',
-    title: 'UI/UX Design',
-  },
-  {
-    category: 'CODE',
-    title: 'Frontend Development',
-  },
-  {
-    category: 'AI DEVELOPMENT',
-    title: 'AI-Assisted Development',
-  },
-  {
-    category: 'COMMERCE',
-    title: 'Shopify Development',
-  },
-];
+
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
-export function AboutSection() {
+export function AboutSection({ aboutContent }: { aboutContent?: any }) {
+  const content = aboutContent || {
+    eyebrow: 'ABOUT ME',
+    heading: 'Design. Build. Ship.',
+    role: 'Frontend Developer & UI/UX Designer',
+    paragraph: 'I bridge the gap between design and engineering, crafting digital experiences that are not only visually stunning but also highly performant and accessible.',
+    ctaText: 'Read my full story',
+    ctaLink: '/about',
+    capabilities: [
+      { title: 'UI / UX Design', desc: 'Crafting intuitive, beautiful interfaces that users love.' },
+      { title: 'Frontend Engineering', desc: 'Building fast, accessible, production-grade web apps.' },
+      { title: 'Design Systems', desc: 'Creating scalable component libraries and style guides.' },
+      { title: 'Performance', desc: 'Optimising for Core Web Vitals and real-world speed.' },
+    ],
+  };
+
   return (
     <section
       id="about-preview"
@@ -34,48 +33,38 @@ export function AboutSection() {
       <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-16 items-start">
         
         {/* LEFT: About Me Content */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6, ease }}
-          className="flex flex-col max-w-[580px]"
-        >
-          {/* Section label with small minimal icon */}
-          <div className="flex items-center gap-2.5 mb-4">
-            <User size={18} className="text-accent shrink-0" strokeWidth={2.5} />
-            <span className="text-xs font-mono tracking-widest text-muted uppercase font-medium">
-              ABOUT ME
-            </span>
-          </div>
+        <div className="flex flex-col max-w-[580px]">
+          <SectionHeader icon={User} label={content.eyebrow} className="!mb-6">
+            <h2 className="text-4xl md:text-5xl lg:text-[52px] font-display font-semibold tracking-tight text-accent leading-[1.15] mb-5">
+              {content.heading}
+            </h2>
 
-          {/* Headline */}
-          <h2 className="text-4xl md:text-5xl lg:text-[52px] font-display font-semibold tracking-tight text-accent leading-[1.15] mb-5">
-            I design, build, and ship digital experiences.
-          </h2>
+            <p className="text-sm md:text-[15px] font-medium text-foreground/80 mb-4">
+              {content.role}
+            </p>
 
-          {/* Role Subtitle */}
-          <p className="text-sm md:text-[15px] font-medium text-foreground/80 mb-4">
-            UI/UX Designer · Frontend Developer · AI-Assisted Developer · Shopify Developer
-          </p>
-
-          {/* Paragraph */}
-          <p className="text-[15px] md:text-base text-muted leading-relaxed font-light mb-6">
-            I combine thoughtful design with modern development to create digital products that are clear, useful, and built to perform.
-          </p>
+            <p className="text-[15px] md:text-base text-muted leading-relaxed font-light mb-6">
+              {content.paragraph}
+            </p>
+          </SectionHeader>
 
           {/* Link CTA */}
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
             <Link
-              href="/about"
+              href={content.ctaLink}
               className="inline-flex items-center text-sm font-medium text-foreground hover:text-accent transition-colors duration-200 group"
             >
               <span className="underline underline-offset-4 decoration-border-subtle group-hover:decoration-accent transition-colors duration-200">
-                Read my story
+                {content.ctaText}
               </span>
             </Link>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
 
         {/* RIGHT: Modern Cardless Capability List */}
         <motion.div
@@ -85,17 +74,17 @@ export function AboutSection() {
           transition={{ duration: 0.6, delay: 0.1, ease }}
           className="flex flex-col w-full lg:pt-2"
         >
-          {capabilities.map((item, index) => (
-            <div key={item.category} className="flex flex-col group cursor-default">
+          {content.capabilities.map((item: any, index: number) => (
+            <div key={item.title} className="flex flex-col group cursor-default">
               <div className="py-4 md:py-5 flex flex-col">
                 <span className="text-[10px] md:text-[11px] font-mono tracking-widest text-muted uppercase mb-1 transition-colors duration-200 group-hover:text-accent">
-                  {item.category}
+                  {item.title}
                 </span>
                 <h3 className="text-lg md:text-xl font-display font-semibold text-foreground tracking-tight transition-transform duration-200 group-hover:translate-x-1">
-                  {item.title}
+                  {item.desc}
                 </h3>
               </div>
-              {index !== capabilities.length - 1 && (
+              {index !== content.capabilities.length - 1 && (
                 <div className="w-full h-px bg-border-subtle relative overflow-hidden">
                   <div className="absolute inset-0 bg-accent/40 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" />
                 </div>

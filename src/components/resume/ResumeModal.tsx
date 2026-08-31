@@ -89,13 +89,14 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
             className="relative w-full max-w-[820px] h-[88vh] max-h-[1000px] bg-[#F5F0E8] text-[#181818] rounded-md shadow-2xl overflow-hidden flex flex-col"
           >
             {/* Header / Actions */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E0D8] shrink-0 bg-[#F5F0E8] z-10">
+            <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-[#E5E0D8] shrink-0 bg-[#F5F0E8] z-10">
               <div className="flex flex-col">
                 <span className="font-display font-bold text-sm tracking-wide">SAILESH P</span>
-                <span className="text-xs font-medium text-[#666] uppercase tracking-widest">Resume / Curriculum Vitae</span>
+                <span className="text-[10px] sm:text-xs font-medium text-[#666] uppercase tracking-widest hidden sm:block">Resume / Curriculum Vitae</span>
+                <span className="text-[10px] font-medium text-[#666] uppercase tracking-widest block sm:hidden">Resume</span>
               </div>
               
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 sm:gap-4">
                 <a 
                   href="/resume/SAILESH-P.pdf" 
                   download="Sailesh-P-Resume.pdf"
@@ -109,11 +110,13 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                     link.click();
                     document.body.removeChild(link);
                   }}
-                  className="hidden sm:flex items-center gap-2 text-xs font-medium hover:text-[#000] text-[#444] transition-colors"
+                  className="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-medium hover:text-[#000] text-[#444] transition-colors"
                 >
-                  <Download size={14} /> Download Resume
+                  <Download size={15} /> 
+                  <span className="hidden sm:inline">Download Resume</span>
+                  <span className="inline sm:hidden">Download</span>
                 </a>
-                <div className="w-px h-4 bg-[#D5D0C8] hidden sm:block mx-1"></div>
+                <div className="w-px h-4 bg-[#D5D0C8] mx-0.5 sm:mx-1"></div>
                 <button 
                   onClick={onClose}
                   aria-label="Close resume"

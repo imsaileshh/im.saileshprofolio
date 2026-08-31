@@ -5,6 +5,8 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import type { Variants } from 'framer-motion';
 
 import { SectionReveal, StaggerContainer } from '@/components/ui/SectionReveal';
+import { Compass } from 'lucide-react';
+import { SectionHeader } from '@/components/ui/SectionHeader';
 
 const experienceRowVariants: Variants = {
   hidden: { opacity: 0, y: 22, x: -10 },
@@ -20,7 +22,8 @@ type PreviewTimelineItem = {
   year: string;
   role: string;
   company: string;
-  description: string;
+  description: string[];
+  technologies?: string[];
 };
 
 export function ExperienceEducationPreview({
@@ -42,25 +45,16 @@ export function ExperienceEducationPreview({
   return (
     <SectionReveal id="experience-preview" className="py-10 md:py-14 lg:py-16 relative px-5 sm:px-6 md:px-10 lg:px-16">
       <section ref={sectionRef} className="relative">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8"
-        >
-          <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-accent/25 bg-accent/10 px-3 py-1 text-[10px] font-mono font-semibold tracking-[0.16em] text-accent">
-              TRENDING
-            </div>
-            <h2 className="text-3xl font-display font-medium tracking-tight mb-2">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+          <SectionHeader icon={Compass} label="EXPERIENCE" className="!mb-0">
+            <h2 className="text-3xl md:text-4xl lg:text-[40px] font-display font-medium tracking-tight leading-[1.15] mb-2">
               Experience & Education
             </h2>
             <p className="text-muted text-sm md:text-base max-w-xl">
               My professional journey, education and growth across design and frontend development.
             </p>
-          </div>
-        </motion.div>
+          </SectionHeader>
+        </div>
 
         <div className="flex flex-col max-w-4xl relative mt-8">
           <div className="absolute left-[20px] md:left-[180px] top-2 bottom-0 w-[1px] bg-border-subtle origin-top" />
@@ -137,7 +131,7 @@ function ExperienceRow({
       />
 
       <div className="w-full md:w-[150px] shrink-0 pt-1">
-        <span className="text-xs font-medium text-muted opacity-70 group-hover:opacity-100 group-hover:text-foreground tracking-widest font-mono transition-all duration-300">
+        <span className="text-xs font-medium text-muted opacity-70 group-hover:opacity-100 group-hover:text-foreground font-mono transition-all duration-300">
           {item.year}
         </span>
       </div>
@@ -154,9 +148,22 @@ function ExperienceRow({
           )}
         </div>
         <p className="text-sm text-foreground font-medium mb-3 uppercase tracking-wider">{item.company}</p>
-        <p className="text-sm text-muted opacity-70 group-hover:opacity-95 leading-relaxed transition-opacity duration-300">
-          {item.description}
-        </p>
+        
+        <ul className="text-sm text-muted opacity-70 group-hover:opacity-95 leading-relaxed transition-opacity duration-300 list-disc list-outside ml-4 space-y-1.5 mb-4">
+          {item.description.map((desc, i) => (
+            <li key={i} className="pl-1 marker:text-muted/50">{desc}</li>
+          ))}
+        </ul>
+
+        {item.technologies && item.technologies.length > 0 && (
+          <div className="flex flex-wrap gap-2 mt-auto pt-2">
+            {item.technologies.map((tech, i) => (
+              <span key={i} className="px-2 py-1 bg-white/5 border border-white/10 rounded-md text-[10px] font-mono tracking-wide text-zinc-400 group-hover:text-zinc-300 group-hover:border-white/20 transition-all duration-300">
+                {tech}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </motion.div>
   );

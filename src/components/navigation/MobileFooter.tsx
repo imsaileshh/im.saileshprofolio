@@ -23,7 +23,7 @@ export function MobileFooter() {
           Sailesh<span className="text-[var(--accent)]">.</span>
         </span>
         <p className="text-[10px] font-mono tracking-[0.18em] text-[var(--muted)] uppercase mt-1">
-          Design · Code · Commerce
+          UI/UX Designer │ Product Designer
         </p>
       </motion.div>
 
