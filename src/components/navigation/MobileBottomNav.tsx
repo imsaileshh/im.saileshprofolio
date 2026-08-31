@@ -26,7 +26,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
   const pathname = usePathname();
-  const [isVisible, setIsVisible] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [hasMounted, setHasMounted] = useState(false);
   const lastScrollY = useRef(0);
   const ticking = useRef(false);
@@ -36,12 +36,12 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
     setHasMounted(true);
   }, []);
 
-  // Reset visibility on route change
+  // Reset state on route change
   useEffect(() => {
-    setIsVisible(true);
+    setIsExpanded(false);
   }, [pathname]);
 
-  // ── Scroll direction detection (hide on scroll down, show on scroll up) ──
+  // ── Scroll direction detection (expand on scroll down, collapse on scroll up) ──
   useEffect(() => {
     if (!hasMounted) return;
 
@@ -58,17 +58,17 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
       const currentScrollY = getScrollY();
       const delta = currentScrollY - lastScrollY.current;
 
-      // Always show when near top of the page
+      // Top of page -> Collapsed (minimal state)
       if (currentScrollY < 24) {
-        setIsVisible(true);
+        setIsExpanded(false);
       } else if (Math.abs(delta) > 8) {
-        // Scrolling DOWN -> Hide
+        // Scrolling DOWN -> Expand
         if (delta > 0) {
-          setIsVisible(false);
+          setIsExpanded(true);
         }
-        // Scrolling UP -> Show
+        // Scrolling UP -> Collapse
         else {
-          setIsVisible(true);
+          setIsExpanded(false);
         }
       }
 
@@ -106,21 +106,32 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
       <motion.nav
         initial={false}
         animate={{
-          y: isVisible ? 0 : 80,
-          opacity: isVisible ? 1 : 0,
+          width: isExpanded ? '100%' : '56px',
         }}
         transition={{
-          duration: shouldReduceMotion ? 0.15 : 0.3,
+          duration: shouldReduceMotion ? 0.15 : 0.4,
           ease,
         }}
         aria-label="Mobile Navigation"
-        className="pointer-events-auto flex items-center justify-between gap-1 sm:gap-1.5 px-2 py-1.5 rounded-full bg-[var(--panel)] border border-[var(--border)] shadow-[0_12px_36px_rgba(0,0,0,0.35)] backdrop-blur-[20px] max-w-[360px] w-full"
+        className="pointer-events-auto relative flex items-center justify-center rounded-full bg-[var(--panel)] border border-[var(--border)] shadow-[0_12px_36px_rgba(0,0,0,0.35)] backdrop-blur-[20px] max-w-[360px] overflow-hidden"
         style={{
           boxShadow:
             '0 12px 32px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06)',
+          height: '56px',
         }}
       >
-        {navItems.map((item) => {
+        {/* Expanded Navigation Icons */}
+        <motion.div
+          animate={{
+            opacity: isExpanded ? 1 : 0,
+            scale: isExpanded ? 1 : 0.9,
+            filter: isExpanded ? 'blur(0px)' : 'blur(4px)',
+          }}
+          transition={{ duration: 0.3, ease }}
+          className="absolute left-1/2 -translate-x-1/2 flex items-center justify-between gap-1 sm:gap-1.5 w-[calc(100vw-32px)] max-w-[360px] px-2 h-full"
+          style={{ pointerEvents: isExpanded ? 'auto' : 'none' }}
+        >
+          {navItems.map((item) => {
           let isActive = false;
           if (item.id !== 'resume') {
             isActive =
@@ -192,6 +203,22 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
             </Link>
           );
         })}
+        </motion.div>
+
+        {/* Minimal Single Dot (Collapsed State) */}
+        <motion.button
+          onClick={() => setIsExpanded(true)}
+          animate={{
+            opacity: isExpanded ? 0 : 1,
+            scale: isExpanded ? 0 : 1,
+          }}
+          transition={{ duration: 0.3, ease }}
+          className="absolute inset-0 flex items-center justify-center w-full h-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded-full"
+          style={{ pointerEvents: isExpanded ? 'none' : 'auto' }}
+          aria-label="Expand Navigation"
+        >
+          <div className="w-2 h-2 rounded-full bg-[var(--muted)]" />
+        </motion.button>
       </motion.nav>
     </div>
   );
