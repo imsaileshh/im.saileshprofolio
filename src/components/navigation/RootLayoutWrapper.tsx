@@ -10,9 +10,7 @@ import { MobileBottomNav } from './MobileBottomNav';
 import { MobileFooter } from './MobileFooter';
 import { ResumeModal } from '../resume/ResumeModal';
 import { HireMeModal } from '../hire/HireMeModal';
-
-
-
+import { Preloader } from '../ui/Preloader';
 
 export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -51,6 +49,7 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <Preloader />
       <ResumeModal isOpen={isResumeOpen} onClose={() => setIsResumeOpen(false)} />
       <HireMeModal isOpen={isHireMeOpen} onClose={() => setIsHireMeOpen(false)} />
       
