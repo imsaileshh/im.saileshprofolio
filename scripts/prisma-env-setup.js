@@ -5,6 +5,12 @@ const path = require('path');
 // to the standard variables Prisma expects (DATABASE_URL, DIRECT_URL)
 if (process.env.VERCEL) {
   let envVars = [];
+  const envPath = path.join(__dirname, '../.env');
+  
+  // Clear out any stale cached .env file on Vercel to prevent Prisma from using old localhost variables
+  if (fs.existsSync(envPath)) {
+    fs.unlinkSync(envPath);
+  }
   
   // Use the Prisma-specific pooled URL for normal connections
   const mainUrl = process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL || process.env.DATABASE_URL_PRISMA_DATABASE_URL || process.env.DATABASE_URL_POSTGRES_URL;
@@ -19,9 +25,8 @@ if (process.env.VERCEL) {
   }
   
   if (envVars.length > 0) {
-    const envPath = path.join(__dirname, '../.env');
-    // We append to .env so Next.js and Prisma CLI can pick it up
-    fs.appendFileSync(envPath, '\n' + envVars.join('\n'));
+    // We create a fresh .env so Next.js and Prisma CLI can pick it up
+    fs.writeFileSync(envPath, envVars.join('\n'));
     console.log('Successfully mapped Vercel database environment variables for Prisma.');
   }
 }

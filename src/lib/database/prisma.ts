@@ -15,16 +15,24 @@ const getDatabaseUrl = () => {
     return vercelUrl;
   }
 
-  // Fallback to standard DATABASE_URL
   const fallbackUrl = process.env.DATABASE_URL;
 
-  // Safety check: Never use localhost in Vercel production environments
-  if (process.env.VERCEL) {
-    if (fallbackUrl && (fallbackUrl.includes('localhost') || fallbackUrl.includes('127.0.0.1'))) {
-      throw new Error("CRITICAL: Attempted to use a localhost DATABASE_URL in Vercel. Please check your Vercel Environment Variables and ensure POSTGRES_PRISMA_URL or a valid production DATABASE_URL is set.");
-    }
-    if (!fallbackUrl) {
-      throw new Error("CRITICAL: No valid production database URL found. Please configure Vercel Postgres or set a valid DATABASE_URL environment variable.");
+  // If we are in production, we absolutely MUST have a remote URL.
+  // We do not rely on process.env.VERCEL alone because Next.js sometimes prunes it.
+  if (process.env.NODE_ENV === 'production') {
+    // If it's a local build, NEXT_PHASE is phase-production-build, we might allow localhost.
+    const isLocalBuild = process.env.NEXT_PHASE === 'phase-production-build' && !process.env.VERCEL;
+    
+    if (!isLocalBuild) {
+      if (fallbackUrl && (fallbackUrl.includes('localhost') || fallbackUrl.includes('127.0.0.1'))) {
+         // Return a deliberately invalid URL to force a loud crash instead of silently trying localhost
+         console.error("CRITICAL: DATABASE_URL is localhost in production. Overriding to prevent localhost connection.");
+         return "postgresql://invalid:invalid@invalid:5432/invalid";
+      }
+      if (!fallbackUrl && !vercelUrl) {
+         console.error("CRITICAL: No production database URL found. Overriding to prevent fallback to cached .env.");
+         return "postgresql://invalid:invalid@invalid:5432/invalid";
+      }
     }
   }
 
@@ -33,13 +41,14 @@ const getDatabaseUrl = () => {
 
 const databaseUrl = getDatabaseUrl();
 
-const prismaOptions = databaseUrl ? {
+// ALWAYS pass a URL to Prisma in production so it NEVER falls back to a baked-in .env file
+const prismaOptions = {
   datasources: {
     db: {
-      url: databaseUrl,
+      url: databaseUrl || "postgresql://invalid:invalid@invalid:5432/invalid",
     },
   },
-} : undefined;
+};
 
 export const prisma = globalForPrisma.prisma ?? new PrismaClient(prismaOptions);
 
