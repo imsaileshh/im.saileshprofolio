@@ -7,7 +7,7 @@ type IconProps = {
 
 // ─── FRONTEND LOGOS ─────────────────────────────────────────────────────────
 
-export function ReactLogo({ size = 22, className = '' }: IconProps) {
+export function ReactLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="-11.5 -10.23174 23 20.46348" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <circle cx="0" cy="0" r="2.05" fill="#61DAFB"/>
@@ -20,7 +20,7 @@ export function ReactLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function NextjsLogo({ size = 22, className = '' }: IconProps) {
+export function NextjsLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <circle cx="90" cy="90" r="90" fill="currentColor"/>
@@ -28,19 +28,19 @@ export function NextjsLogo({ size = 22, className = '' }: IconProps) {
       <rect x="115" y="54" width="12" height="72" fill="url(#next_paint1)"/>
       <defs>
         <linearGradient id="next_paint0" x1="109" y1="116.5" x2="144.5" y2="160.5" gradientUnits="userSpaceOnUse">
-          <stop stopColor="var(--bg, #000)"/>
-          <stop offset="1" stopColor="var(--bg, #000)" stopOpacity="0"/>
+          <stop stopColor="var(--bg, #090A0C)"/>
+          <stop offset="1" stopColor="var(--bg, #090A0C)" stopOpacity="0"/>
         </linearGradient>
         <linearGradient id="next_paint1" x1="121" y1="54" x2="120.799" y2="106.875" gradientUnits="userSpaceOnUse">
-          <stop stopColor="var(--bg, #000)"/>
-          <stop offset="1" stopColor="var(--bg, #000)" stopOpacity="0"/>
+          <stop stopColor="var(--bg, #090A0C)"/>
+          <stop offset="1" stopColor="var(--bg, #090A0C)" stopOpacity="0"/>
         </linearGradient>
       </defs>
     </svg>
   );
 }
 
-export function TypeScriptLogo({ size = 22, className = '' }: IconProps) {
+export function TypeScriptLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <rect width="24" height="24" rx="4" fill="#3178C6"/>
@@ -50,7 +50,7 @@ export function TypeScriptLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function JavaScriptLogo({ size = 22, className = '' }: IconProps) {
+export function JavaScriptLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <rect width="24" height="24" rx="4" fill="#F7DF1E"/>
@@ -60,7 +60,7 @@ export function JavaScriptLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function TailwindLogo({ size = 22, className = '' }: IconProps) {
+export function TailwindLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18.001 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.336 6.182 14.975 4.8 12.001 4.8zm-6 7.2c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.336 13.382 8.975 12 6.001 12z" fill="#38BDF8"/>
@@ -68,7 +68,7 @@ export function TailwindLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function HtmlLogo({ size = 22, className = '' }: IconProps) {
+export function HtmlLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M3 2L4.636 20.364L12 22.4L19.364 20.364L21 2H3Z" fill="#E34F26"/>
@@ -79,7 +79,7 @@ export function HtmlLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function CssLogo({ size = 22, className = '' }: IconProps) {
+export function CssLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M3 2L4.636 20.364L12 22.4L19.364 20.364L21 2H3Z" fill="#1572B6"/>
@@ -92,7 +92,7 @@ export function CssLogo({ size = 22, className = '' }: IconProps) {
 
 // ─── BACKEND LOGOS ──────────────────────────────────────────────────────────
 
-export function NodeLogo({ size = 22, className = '' }: IconProps) {
+export function NodeLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M12 2L3.5 7V17L12 22L20.5 17V7L12 2Z" fill="#339933"/>
@@ -102,7 +102,7 @@ export function NodeLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function RestApiLogo({ size = 22, className = '' }: IconProps) {
+export function RestApiLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M4 14.5V9.5C4 8.11929 5.11929 7 6.5 7H17.5C18.8807 7 20 8.11929 20 9.5V14.5C20 15.8807 18.8807 17 17.5 17H6.5C5.11929 17 4 15.8807 4 14.5Z"/>
@@ -113,7 +113,7 @@ export function RestApiLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function PostgreSqlLogo({ size = 22, className = '' }: IconProps) {
+export function PostgreSqlLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM17.2 16.6C16.8 17.2 15.9 17.5 15.1 17.5C13.8 17.5 12.8 16.8 12.2 15.7C11.5 16.9 10.3 17.5 8.9 17.5C7.2 17.5 5.8 16.1 5.8 14.4C5.8 12.7 7.2 11.3 8.9 11.3C9.7 11.3 10.5 11.6 11.1 12.1V7.5H13.1V12.7C13.6 12.3 14.3 12 15.1 12C16.8 12 18.2 13.4 18.2 15.1C18.2 15.7 17.8 16.3 17.2 16.6Z" fill="#336791"/>
@@ -121,7 +121,7 @@ export function PostgreSqlLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function MongoDbLogo({ size = 22, className = '' }: IconProps) {
+export function MongoDbLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M12 2C11.8 2.4 10.2 6.1 10.2 9.5C10.2 13.9 12 16.5 12 22C12 16.5 13.8 13.9 13.8 9.5C13.8 6.1 12.2 2.4 12 2Z" fill="#47A248"/>
@@ -133,7 +133,7 @@ export function MongoDbLogo({ size = 22, className = '' }: IconProps) {
 
 // ─── DESIGN LOGOS ───────────────────────────────────────────────────────────
 
-export function FigmaLogo({ size = 22, className = '' }: IconProps) {
+export function FigmaLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M8 2H12V8H8C6.34315 8 5 6.65685 5 5C5 3.34315 6.34315 2 8 2Z" fill="#F24E1E"/>
@@ -145,7 +145,7 @@ export function FigmaLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function PhotoshopLogo({ size = 22, className = '' }: IconProps) {
+export function PhotoshopLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <rect width="24" height="24" rx="4.5" fill="#001E36"/>
@@ -155,7 +155,7 @@ export function PhotoshopLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function IllustratorLogo({ size = 22, className = '' }: IconProps) {
+export function IllustratorLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <rect width="24" height="24" rx="4.5" fill="#330000"/>
@@ -165,7 +165,7 @@ export function IllustratorLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function LightroomLogo({ size = 22, className = '' }: IconProps) {
+export function LightroomLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <rect width="24" height="24" rx="4.5" fill="#001D26"/>
@@ -175,7 +175,7 @@ export function LightroomLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function FramerLogo({ size = 22, className = '' }: IconProps) {
+export function FramerLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M4 2H20V9H12L20 16H12V23L4 16V9H12L4 2Z" fill="#0055FF"/>
@@ -185,7 +185,7 @@ export function FramerLogo({ size = 22, className = '' }: IconProps) {
 
 // ─── SOFTWARE LOGOS ─────────────────────────────────────────────────────────
 
-export function VsCodeLogo({ size = 22, className = '' }: IconProps) {
+export function VsCodeLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M17.5 2.5L12 7.7L7.6 4.3L4.5 5.8L7.6 9.8L4.5 13.8L7.6 15.3L12 11.9L17.5 17.1L21 15.5V4.1L17.5 2.5Z" fill="#007ACC"/>
@@ -195,7 +195,7 @@ export function VsCodeLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function GitLogo({ size = 22, className = '' }: IconProps) {
+export function GitLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M21.6 10.9L13.1 2.4C12.6 1.9 11.7 1.9 11.2 2.4L9.3 4.3L11.8 6.8C12.3 6.6 12.9 6.8 13.3 7.2C13.7 7.6 13.8 8.2 13.7 8.7L16.1 11.1C16.6 11 17.2 11.1 17.6 11.5C18.1 12 18.1 12.9 17.6 13.4C17.1 13.9 16.2 13.9 15.7 13.4C15.3 13 15.2 12.4 15.3 11.9L13.1 9.7V14.6C13.2 14.8 13.3 15.1 13.3 15.4C13.3 16.2 12.7 16.8 11.9 16.8C11.1 16.8 10.5 16.2 10.5 15.4C10.5 14.8 10.9 14.2 11.5 14V8.9C10.9 8.7 10.5 8.1 10.5 7.5C10.5 7.1 10.7 6.7 11 6.4L8.5 3.9L2.4 10C1.9 10.5 1.9 11.4 2.4 11.9L10.9 20.4C11.4 20.9 12.3 20.9 12.8 20.4L21.6 11.6C22.1 11.4 22.1 11.1 21.6 10.9Z" fill="#F05032"/>
@@ -203,7 +203,7 @@ export function GitLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function GitHubLogo({ size = 22, className = '' }: IconProps) {
+export function GitHubLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path fillRule="evenodd" clipRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
@@ -211,7 +211,7 @@ export function GitHubLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function DockerLogo({ size = 22, className = '' }: IconProps) {
+export function DockerLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M13.9 8.2H16.2V10.5H13.9V8.2ZM11.1 8.2H13.4V10.5H11.1V8.2ZM8.3 8.2H10.6V10.5H8.3V8.2ZM13.9 5.4H16.2V7.7H13.9V5.4ZM11.1 5.4H13.4V7.7H11.1V5.4ZM8.3 5.4H10.6V7.7H8.3V5.4ZM11.1 2.6H13.4V4.9H11.1V2.6ZM8.3 2.6H10.6V4.9H8.3V2.6ZM5.5 8.2H7.8V10.5H5.5V8.2ZM23.8 11.2C23.5 11.1 22.3 11 21.3 11.6C21 11.8 20.8 12.1 20.6 12.4C20.2 12.2 19.3 12 18.2 12.3C17.6 12.4 17.1 12.7 16.7 13.1H1.5C0.9 13.1 0.4 13.5 0.2 14.1C-0.3 15.9 0.2 18.2 1.7 19.8C3.1 21.2 5.1 22 7.7 22C14.4 22 18.8 17.6 19.5 14C20.6 14.1 22.4 13.9 23.6 12.4C24 11.9 23.9 11.3 23.8 11.2Z" fill="#2496ED"/>
@@ -219,7 +219,7 @@ export function DockerLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function VercelLogo({ size = 22, className = '' }: IconProps) {
+export function VercelLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M12 2L24 22H0L12 2Z"/>
@@ -229,7 +229,7 @@ export function VercelLogo({ size = 22, className = '' }: IconProps) {
 
 // ─── E-COMMERCE LOGOS ───────────────────────────────────────────────────────
 
-export function ShopifyLogo({ size = 22, className = '' }: IconProps) {
+export function ShopifyLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M18.8 4.3L15.7 2.5C15.4 2.3 15 2.5 14.9 2.8L14.3 4.2L12.5 3.1C12.2 2.9 11.7 3.1 11.6 3.4L6.2 17.8L3.2 17.1C2.9 17 2.6 17.2 2.5 17.5L2.1 18.6C2 18.9 2.2 19.2 2.5 19.3L11.5 22.2C11.8 22.3 12.1 22.1 12.2 21.8L19.4 5.3C19.5 4.9 19.2 4.5 18.8 4.3Z" fill="#95BF47"/>
@@ -240,7 +240,7 @@ export function ShopifyLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function LiquidLogo({ size = 22, className = '' }: IconProps) {
+export function LiquidLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#2DD4BF" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
@@ -249,7 +249,7 @@ export function LiquidLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function CustomThemesLogo({ size = 22, className = '' }: IconProps) {
+export function CustomThemesLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#818CF8" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M12 3a9 9 0 0 0-9 9 9 9 0 0 0 9 9 9 9 0 0 0 9-9 9 9 0 0 0-9-9z"/>
@@ -259,7 +259,7 @@ export function CustomThemesLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function StorefrontUxLogo({ size = 22, className = '' }: IconProps) {
+export function StorefrontUxLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#F472B6" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <rect x="2" y="3" width="20" height="14" rx="2"/>
@@ -273,7 +273,7 @@ export function StorefrontUxLogo({ size = 22, className = '' }: IconProps) {
 
 // ─── TOOLS & WORKFLOW LOGOS ─────────────────────────────────────────────────
 
-export function CursorLogo({ size = 22, className = '' }: IconProps) {
+export function CursorLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M4 2L20 9L12.5 12.5L9 20L4 2Z" fill="currentColor"/>
@@ -281,7 +281,7 @@ export function CursorLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function WarpLogo({ size = 22, className = '' }: IconProps) {
+export function WarpLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#00C0A3" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <polyline points="4 17 10 11 4 5"/>
@@ -290,7 +290,7 @@ export function WarpLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function PostmanLogo({ size = 22, className = '' }: IconProps) {
+export function PostmanLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <circle cx="12" cy="12" r="10" fill="#FF6C37"/>
@@ -299,7 +299,7 @@ export function PostmanLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function NotionLogo({ size = 22, className = '' }: IconProps) {
+export function NotionLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M4.5 3.5L17.5 2.5C18.5 2.4 19.5 3.2 19.5 4.3V19.5C19.5 20.6 18.6 21.5 17.5 21.5L6.5 22.5C5.4 22.6 4.5 21.7 4.5 20.6V3.5Z" fill="currentColor"/>
@@ -309,7 +309,7 @@ export function NotionLogo({ size = 22, className = '' }: IconProps) {
   );
 }
 
-export function LinearLogo({ size = 22, className = '' }: IconProps) {
+export function LinearLogo({ size = 42, className = '' }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={className}>
       <path d="M2.5 12C2.5 6.75329 6.75329 2.5 12 2.5C17.2467 2.5 21.5 6.75329 21.5 12C21.5 17.2467 17.2467 21.5 12 21.5C6.75329 21.5 2.5 17.2467 2.5 12Z" stroke="#5E6AD2" strokeWidth="1.5"/>
