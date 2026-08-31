@@ -24,15 +24,6 @@ import {
   GitHubLogo,
   DockerLogo,
   VercelLogo,
-  ShopifyLogo,
-  LiquidLogo,
-  CustomThemesLogo,
-  StorefrontUxLogo,
-  CursorLogo,
-  WarpLogo,
-  PostmanLogo,
-  NotionLogo,
-  LinearLogo,
 } from '@/components/ui/BrandLogos';
 
 const ease = [0.22, 1, 0.36, 1] as const;
@@ -65,7 +56,7 @@ const stackCategories = [
       { name: 'Figma', Icon: FigmaLogo },
       { name: 'Adobe Photoshop', Icon: PhotoshopLogo },
       { name: 'Adobe Illustrator', Icon: IllustratorLogo },
-      { name: 'Lightroom Classic', Icon: LightroomLogo },
+      { name: 'Adobe Lightroom', Icon: LightroomLogo },
       { name: 'Framer', Icon: FramerLogo },
     ],
   },
@@ -77,25 +68,6 @@ const stackCategories = [
       { name: 'GitHub', Icon: GitHubLogo },
       { name: 'Docker', Icon: DockerLogo },
       { name: 'Vercel', Icon: VercelLogo },
-    ],
-  },
-  {
-    category: 'E-COMMERCE',
-    technologies: [
-      { name: 'Shopify', Icon: ShopifyLogo },
-      { name: 'Liquid', Icon: LiquidLogo },
-      { name: 'Custom Themes', Icon: CustomThemesLogo },
-      { name: 'Storefront UX', Icon: StorefrontUxLogo },
-    ],
-  },
-  {
-    category: 'TOOLS & WORKFLOW',
-    technologies: [
-      { name: 'Cursor', Icon: CursorLogo },
-      { name: 'Warp', Icon: WarpLogo },
-      { name: 'Postman', Icon: PostmanLogo },
-      { name: 'Notion', Icon: NotionLogo },
-      { name: 'Linear', Icon: LinearLogo },
     ],
   },
 ];
@@ -120,7 +92,7 @@ export function StackPreview() {
         </h2>
       </motion.div>
 
-      {/* ONE COLUMN FULL-WIDTH EDITORIAL STACK LIST */}
+      {/* ONE COLUMN FULL-WIDTH EDITORIAL STACK LIST (4 ROWS ONLY) */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -131,7 +103,7 @@ export function StackPreview() {
         {stackCategories.map((item) => (
           <div
             key={item.category}
-            className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 py-8 md:py-10 lg:py-11 border-b border-border-subtle/80 relative group cursor-default"
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 py-8 md:py-10 lg:py-12 border-b border-border-subtle/80 relative group cursor-default"
           >
             {/* LEFT: Straight Category name (no category icons) */}
             <div className="w-full sm:w-auto shrink-0">
@@ -148,7 +120,7 @@ export function StackPreview() {
                   className="relative group/logo flex items-center justify-center"
                 >
                   <div className="flex items-center justify-center opacity-85 group-hover/logo:opacity-100 transition-all duration-200 group-hover/logo:scale-110">
-                    <tech.Icon size={42} />
+                    <tech.Icon size={44} />
                   </div>
 
                   {/* Subtle Tooltip on Hover */}
