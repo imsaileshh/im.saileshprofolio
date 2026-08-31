@@ -150,7 +150,16 @@ export function Sidebar({ mobile = false, onOpenResume, onOpenHireMe }: { mobile
             </div>
             <span className="font-display font-medium text-sm">Sailesh P</span>
           </div>
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => onOpenHireMe?.()}
+              aria-label="Hire me"
+              className="flex items-center gap-1.5 h-8 px-3 rounded-full text-[11px] font-medium tracking-wide border border-border-subtle bg-[var(--card)] text-muted hover:text-foreground hover:border-accent/40 hover:bg-[var(--nav-active)] transition-all duration-200 active:scale-95"
+            >
+              <Mail size={12} className="shrink-0" />
+              Hire me
+            </button>
             <ThemeToggle />
           </div>
         </div>
