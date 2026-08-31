@@ -8,8 +8,8 @@ export function EditorialFooter() {
       <div className="flex flex-col md:flex-row justify-between items-center gap-6">
         
         <div className="flex flex-col items-center md:items-start">
-          <Link href="/" className="font-display font-medium text-xl tracking-tight mb-1">
-            Sailesh P
+          <Link href="/" className="font-display font-bold text-xl tracking-tight mb-1 text-foreground flex items-center">
+            Sailesh P<span className="text-accent font-bold">.</span>
           </Link>
           <p className="text-muted text-sm">Designer & Developer</p>
         </div>

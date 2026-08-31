@@ -33,11 +33,11 @@ export function Sidebar({ mobile = false, onOpenResume, onOpenHireMe }: { mobile
             />
           </div>
           <div className="flex flex-col justify-center">
-            <h2 className="text-[17px] font-display font-semibold tracking-tight">
-              Sailesh P
+            <h2 className="text-[18px] font-display font-bold tracking-tight text-foreground flex items-center">
+              Sailesh P<span className="text-accent font-bold">.</span>
             </h2>
             <div className="flex flex-col mt-0.5 gap-0.5">
-              <span className="text-[10px] font-medium text-muted tracking-[0.04em] uppercase">
+              <span className="text-[10px] font-mono font-medium text-muted tracking-[0.12em] uppercase">
                 DESIGN · CODE · COMMERCE
               </span>
             </div>
@@ -148,7 +148,9 @@ export function Sidebar({ mobile = false, onOpenResume, onOpenHireMe }: { mobile
                 className="object-cover grayscale"
               />
             </div>
-            <span className="font-display font-medium text-sm">Sailesh P</span>
+            <span className="font-display font-bold text-sm tracking-tight text-foreground flex items-center">
+              Sailesh P<span className="text-accent font-bold">.</span>
+            </span>
           </div>
           <div className="flex items-center gap-2">
             <button
