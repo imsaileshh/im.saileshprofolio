@@ -13,13 +13,13 @@ if (process.env.VERCEL) {
   }
   
   // Use the Prisma-specific pooled URL for normal connections
-  const mainUrl = process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL || process.env.DATABASE_URL_PRISMA_DATABASE_URL || process.env.DATABASE_URL_POSTGRES_URL;
+  const mainUrl = process.env.DATABASE_URL || process.env.POSTGRES_PRISMA_URL || process.env.POSTGRES_URL || process.env.DATABASE_URL_PRISMA_DATABASE_URL || process.env.DATABASE_URL_POSTGRES_URL;
   if (mainUrl && !mainUrl.includes('localhost') && !mainUrl.includes('127.0.0.1')) {
     envVars.push(`DATABASE_URL="${mainUrl}"`);
   }
   
   // Use the direct (non-pooled) URL for Prisma migrations
-  const directUrl = process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL || process.env.DATABASE_URL_POSTGRES_URL;
+  const directUrl = process.env.DIRECT_URL || process.env.POSTGRES_URL_NON_POOLING || process.env.POSTGRES_URL || process.env.DATABASE_URL_POSTGRES_URL;
   if (directUrl && !directUrl.includes('localhost') && !directUrl.includes('127.0.0.1')) {
     envVars.push(`DIRECT_URL="${directUrl}"`);
   }

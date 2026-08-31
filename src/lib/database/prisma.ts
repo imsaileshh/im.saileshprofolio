@@ -3,40 +3,36 @@ import { PrismaClient } from '@prisma/client';
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
 
 const getDatabaseUrl = () => {
-  // Prioritize Vercel-provided Postgres variables
-  const vercelUrl = 
-    process.env.POSTGRES_PRISMA_URL || 
-    process.env.POSTGRES_URL ||
-    process.env.DATABASE_URL_PRISMA_DATABASE_URL || 
-    process.env.DATABASE_URL_POSTGRES_URL;
+  // Define the required priority list
+  const urls = [
+    process.env.DATABASE_URL,
+    process.env.POSTGRES_PRISMA_URL,
+    process.env.POSTGRES_URL,
+    process.env.DATABASE_URL_PRISMA_DATABASE_URL,
+    process.env.DATABASE_URL_POSTGRES_URL
+  ];
 
-  // If we have a Vercel URL and it's not localhost, use it
-  if (vercelUrl && !vercelUrl.includes('localhost') && !vercelUrl.includes('127.0.0.1')) {
-    return vercelUrl;
-  }
+  // Find the first defined URL
+  const selectedUrl = urls.find(url => url !== undefined && url !== '');
 
-  const fallbackUrl = process.env.DATABASE_URL;
-
-  // If we are in production, we absolutely MUST have a remote URL.
-  // We do not rely on process.env.VERCEL alone because Next.js sometimes prunes it.
+  // If we are in production, we absolutely MUST have a valid remote URL
   if (process.env.NODE_ENV === 'production') {
     // If it's a local build, NEXT_PHASE is phase-production-build, we might allow localhost.
     const isLocalBuild = process.env.NEXT_PHASE === 'phase-production-build' && !process.env.VERCEL;
     
     if (!isLocalBuild) {
-      if (fallbackUrl && (fallbackUrl.includes('localhost') || fallbackUrl.includes('127.0.0.1'))) {
-         // Return a deliberately invalid URL to force a loud crash instead of silently trying localhost
-         console.error("CRITICAL: DATABASE_URL is localhost in production. Overriding to prevent localhost connection.");
+      if (!selectedUrl) {
+         console.error("CRITICAL: No production database URL found. Overriding to prevent fallback to cached .env.");
          return "postgresql://invalid:invalid@invalid:5432/invalid";
       }
-      if (!fallbackUrl && !vercelUrl) {
-         console.error("CRITICAL: No production database URL found. Overriding to prevent fallback to cached .env.");
+      if (selectedUrl.includes('localhost') || selectedUrl.includes('127.0.0.1')) {
+         console.error("CRITICAL: DATABASE_URL is localhost in production. Overriding to prevent localhost connection.");
          return "postgresql://invalid:invalid@invalid:5432/invalid";
       }
     }
   }
 
-  return fallbackUrl;
+  return selectedUrl;
 };
 
 const databaseUrl = getDatabaseUrl();
