@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { User } from 'lucide-react';
 import Link from 'next/link';
 
 const capabilities = [
@@ -40,9 +41,12 @@ export function AboutSection() {
           transition={{ duration: 0.6, ease }}
           className="flex flex-col max-w-[580px]"
         >
-          {/* Section label */}
-          <div className="text-[10px] font-mono tracking-widest text-muted uppercase mb-3">
-            ABOUT ME
+          {/* Section label with small minimal icon */}
+          <div className="flex items-center gap-2 mb-3">
+            <User size={13} className="text-accent shrink-0" strokeWidth={2} />
+            <span className="text-[10px] font-mono tracking-widest text-muted uppercase">
+              ABOUT ME
+            </span>
           </div>
 
           {/* Headline */}
@@ -73,7 +77,7 @@ export function AboutSection() {
           </div>
         </motion.div>
 
-        {/* RIGHT: Cardless Capability List */}
+        {/* RIGHT: Modern Cardless Capability List */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -82,17 +86,19 @@ export function AboutSection() {
           className="flex flex-col w-full lg:pt-2"
         >
           {capabilities.map((item, index) => (
-            <div key={item.category} className="flex flex-col">
-              <div className="py-4 md:py-5 flex flex-col group cursor-default transition-colors duration-200">
+            <div key={item.category} className="flex flex-col group cursor-default">
+              <div className="py-4 md:py-5 flex flex-col">
                 <span className="text-[10px] md:text-[11px] font-mono tracking-widest text-muted uppercase mb-1 transition-colors duration-200 group-hover:text-accent">
                   {item.category}
                 </span>
-                <h3 className="text-lg md:text-xl font-display font-semibold text-foreground tracking-tight transition-colors duration-200">
+                <h3 className="text-lg md:text-xl font-display font-semibold text-foreground tracking-tight transition-transform duration-200 group-hover:translate-x-1">
                   {item.title}
                 </h3>
               </div>
               {index !== capabilities.length - 1 && (
-                <div className="w-full h-px bg-border-subtle" />
+                <div className="w-full h-px bg-border-subtle relative overflow-hidden">
+                  <div className="absolute inset-0 bg-accent/40 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out" />
+                </div>
               )}
             </div>
           ))}
