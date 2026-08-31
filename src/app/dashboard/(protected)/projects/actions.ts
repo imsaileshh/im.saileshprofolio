@@ -132,9 +132,7 @@ export async function createProjectAction(prevState: ActionState, formData: Form
     
     payload = applyAutoSeo(payload);
     
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { submitAction, ...dataPayload } = payload;
-    const project = await createProjectRecord(dataPayload);
+    const project = await createProjectRecord(payload);
     revalidateProjects();
     
     redirect(`/dashboard/projects/${project.id}/success`);
@@ -171,9 +169,7 @@ export async function updateProjectAction(prevState: ActionState, formData: Form
     
     payload = applyAutoSeo(payload);
     
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { submitAction, ...dataPayload } = payload;
-    await updateProjectRecord(id, dataPayload);
+    await updateProjectRecord(id, payload);
     revalidateProjects();
     
     redirect('/dashboard/projects?saved=updated');

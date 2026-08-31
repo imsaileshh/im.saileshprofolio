@@ -15,12 +15,12 @@ export default async function AboutPage() {
 
   return (
     <div className="flex flex-col p-5 sm:p-6 md:p-10 lg:p-14 pb-10 max-w-6xl mx-auto w-full">
-      <AboutHero data={settings?.aboutPageIntro} />
-      <AboutApproach data={settings?.aboutApproach} />
-      <AboutCapabilities data={settings?.aboutBring} />
-      <AboutBento data={settings?.aboutEnjoy} />
-      <AboutPhilosophy data={settings?.aboutPhilosophy} />
-      <AboutValues data={settings?.aboutValues} />
+      <AboutHero data={settings?.aboutPageIntro as any} />
+      <AboutApproach data={(settings?.aboutApproach as any) || undefined} />
+      <AboutCapabilities data={(settings?.aboutBring as any) || undefined} />
+      <AboutBento data={(settings?.aboutEnjoy as any) || undefined} />
+      <AboutPhilosophy data={(settings?.aboutPhilosophy as any) || undefined} />
+      <AboutValues data={(settings?.aboutValues as any) || undefined} />
     </div>
   );
 }

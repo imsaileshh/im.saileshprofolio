@@ -6,6 +6,7 @@ export async function GET() {
   try {
     const skills = await prisma.skill.findMany({
       orderBy: { orderIndex: 'asc' },
+      include: { section: true },
     });
     return NextResponse.json(skills);
   } catch (error) {
@@ -24,8 +25,10 @@ export async function POST(request: Request) {
     const skill = await prisma.skill.create({
       data: {
         name: data.name,
-        category: data.category,
-        proficiency: data.proficiency || 80,
+        sectionId: data.sectionId,
+        type: data.type,
+        icon: data.icon,
+        description: data.description,
         orderIndex: data.orderIndex || 0,
       },
     });
