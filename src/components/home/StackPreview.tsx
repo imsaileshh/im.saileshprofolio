@@ -1,40 +1,102 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Code2, PenTool, ShoppingCart, Server, Wrench, Layers, Terminal } from 'lucide-react';
+import { Layers } from 'lucide-react';
+import {
+  ReactLogo,
+  NextjsLogo,
+  TypeScriptLogo,
+  JavaScriptLogo,
+  TailwindLogo,
+  HtmlLogo,
+  CssLogo,
+  NodeLogo,
+  RestApiLogo,
+  PostgreSqlLogo,
+  MongoDbLogo,
+  FigmaLogo,
+  PhotoshopLogo,
+  IllustratorLogo,
+  LightroomLogo,
+  FramerLogo,
+  VsCodeLogo,
+  GitLogo,
+  GitHubLogo,
+  DockerLogo,
+  VercelLogo,
+  ShopifyLogo,
+  LiquidLogo,
+  CustomThemesLogo,
+  StorefrontUxLogo,
+  CursorLogo,
+  WarpLogo,
+  PostmanLogo,
+  NotionLogo,
+  LinearLogo,
+} from '@/components/ui/BrandLogos';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 const stackCategories = [
   {
     category: 'FRONTEND',
-    icon: Code2,
-    tech: 'React · Next.js · TypeScript · JavaScript · Tailwind CSS · HTML · CSS',
+    technologies: [
+      { name: 'React', Icon: ReactLogo },
+      { name: 'Next.js', Icon: NextjsLogo },
+      { name: 'TypeScript', Icon: TypeScriptLogo },
+      { name: 'JavaScript', Icon: JavaScriptLogo },
+      { name: 'Tailwind CSS', Icon: TailwindLogo },
+      { name: 'HTML5', Icon: HtmlLogo },
+      { name: 'CSS3', Icon: CssLogo },
+    ],
   },
   {
     category: 'BACKEND',
-    icon: Server,
-    tech: 'Node.js · REST API · PostgreSQL · MongoDB',
+    technologies: [
+      { name: 'Node.js', Icon: NodeLogo },
+      { name: 'REST API', Icon: RestApiLogo },
+      { name: 'PostgreSQL', Icon: PostgreSqlLogo },
+      { name: 'MongoDB', Icon: MongoDbLogo },
+    ],
   },
   {
     category: 'DESIGN',
-    icon: PenTool,
-    tech: 'Figma · Photoshop · Illustrator · Lightroom · Framer',
+    technologies: [
+      { name: 'Figma', Icon: FigmaLogo },
+      { name: 'Adobe Photoshop', Icon: PhotoshopLogo },
+      { name: 'Adobe Illustrator', Icon: IllustratorLogo },
+      { name: 'Lightroom Classic', Icon: LightroomLogo },
+      { name: 'Framer', Icon: FramerLogo },
+    ],
   },
   {
     category: 'SOFTWARE',
-    icon: Terminal,
-    tech: 'VS Code · Git · GitHub · Docker · Vercel',
+    technologies: [
+      { name: 'VS Code', Icon: VsCodeLogo },
+      { name: 'Git', Icon: GitLogo },
+      { name: 'GitHub', Icon: GitHubLogo },
+      { name: 'Docker', Icon: DockerLogo },
+      { name: 'Vercel', Icon: VercelLogo },
+    ],
   },
   {
     category: 'E-COMMERCE',
-    icon: ShoppingCart,
-    tech: 'Shopify · Liquid · Custom Themes · Storefront UX',
+    technologies: [
+      { name: 'Shopify', Icon: ShopifyLogo },
+      { name: 'Liquid', Icon: LiquidLogo },
+      { name: 'Custom Themes', Icon: CustomThemesLogo },
+      { name: 'Storefront UX', Icon: StorefrontUxLogo },
+    ],
   },
   {
     category: 'TOOLS & WORKFLOW',
-    icon: Wrench,
-    tech: 'Cursor · Warp · Postman · Notion · Linear',
+    technologies: [
+      { name: 'Cursor', Icon: CursorLogo },
+      { name: 'Warp', Icon: WarpLogo },
+      { name: 'Postman', Icon: PostmanLogo },
+      { name: 'Notion', Icon: NotionLogo },
+      { name: 'Linear', Icon: LinearLogo },
+    ],
   },
 ];
 
@@ -48,7 +110,7 @@ export function StackPreview() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.55, ease }}
-        className="flex items-center gap-3 mb-4 md:mb-6"
+        className="flex items-center gap-3 mb-6 md:mb-8"
       >
         <div className="p-2 rounded-lg bg-[var(--card)] border border-border-subtle text-muted">
           <Layers size={20} />
@@ -69,24 +131,33 @@ export function StackPreview() {
         {stackCategories.map((item) => (
           <div
             key={item.category}
-            className="flex flex-col group cursor-default py-6 md:py-8 border-b border-border-subtle relative overflow-hidden"
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-6 md:py-7 border-b border-border-subtle relative group cursor-default"
           >
-            {/* Top row: Category name on LEFT, small minimal outline icon on FAR RIGHT */}
-            <div className="flex items-center justify-between mb-2">
+            {/* LEFT: Category name */}
+            <div className="w-full sm:w-auto shrink-0">
               <span className="text-[11px] md:text-[12px] font-mono tracking-[0.2em] text-muted font-semibold uppercase transition-colors duration-200 group-hover:text-accent">
                 {item.category}
               </span>
-              <item.icon
-                size={17}
-                className="text-muted group-hover:text-accent transition-colors duration-200 shrink-0"
-                strokeWidth={1.75}
-              />
             </div>
 
-            {/* Clear, readable inline typography for technologies */}
-            <p className="text-[16px] md:text-[18px] lg:text-[19px] font-display font-medium text-foreground tracking-tight leading-relaxed transition-colors duration-200">
-              {item.tech}
-            </p>
+            {/* RIGHT: Original Technology Logos (floating directly, no borders/containers, with tooltips) */}
+            <div className="flex flex-wrap items-center justify-start sm:justify-end gap-5 md:gap-6 lg:gap-7">
+              {item.technologies.map((tech) => (
+                <div
+                  key={tech.name}
+                  className="relative group/logo flex items-center justify-center"
+                >
+                  <div className="flex items-center justify-center opacity-75 group-hover/logo:opacity-100 transition-all duration-200 group-hover/logo:scale-115">
+                    <tech.Icon size={24} />
+                  </div>
+
+                  {/* Subtle Tooltip on Hover */}
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-[var(--bg)] text-[10px] font-mono font-medium px-2 py-0.5 rounded opacity-0 translate-y-1 group-hover/logo:opacity-100 group-hover/logo:translate-y-0 transition-all duration-150 pointer-events-none whitespace-nowrap z-50 shadow-md">
+                    {tech.name}
+                  </div>
+                </div>
+              ))}
+            </div>
 
             {/* Subtle hover accent divider slide */}
             <div className="absolute bottom-0 left-0 right-0 h-px bg-accent/40 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out pointer-events-none" />
