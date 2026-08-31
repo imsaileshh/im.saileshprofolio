@@ -1,221 +1,267 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import { User, LayoutTemplate, Code2, Monitor, ShoppingCart } from 'lucide-react';
-import { useState } from 'react';
+import { useRef } from 'react';
+import { motion, useInView, useScroll, useTransform } from 'framer-motion';
+import { LayoutTemplate, Code2, Monitor, ShoppingCart, ArrowUpRight, Sparkles, ShoppingBag, User } from 'lucide-react';
+import Link from 'next/link';
 
+// ─── Capability data ─────────────────────────────────────────────────────────
 const capabilities = [
-  { 
+  {
     id: '01',
-    title: 'UI/UX DESIGN', 
-    desc: 'Clear, intuitive and user-focused digital experiences.', 
+    title: 'UI / UX Design',
+    desc: 'Clear, intuitive and user-focused digital experiences that look stunning and feel effortless.',
     meta: 'FIGMA · UX · INTERACTION',
-    icon: LayoutTemplate, 
-    delay: 0,
-    graphic: 'uiux'
+    icon: LayoutTemplate,
+    accent: 'var(--accent)',
+    bg: 'linear-gradient(135deg, rgba(45,212,191,0.08) 0%, transparent 60%)',
+    DecorIcon: LayoutTemplate,
   },
-  { 
+  {
     id: '02',
-    title: 'FRONTEND DEVELOPMENT', 
-    desc: 'Responsive interfaces built for performance and scale.', 
+    title: 'Frontend Dev',
+    desc: 'Responsive, high-performance interfaces built with modern frameworks and design systems.',
     meta: 'REACT · NEXT.JS · TYPESCRIPT',
-    icon: Code2, 
-    delay: 0.08,
-    graphic: 'frontend'
+    icon: Code2,
+    accent: '#818cf8',
+    bg: 'linear-gradient(135deg, rgba(129,140,248,0.08) 0%, transparent 60%)',
+    DecorIcon: Code2,
   },
-  { 
+  {
     id: '03',
-    title: 'VIBE CODING', 
-    desc: 'Turning ideas into working products with AI-assisted workflows.', 
+    title: 'Vibe Coding',
+    desc: 'Turning ideas into working products with AI-assisted workflows and rapid iteration.',
     meta: 'AI · PROTOTYPE · BUILD',
-    icon: Monitor, 
-    delay: 0.16,
-    graphic: 'vibecoding'
+    icon: Monitor,
+    accent: '#f472b6',
+    bg: 'linear-gradient(135deg, rgba(244,114,182,0.08) 0%, transparent 60%)',
+    DecorIcon: Sparkles,
   },
-  { 
+  {
     id: '04',
-    title: 'SHOPIFY DEVELOPMENT', 
-    desc: 'Custom storefronts designed around usability and conversion.', 
+    title: 'Shopify Dev',
+    desc: 'Custom storefronts engineered around usability, brand expression and conversion.',
     meta: 'SHOPIFY · LIQUID · E-COMMERCE',
-    icon: ShoppingCart, 
-    delay: 0.24,
-    graphic: 'shopify'
+    icon: ShoppingCart,
+    accent: '#34d399',
+    bg: 'linear-gradient(135deg, rgba(52,211,153,0.08) 0%, transparent 60%)',
+    DecorIcon: ShoppingBag,
   },
 ];
 
-export function AboutSection() {
+// ─── Single Cinematic Card ────────────────────────────────────────────────────
+function CinematicAboutCard({ cap, index }: { cap: typeof capabilities[0]; index: number }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(cardRef, { once: false, margin: '-8% 0px -8% 0px' });
 
-  return (
-    <section id="about-preview" className="py-10 md:py-14 lg:py-16 relative px-5 sm:px-6 md:px-10 lg:px-16 overflow-hidden">
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,.9fr)_minmax(0,1.25fr)] gap-8 lg:gap-12 items-start">
-        
-        {/* LEFT: Intro Content */}
-        <div className="flex flex-col">
-          <motion.div 
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.18 }}
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center gap-3 mb-2"
-          >
-            <div className="p-2 rounded-lg bg-[var(--sidebar)] border border-border-subtle text-muted">
-              <User size={20} />
-            </div>
-            <h2 className="text-3xl font-display font-medium tracking-tight">
-              About Me
-            </h2>
-          </motion.div>
-          
-          <motion.p 
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.18 }}
-            transition={{ duration: 0.5, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-            className="text-[13px] md:text-[14px] text-muted mb-6"
-          >
-            Designing and building modern digital experiences from idea to launch.
-          </motion.p>
-          
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true, amount: 0.18 }}
-            transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-            className="flex flex-col gap-3 max-w-[620px]"
-          >
-            <p className="text-[15px] md:text-[16px] text-muted leading-[1.65] font-light">
-              I'm a UI/UX Designer, Frontend Developer, Vibe Coder and Shopify Developer focused on turning ideas into modern digital experiences.
-            </p>
-            <p className="text-[15px] md:text-[16px] text-muted leading-[1.65] font-light">
-              I combine thoughtful design, responsive frontend development, AI-assisted workflows and e-commerce expertise to build products that are visually engaging, usable and scalable.
-            </p>
-          </motion.div>
-        </div>
+  const { scrollYProgress } = useScroll({
+    target: cardRef,
+    offset: ['start end', 'end start'],
+  });
 
-        {/* RIGHT: 2x2 Capability Cards */}
-        <div className="flex flex-col">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {capabilities.map((cap) => (
-              <CapabilityCard key={cap.id} cap={cap} />
-            ))}
-          </div>
-        </div>
-        
-      </div>
-      
-      {/* Section Divider */}
-      <motion.div 
-        initial={{ scaleX: 0 }}
-        whileInView={{ scaleX: 1 }}
-        viewport={{ once: true, amount: 0.18 }}
-        transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute bottom-0 left-0 right-0 h-px bg-border-subtle origin-left" 
-      />
-    </section>
-  );
-}
-
-import { ArrowUpRight, Sparkles, ShoppingBag } from 'lucide-react';
-
-function CapabilityCard({ cap }: { cap: any }) {
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = useState(false);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (typeof window !== 'undefined' && window.innerWidth < 768) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    setMousePos({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
-
-  // Parallax offsets (very subtle)
-  const parallaxX = isHovered ? (mousePos.x - 150) * 0.03 : 0;
-  const parallaxY = isHovered ? (mousePos.y - 100) * 0.03 : 0;
-
-  // Stagger entrance X calculation based on card
-  const entranceX = ['01', '03'].includes(cap.id) ? 20 : 30;
+  const decorY = useTransform(scrollYProgress, [0, 1], ['-10%', '10%']);
+  const decorOpacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: entranceX }}
-      whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      transition={{ duration: 0.5, delay: cap.delay, ease: [0.22, 1, 0.36, 1] }}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className="group relative flex flex-col p-5 md:p-6 min-h-[170px] md:min-h-[200px] rounded-[16px] bg-[var(--card)] border border-border-subtle hover:border-muted/40 hover:bg-nav-active transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)] overflow-hidden cursor-default md:hover:-translate-y-1"
+      ref={cardRef}
+      initial={{ opacity: 0, y: 48 }}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 48 }}
+      transition={{
+        duration: 0.7,
+        ease: [0.22, 1, 0.36, 1],
+        delay: index * 0.06,
+      }}
+      className="relative group"
     >
-      {/* Interactive Teal Radial Highlight */}
-      <div 
-        className="absolute inset-0 z-0 opacity-0 hidden md:group-hover:block md:group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-        style={{
-          background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(45, 212, 191, 0.04), transparent 40%)`
-        }}
-      />
-
-      {/* Animated Bottom Teal Line */}
-      <div className="absolute bottom-0 left-0 h-[1px] w-0 bg-accent group-hover:w-full transition-all duration-[500ms] ease-[cubic-bezier(0.22,1,0.36,1)] z-10" />
-
-      {/* Decorative Graphics (Parallax) */}
-      <motion.div 
-        animate={{ x: parallaxX, y: parallaxY }}
-        transition={{ type: "spring", stiffness: 150, damping: 20 }}
-        className="absolute inset-0 z-0 pointer-events-none opacity-[0.06] group-hover:opacity-[0.10] transition-opacity duration-[350ms] flex items-center justify-center overflow-hidden"
+      {/* Card */}
+      <div
+        className="relative rounded-[20px] overflow-hidden border border-[var(--border)] bg-[var(--card)] transition-all duration-500 hover:border-[var(--muted)]/30"
+        style={{ minHeight: 220 }}
       >
-        {cap.graphic === 'uiux' && (
-          <div className="w-[120px] h-[120px] border border-foreground border-dashed relative">
-            <div className="absolute -top-1 -left-1 w-2 h-2 bg-foreground" />
-            <div className="absolute -top-1 -right-1 w-2 h-2 bg-foreground" />
-            <div className="absolute -bottom-1 -left-1 w-2 h-2 bg-foreground" />
-            <div className="absolute -bottom-1 -right-1 w-2 h-2 bg-foreground" />
+        {/* Gradient bg wash */}
+        <div
+          className="absolute inset-0 z-0 pointer-events-none transition-opacity duration-500 opacity-70 group-hover:opacity-100"
+          style={{ background: cap.bg }}
+        />
+
+        {/* Large decorative background icon — parallax */}
+        <motion.div
+          className="absolute -right-6 -bottom-6 z-0 pointer-events-none"
+          style={{ y: decorY, opacity: decorOpacity }}
+        >
+          <cap.DecorIcon
+            size={120}
+            className="opacity-[0.06] group-hover:opacity-[0.10] transition-opacity duration-500"
+            style={{ color: cap.accent }}
+            strokeWidth={1}
+          />
+        </motion.div>
+
+        {/* Bottom accent line */}
+        <div
+          className="absolute bottom-0 left-0 h-[2px] w-0 group-hover:w-full transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] z-10 rounded-full"
+          style={{ background: cap.accent }}
+        />
+
+        {/* Content */}
+        <div className="relative z-10 flex flex-col h-full p-5 md:p-6">
+          {/* Top row */}
+          <div className="flex items-start justify-between mb-4">
+            {/* Number badge */}
+            <span
+              className="text-[10px] font-mono tracking-[0.18em] px-2 py-1 rounded-full border"
+              style={{
+                color: cap.accent,
+                borderColor: `${cap.accent}30`,
+                background: `${cap.accent}10`,
+              }}
+            >
+              {cap.id}
+            </span>
+
+            {/* Arrow */}
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-300 group-hover:-translate-y-[2px] group-hover:translate-x-[2px]"
+              style={{
+                borderColor: `${cap.accent}30`,
+                background: `${cap.accent}10`,
+                color: cap.accent,
+              }}
+            >
+              <ArrowUpRight size={14} />
+            </div>
           </div>
-        )}
-        {cap.graphic === 'frontend' && (
-          <div className="text-[14px] font-mono leading-[1.8] text-foreground absolute -right-6 top-10 whitespace-pre">
-            {`<div>\n  experience\n</div>`}
+
+          {/* Icon */}
+          <div
+            className="w-10 h-10 rounded-[10px] flex items-center justify-center mb-4 border transition-transform duration-500 group-hover:scale-[1.08]"
+            style={{
+              borderColor: `${cap.accent}25`,
+              background: `${cap.accent}12`,
+              color: cap.accent,
+            }}
+          >
+            <cap.icon size={20} strokeWidth={1.6} />
           </div>
-        )}
-        {cap.graphic === 'vibecoding' && (
-          <Sparkles size={140} className="text-foreground absolute -right-8 -bottom-8" strokeWidth={1} />
-        )}
-        {cap.graphic === 'shopify' && (
-          <ShoppingBag size={140} className="text-foreground absolute -right-8 -bottom-8" strokeWidth={1} />
-        )}
-      </motion.div>
 
-      {/* Content Overlay */}
-      <div className="relative z-10 flex flex-col h-full">
-        {/* Top Row: Number & Arrow */}
-        <div className="flex justify-between items-start mb-2">
-          <span className="text-[10px] font-mono text-muted tracking-widest">{cap.id}</span>
-          <ArrowUpRight size={16} className="text-muted group-hover:text-accent group-hover:translate-x-1 group-hover:-translate-y-1 transition-all duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)]" />
-        </div>
-
-        {/* Icon */}
-        <div className="mb-2">
-          <cap.icon size={20} className="text-foreground group-hover:scale-[1.08] transition-transform duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)]" strokeWidth={1.5} />
-        </div>
-
-        {/* Title & Desc */}
-        <div className="flex flex-col mt-auto pb-1 group-hover:-translate-y-0.5 transition-transform duration-[350ms] ease-[cubic-bezier(0.22,1,0.36,1)]">
-          <h3 className="text-[15px] md:text-[16px] font-semibold text-foreground mb-1.5 leading-tight uppercase tracking-wide">
+          {/* Title */}
+          <h3 className="text-[16px] md:text-[17px] font-display font-semibold text-[var(--text)] mb-2 leading-tight tracking-tight">
             {cap.title}
           </h3>
-          <p className="text-[13px] md:text-[14px] text-muted leading-snug pr-4">
+
+          {/* Desc */}
+          <p className="text-[13px] md:text-[14px] text-[var(--muted)] leading-relaxed flex-1">
             {cap.desc}
           </p>
-        </div>
 
-        {/* Footer Metadata */}
-        <div className="mt-2">
-          <span className="text-[9px] md:text-[10px] font-mono tracking-widest text-muted/60 group-hover:text-accent transition-colors duration-[350ms] uppercase">
-            {cap.meta}
-          </span>
+          {/* Meta */}
+          <div className="mt-4 pt-3 border-t border-[var(--border)]">
+            <span
+              className="text-[9px] font-mono tracking-[0.14em] uppercase transition-colors duration-300"
+              style={{ color: `${cap.accent}99` }}
+            >
+              {cap.meta}
+            </span>
+          </div>
         </div>
       </div>
     </motion.div>
+  );
+}
+
+// ─── Section ──────────────────────────────────────────────────────────────────
+export function AboutSection() {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const headerInView = useInView(headerRef, { once: true, margin: '-8% 0px' });
+
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start end', 'end start'],
+  });
+
+  // Subtle section-level parallax for the bg text
+  const bgTextY = useTransform(scrollYProgress, [0, 1], ['0%', '-20%']);
+  const bgTextOpacity = useTransform(scrollYProgress, [0, 0.15, 0.85, 1], [0, 1, 1, 0]);
+
+  return (
+    <section
+      ref={sectionRef}
+      id="about-preview"
+      className="relative py-12 md:py-20 lg:py-24 px-5 sm:px-6 md:px-10 lg:px-16 overflow-hidden"
+    >
+      {/* Giant watermark text — parallax */}
+      <motion.div
+        aria-hidden
+        className="absolute -top-4 left-0 right-0 flex justify-center pointer-events-none select-none z-0"
+        style={{ y: bgTextY, opacity: bgTextOpacity }}
+      >
+        <span className="text-[clamp(60px,16vw,160px)] font-display font-black tracking-tighter text-[var(--text)] opacity-[0.025] whitespace-nowrap leading-none">
+          ABOUT
+        </span>
+      </motion.div>
+
+      {/* ── Section header ── */}
+      <div ref={headerRef} className="relative z-10 mb-10 md:mb-14">
+        {/* Intro text */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+          transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1] }}
+          className="flex flex-col lg:flex-row lg:items-end justify-between gap-6"
+        >
+          <div className="max-w-lg">
+            {/* Label */}
+            <div className="flex items-center gap-2.5 mb-3">
+              <div className="w-[18px] h-px bg-[var(--accent)]" />
+              <span className="font-mono text-[10px] tracking-[0.18em] text-[var(--accent)] uppercase font-semibold">
+                About Me
+              </span>
+            </div>
+
+            <h2 className="text-3xl md:text-4xl lg:text-[44px] font-display font-semibold tracking-tight text-[var(--text)] leading-[1.1] mb-3">
+              Designing &amp; building<br />
+              <span className="text-[var(--muted)]">digital experiences.</span>
+            </h2>
+
+            <p className="text-[15px] md:text-base text-[var(--muted)] leading-relaxed">
+              I'm a UI/UX Designer, Frontend Developer, Vibe Coder and Shopify Developer — combining thoughtful design with modern development to build products that are visually engaging, usable and scalable.
+            </p>
+          </div>
+
+          {/* About page CTA */}
+          <motion.div
+            initial={{ opacity: 0, x: 16 }}
+            animate={headerInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 16 }}
+            transition={{ duration: 0.5, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Link
+              href="/about"
+              className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-[12px] bg-[var(--card)] border border-[var(--border)] text-[13px] font-semibold text-[var(--text)] hover:bg-[var(--nav-active)] hover:border-[var(--muted)]/40 hover:-translate-y-[2px] transition-all duration-200"
+            >
+              Full Story
+              <ArrowUpRight size={14} className="group-hover:translate-x-[2px] group-hover:-translate-y-[2px] transition-transform duration-200" />
+            </Link>
+          </motion.div>
+        </motion.div>
+      </div>
+
+      {/* ── Cinematic capability cards grid ── */}
+      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+        {capabilities.map((cap, i) => (
+          <CinematicAboutCard key={cap.id} cap={cap} index={i} />
+        ))}
+      </div>
+
+      {/* Section bottom divider */}
+      <motion.div
+        initial={{ scaleX: 0 }}
+        whileInView={{ scaleX: 1 }}
+        viewport={{ once: true, amount: 0.1 }}
+        transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute bottom-0 left-0 right-0 h-px bg-[var(--border)] origin-left"
+      />
+    </section>
   );
 }
