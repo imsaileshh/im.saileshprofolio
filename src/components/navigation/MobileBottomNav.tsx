@@ -30,21 +30,65 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
   const [hasMounted, setHasMounted] = useState(false);
   const collapseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const lastScrollY = useRef(0);
+  const scrollThrottle = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
-  // Collapse after 4s of inactivity
+  // Collapse after 5s of inactivity
   const resetCollapseTimer = () => {
     if (collapseTimer.current) clearTimeout(collapseTimer.current);
-    collapseTimer.current = setTimeout(() => setExpanded(false), 4000);
+    collapseTimer.current = setTimeout(() => setExpanded(false), 5000);
   };
 
   const handleDotPress = () => {
-    setExpanded(true);
-    resetCollapseTimer();
+    setExpanded(prev => {
+      if (!prev) resetCollapseTimer();
+      return !prev;
+    });
   };
+
+  // ── Scroll direction detection: open on scroll-up, close on scroll-down ──
+  useEffect(() => {
+    // Listen on the mobile scroll container AND window
+    const scrollable = document.querySelector('[data-mobile-scroll]') ?? window;
+
+    const getScrollY = () =>
+      scrollable === window
+        ? window.scrollY
+        : (scrollable as Element).scrollTop;
+
+    const onScroll = () => {
+      if (scrollThrottle.current) return; // throttle to ~60fps
+      scrollThrottle.current = setTimeout(() => {
+        scrollThrottle.current = null;
+        const currentY = getScrollY();
+        const delta = currentY - lastScrollY.current;
+
+        if (Math.abs(delta) < 4) return; // ignore tiny jitter
+
+        if (delta < 0) {
+          // Scrolling UP → auto-open
+          setExpanded(true);
+          resetCollapseTimer();
+        } else {
+          // Scrolling DOWN → auto-close
+          setExpanded(false);
+          if (collapseTimer.current) clearTimeout(collapseTimer.current);
+        }
+
+        lastScrollY.current = currentY;
+      }, 16);
+    };
+
+    scrollable.addEventListener('scroll', onScroll, { passive: true });
+    return () => {
+      scrollable.removeEventListener('scroll', onScroll);
+      if (scrollThrottle.current) clearTimeout(scrollThrottle.current);
+    };
+  }, [hasMounted]);
 
   // Collapse on route change
   useEffect(() => {
@@ -63,7 +107,10 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
   }, []);
 
   useEffect(() => {
-    return () => { if (collapseTimer.current) clearTimeout(collapseTimer.current); };
+    return () => {
+      if (collapseTimer.current) clearTimeout(collapseTimer.current);
+      if (scrollThrottle.current) clearTimeout(scrollThrottle.current);
+    };
   }, []);
 
   // Find active nav item for the dot color/icon
