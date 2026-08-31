@@ -76,14 +76,14 @@ export function StackPreview() {
   const shouldReduceMotion = useReducedMotion();
 
   const rowVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 18 },
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.5,
         ease,
-        staggerChildren: shouldReduceMotion ? 0 : 0.04,
+        staggerChildren: shouldReduceMotion ? 0 : 0.05,
       },
     },
   };
@@ -103,7 +103,7 @@ export function StackPreview() {
   return (
     <section id="stack-preview" className="py-10 md:py-14 lg:py-16 relative px-5 sm:px-6 md:px-10 lg:px-16">
       
-      {/* HEADER — Exact icon & heading preserved, reduced bottom spacing to first row */}
+      {/* HEADER — Exact icon & heading preserved */}
       <motion.div 
         initial={{ opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -128,34 +128,26 @@ export function StackPreview() {
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
-            className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 py-5 sm:py-6 md:py-7 border-b border-border-subtle/70 relative cursor-default"
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 py-7 md:py-8 lg:py-9 border-b border-border-subtle/70 relative cursor-default"
           >
-            {/* LEFT: Prominent Category Name (no icons, larger & readable) */}
+            {/* LEFT: Category Name (vertically centered with icons) */}
             <div className="w-full sm:w-auto shrink-0">
               <span className="text-[14px] md:text-[15px] lg:text-[16px] font-mono tracking-[0.22em] text-foreground font-semibold uppercase">
                 {item.category}
               </span>
             </div>
 
-            {/* RIGHT: Normalized Original Brand Logos (floating directly, no borders/containers) */}
-            <div className="flex flex-wrap items-center justify-start sm:justify-end gap-5 sm:gap-6 md:gap-7 lg:gap-8">
+            {/* RIGHT: Official Brand Logos (floating directly, no borders/cards/boxes/tooltips) */}
+            <div className="flex flex-wrap items-center justify-start sm:justify-end gap-6 sm:gap-7 md:gap-8 lg:gap-9">
               {item.technologies.map((tech) => (
                 <motion.div
                   key={tech.name}
                   variants={logoVariants}
-                  whileHover={shouldReduceMotion ? undefined : { scale: 1.06 }}
-                  transition={{ duration: 0.2, ease }}
-                  className="relative group/logo flex items-center justify-center cursor-pointer"
+                  whileHover={shouldReduceMotion ? undefined : { scale: 1.07, y: -3 }}
+                  transition={{ duration: 0.25, ease }}
+                  className="flex items-center justify-center cursor-pointer opacity-90 hover:opacity-100 hover:brightness-110 hover:drop-shadow-[0_4px_16px_rgba(255,255,255,0.12)] transition-[filter,opacity] duration-250 shrink-0"
                 >
-                  {/* Square bounding box ensures normalized visual scale for every logo */}
-                  <div className="w-10 h-10 md:w-11 md:h-11 flex items-center justify-center opacity-90 group-hover/logo:opacity-100 transition-opacity duration-200">
-                    <tech.Icon size={38} />
-                  </div>
-
-                  {/* Subtle Tooltip on Hover */}
-                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-[var(--bg)] text-[10px] font-mono font-medium px-2 py-0.5 rounded opacity-0 translate-y-1 group-hover/logo:opacity-100 group-hover/logo:translate-y-0 transition-all duration-150 pointer-events-none whitespace-nowrap z-50 shadow-md">
-                    {tech.name}
-                  </div>
+                  <tech.Icon size={38} />
                 </motion.div>
               ))}
             </div>
