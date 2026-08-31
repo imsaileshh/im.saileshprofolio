@@ -7,11 +7,12 @@ import { Sidebar } from './Sidebar';
 import { ThemeToggle } from '../theme/ThemeToggle';
 import { ReactLenis } from 'lenis/react';
 import { MobileBottomNav } from './MobileBottomNav';
+import { MobileFooter } from './MobileFooter';
 import { ResumeModal } from '../resume/ResumeModal';
 import { HireMeModal } from '../hire/HireMeModal';
-import { Mail, Github, Linkedin, Dribbble, Instagram } from 'lucide-react';
 
-import { socials } from '@/data/socials';
+
+
 
 export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -80,27 +81,7 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
             </AnimatePresence>
           </div>
 
-          {/* Mobile Socials */}
-          <div className="flex flex-col items-center mt-8">
-            <div className="text-[10px] font-mono tracking-widest text-muted/60 mb-4 uppercase">
-              SOCIALS
-            </div>
-            <div className="grid grid-cols-3 gap-[10px] justify-center mx-auto">
-              {socials.map((social, i) => (
-                <a 
-                  key={i}
-                  href={social.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  title={social.label}
-                  aria-label={social.label}
-                  className="w-10 h-10 flex items-center justify-center rounded-[10px] bg-transparent border border-border-subtle text-muted hover:text-foreground hover:bg-border-subtle/20 hover:border-border-subtle/50 transition-all duration-200 hover:-translate-y-[2px] hover:scale-[1.05] opacity-60 hover:opacity-100"
-                >
-                  <social.icon size={16} />
-                </a>
-              ))}
-            </div>
-          </div>
+          <MobileFooter />
         </main>
         <MobileBottomNav onOpenResume={() => setIsResumeOpen(true)} onOpenHireMe={() => setIsHireMeOpen(true)} />
       </div>
