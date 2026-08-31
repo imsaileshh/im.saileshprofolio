@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --write .",
-    "db:generate": "prisma generate",
+    "db:generate": "node scripts/prisma-env-setup.js && prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:seed": "tsx scripts/seed.ts",
@@ -17,7 +17,8 @@
     "mobile:android": "npm --prefix mobile run android",
     "mobile:build": "tsx scripts/build-mobile.ts",
     "generate:types": "tsx scripts/generate-types.ts",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "node scripts/prisma-env-setup.js && prisma generate"
   },
   "dependencies": {
     "@google/genai": "^2.19.0",
