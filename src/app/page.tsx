@@ -17,39 +17,24 @@ function formatYearRange(startDate: Date, endDate?: Date | null) {
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  let workProjects = [];
-  let experienceItems: any[] = [];
-  let educationItems: any[] = [];
-  let serverError = null;
-  let envKeys = [];
-
-  try {
-    envKeys = Object.keys(process.env).filter(k => k.includes('POSTGRES') || k.includes('URL') || k.includes('PRISMA'));
-    [workProjects, experienceItems, educationItems] = await Promise.all([
-      prisma.project.findMany({
-        where: { featured: true, published: true, archived: false },
-        include: { images: { orderBy: { order: 'asc' } } },
-        orderBy: { orderIndex: 'asc' },
-        take: 3,
-      }),
-      prisma.experience.findMany({
-        where: { visible: true },
-        orderBy: [{ featured: 'desc' }, { orderIndex: 'asc' }],
-        take: 3,
-      }),
-      prisma.education.findMany({
-        where: { visible: true },
-        orderBy: { orderIndex: 'asc' },
-        take: 2,
-      }),
-    ]);
-  } catch (error: any) {
-    serverError = {
-      name: error.name,
-      message: error.message,
-      stack: error.stack,
-    };
-  }
+  const [workProjects, experienceItems, educationItems] = await Promise.all([
+    prisma.project.findMany({
+      where: { featured: true, published: true, archived: false },
+      include: { images: { orderBy: { order: 'asc' } } },
+      orderBy: { orderIndex: 'asc' },
+      take: 3,
+    }),
+    prisma.experience.findMany({
+      where: { visible: true },
+      orderBy: [{ featured: 'desc' }, { orderIndex: 'asc' }],
+      take: 3,
+    }),
+    prisma.education.findMany({
+      where: { visible: true },
+      orderBy: { orderIndex: 'asc' },
+      take: 2,
+    }),
+  ]);
 
   const projectCards = workProjects.map((project, index) => ({
     ...project,
@@ -74,15 +59,6 @@ export default async function HomePage() {
 
   return (
     <div className="flex flex-col">
-      {serverError && (
-        <div style={{ padding: 20, backgroundColor: 'red', color: 'white' }}>
-          <h2>SERVER ERROR DIAGNOSTIC:</h2>
-          <p><strong>Name:</strong> {serverError.name}</p>
-          <p><strong>Message:</strong> {serverError.message}</p>
-          <p><strong>Env Keys Available:</strong> {envKeys.join(', ')}</p>
-        </div>
-      )}
-
       {/* 01 - INTRODUCTION */}
       <HomeHero />
 
