@@ -1,122 +1,228 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
+
+// Sequence phases
+// 0: "HELLO"
+// 1: "I'M SAILESH"
+// 2: "UI/UX DESIGNER"
+// 3: "FRONTEND DEVELOPER"
+// 4: "SHOPIFY • AI • DIGITAL"
+// 5: Exit / Reveal
+
+const maskSlideVariants: Variants = {
+  initial: { y: '115%', opacity: 0 },
+  animate: {
+    y: '0%',
+    opacity: 1,
+    transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const },
+  },
+  exit: {
+    y: '-115%',
+    opacity: 0,
+    transition: { duration: 0.35, ease: [0.76, 0, 0.24, 1] as const },
+  },
+};
 
 export function Preloader() {
-  const [loading, setLoading] = useState(true);
-  const [progress, setProgress] = useState(0);
+  const [phase, setPhase] = useState<number | null>(null);
+  const [isVisible, setIsVisible] = useState(true);
+
+  // Safety unlock scroll function
+  const unlockScroll = useCallback(() => {
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+    const mobileScroll = document.querySelector('[data-mobile-scroll]') as HTMLElement | null;
+    if (mobileScroll) mobileScroll.style.overflow = '';
+  }, []);
 
   useEffect(() => {
-    // Check if already shown in this tab session
-    const hasLoaded = sessionStorage.getItem('portfolio_preloader_seen');
-    if (hasLoaded) {
-      setLoading(false);
+    // Check reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      setIsVisible(false);
       return;
     }
 
-    // Progress counter animation
-    const startTime = Date.now();
-    const duration = 1400; // 1.4 seconds smooth load
+    // Lock scroll during intro
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    const mobileScroll = document.querySelector('[data-mobile-scroll]') as HTMLElement | null;
+    if (mobileScroll) mobileScroll.style.overflow = 'hidden';
 
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const pct = Math.min(100, Math.round((elapsed / duration) * 100));
-      setProgress(pct);
+    // Sequence timing (total ~2.9s before curtain exit)
+    setPhase(0); // HELLO (0ms)
 
-      if (pct >= 100) {
-        clearInterval(interval);
-        setTimeout(() => {
-          setLoading(false);
-          sessionStorage.setItem('portfolio_preloader_seen', 'true');
-        }, 300);
-      }
-    }, 20);
+    const t1 = setTimeout(() => setPhase(1), 600);   // I'M SAILESH (600ms)
+    const t2 = setTimeout(() => setPhase(2), 1400);  // UI/UX DESIGNER (1400ms)
+    const t3 = setTimeout(() => setPhase(3), 1950);  // FRONTEND DEVELOPER (1950ms)
+    const t4 = setTimeout(() => setPhase(4), 2500);  // SHOPIFY • AI • DIGITAL (2500ms)
+    const t5 = setTimeout(() => {
+      setPhase(5); // Trigger curtain slide up
+      setIsVisible(false);
+      unlockScroll();
+    }, 3100);
 
-    return () => clearInterval(interval);
-  }, []);
+    // Hard fallback timeout so it never gets stuck
+    const safetyTimeout = setTimeout(() => {
+      setIsVisible(false);
+      unlockScroll();
+    }, 4200);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+      clearTimeout(t4);
+      clearTimeout(t5);
+      clearTimeout(safetyTimeout);
+      unlockScroll();
+    };
+  }, [unlockScroll]);
 
   return (
-    <AnimatePresence>
-      {loading && (
+    <AnimatePresence onExitComplete={unlockScroll}>
+      {isVisible && (
         <motion.div
-          key="preloader"
-          initial={{ opacity: 1 }}
+          key="cinematic-intro-curtain"
+          initial={{ y: '0%' }}
           exit={{
             y: '-100%',
-            transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] },
+            transition: {
+              duration: 0.85,
+              ease: [0.76, 0, 0.24, 1] as const,
+            },
           }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[var(--bg)] text-[var(--text)] select-none overflow-hidden"
+          className="fixed inset-0 z-[9999] flex flex-col justify-between items-center bg-[#090A0C] text-[#F4F4F4] select-none pointer-events-auto overflow-hidden px-6 py-8 md:p-12"
         >
-          {/* Ambient Glow */}
-          <div
-            className="absolute w-[350px] h-[350px] rounded-full blur-[100px] pointer-events-none opacity-20 transition-all duration-700"
-            style={{
-              background: 'radial-gradient(circle, var(--accent) 0%, transparent 70%)',
-            }}
-          />
-
-          <div className="relative z-10 flex flex-col items-center max-w-xs w-full px-6">
-            {/* Wordmark Logo */}
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, ease: 'easeOut' }}
-              className="flex items-center gap-1 mb-2"
-            >
-              <span className="text-3xl md:text-4xl font-display font-semibold tracking-tight">
-                Sailesh
-              </span>
-              <motion.span
-                animate={{
-                  scale: [1, 1.35, 1],
-                  opacity: [0.8, 1, 0.8],
-                }}
-                transition={{
-                  duration: 1.2,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-                className="w-2.5 h-2.5 rounded-full bg-[var(--accent)] inline-block ml-0.5 shadow-[0_0_12px_var(--accent)]"
-              />
-            </motion.div>
-
-            {/* Tagline */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.15 }}
-              className="text-[10px] md:text-[11px] font-mono tracking-[0.24em] text-[var(--muted)] uppercase mb-8"
-            >
-              DESIGN · CODE · COMMERCE
-            </motion.p>
-
-            {/* Progress Bar Container */}
-            <div className="w-full max-w-[200px] h-[3px] bg-[var(--border)] rounded-full overflow-hidden relative mb-4">
-              <motion.div
-                className="h-full rounded-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]"
-                style={{ width: `${progress}%` }}
-                transition={{ ease: 'easeOut' }}
-              />
-            </div>
-
-            {/* Percentage Number */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-              className="text-xs font-mono font-medium text-[var(--muted)] tabular-nums tracking-widest"
-            >
-              {progress}%
-            </motion.div>
+          {/* Top subtle coordinates header */}
+          <div className="w-full flex justify-between items-center text-[10px] font-mono tracking-[0.2em] text-[#9A9CA2]/40 uppercase">
+            <span>SAILESH P</span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#2DD4BF] animate-pulse" />
+              PORTFOLIO 2026
+            </span>
           </div>
 
-          {/* Bottom Accent line indicator */}
+          {/* Central Cinematic Typography Sequence */}
+          <div className="relative flex flex-col items-center justify-center text-center my-auto min-h-[140px] md:min-h-[180px] w-full max-w-2xl px-4">
+            <AnimatePresence mode="wait">
+              {/* PHASE 0: HELLO */}
+              {phase === 0 && (
+                <div key="phase-hello" className="overflow-hidden py-2">
+                  <motion.h1
+                    variants={maskSlideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="text-4xl sm:text-5xl md:text-7xl font-display font-semibold tracking-tight text-[#F4F4F4]"
+                  >
+                    HELLO
+                  </motion.h1>
+                </div>
+              )}
+
+              {/* PHASE 1: I'M SAILESH */}
+              {phase === 1 && (
+                <div key="phase-name" className="overflow-hidden py-2">
+                  <motion.h1
+                    variants={maskSlideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="text-3xl sm:text-5xl md:text-7xl font-display font-semibold tracking-tight flex items-center justify-center gap-2 md:gap-3.5 flex-wrap"
+                  >
+                    <span className="text-[#9A9CA2]/70 font-light">I&apos;M</span>
+                    <span className="text-[#F4F4F4] font-bold">SAILESH</span>
+                    <motion.span
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.2, duration: 0.3 }}
+                      className="w-2.5 h-2.5 md:w-3.5 md:h-3.5 rounded-full bg-[#2DD4BF] shadow-[0_0_14px_#2DD4BF] inline-block"
+                    />
+                  </motion.h1>
+                </div>
+              )}
+
+              {/* PHASE 2: UI/UX DESIGNER */}
+              {phase === 2 && (
+                <div key="phase-uiux" className="overflow-hidden py-2">
+                  <motion.div
+                    variants={maskSlideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="flex flex-col items-center gap-1.5"
+                  >
+                    <span className="text-[10px] md:text-xs font-mono tracking-[0.25em] text-[#2DD4BF] uppercase font-semibold">
+                      01 / SPECIALTY
+                    </span>
+                    <h2 className="text-2xl sm:text-4xl md:text-6xl font-display font-semibold tracking-tight text-[#F4F4F4]">
+                      UI/UX DESIGNER
+                    </h2>
+                  </motion.div>
+                </div>
+              )}
+
+              {/* PHASE 3: FRONTEND DEVELOPER */}
+              {phase === 3 && (
+                <div key="phase-frontend" className="overflow-hidden py-2">
+                  <motion.div
+                    variants={maskSlideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="flex flex-col items-center gap-1.5"
+                  >
+                    <span className="text-[10px] md:text-xs font-mono tracking-[0.25em] text-[#2DD4BF] uppercase font-semibold">
+                      02 / SPECIALTY
+                    </span>
+                    <h2 className="text-2xl sm:text-4xl md:text-6xl font-display font-semibold tracking-tight text-[#F4F4F4]">
+                      FRONTEND DEVELOPER
+                    </h2>
+                  </motion.div>
+                </div>
+              )}
+
+              {/* PHASE 4: SHOPIFY • AI • DIGITAL */}
+              {phase === 4 && (
+                <div key="phase-digital" className="overflow-hidden py-2">
+                  <motion.div
+                    variants={maskSlideVariants}
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    className="flex flex-col items-center gap-2"
+                  >
+                    <span className="text-[10px] md:text-xs font-mono tracking-[0.25em] text-[#2DD4BF] uppercase font-semibold">
+                      03 / WORKFLOWS
+                    </span>
+                    <h2 className="text-xl sm:text-3xl md:text-5xl font-display font-semibold tracking-tight text-[#F4F4F4] flex items-center justify-center gap-2 md:gap-3 flex-wrap">
+                      <span>SHOPIFY</span>
+                      <span className="text-[#2DD4BF] text-sm md:text-xl font-mono">•</span>
+                      <span>AI</span>
+                      <span className="text-[#2DD4BF] text-sm md:text-xl font-mono">•</span>
+                      <span>DIGITAL</span>
+                    </h2>
+                  </motion.div>
+                </div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Bottom subtle bar indicator */}
+          <div className="w-full flex justify-between items-center text-[10px] font-mono tracking-[0.2em] text-[#9A9CA2]/40 uppercase">
+            <span>DESIGN · CODE · COMMERCE</span>
+            <span className="text-[#2DD4BF]/80 font-semibold">INITIALIZING</span>
+          </div>
+
+          {/* Bottom subtle progress line */}
           <motion.div
             initial={{ scaleX: 0 }}
             animate={{ scaleX: 1 }}
-            transition={{ duration: 1.2, ease: 'easeInOut' }}
-            className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--border)] to-transparent"
+            transition={{ duration: 3.1, ease: 'linear' }}
+            className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#2DD4BF] to-transparent origin-left"
           />
         </motion.div>
       )}
