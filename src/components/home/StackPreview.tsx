@@ -48,7 +48,7 @@ export function StackPreview() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.55, ease }}
-        className="flex items-center gap-3 mb-6 md:mb-8"
+        className="flex items-center gap-3 mb-4 md:mb-6"
       >
         <div className="p-2 rounded-lg bg-[var(--card)] border border-border-subtle text-muted">
           <Layers size={20} />
@@ -58,33 +58,33 @@ export function StackPreview() {
         </h2>
       </motion.div>
 
-      {/* CARDLESS EDITORIAL STACK GRID */}
+      {/* ONE COLUMN FULL-WIDTH EDITORIAL STACK LIST */}
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.15 }}
         transition={{ duration: 0.6, delay: 0.1, ease }}
-        className="grid grid-cols-1 md:grid-cols-2 gap-x-12 lg:gap-x-16 gap-y-0"
+        className="w-full flex flex-col"
       >
-        {stackCategories.map((item, index) => (
+        {stackCategories.map((item) => (
           <div
             key={item.category}
-            className="flex flex-col group cursor-default py-5 md:py-6 border-b border-border-subtle relative overflow-hidden"
+            className="flex flex-col group cursor-default py-6 md:py-8 border-b border-border-subtle relative overflow-hidden"
           >
-            {/* Top row: Category name left, small supporting icon right */}
+            {/* Top row: Category name on LEFT, small minimal outline icon on FAR RIGHT */}
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[12px] md:text-[13px] font-mono tracking-widest text-foreground font-semibold uppercase transition-colors duration-200 group-hover:text-accent">
+              <span className="text-[11px] md:text-[12px] font-mono tracking-[0.2em] text-muted font-semibold uppercase transition-colors duration-200 group-hover:text-accent">
                 {item.category}
               </span>
               <item.icon
-                size={15}
+                size={17}
                 className="text-muted group-hover:text-accent transition-colors duration-200 shrink-0"
                 strokeWidth={1.75}
               />
             </div>
 
-            {/* Inline typography for technologies */}
-            <p className="text-[13px] md:text-[14px] text-muted leading-relaxed font-light transition-colors duration-200 group-hover:text-foreground/90">
+            {/* Clear, readable inline typography for technologies */}
+            <p className="text-[16px] md:text-[18px] lg:text-[19px] font-display font-medium text-foreground tracking-tight leading-relaxed transition-colors duration-200">
               {item.tech}
             </p>
 
