@@ -76,20 +76,20 @@ export function StackPreview() {
   const shouldReduceMotion = useReducedMotion();
 
   const rowVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 24 },
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 18 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.55,
+        duration: 0.5,
         ease,
-        staggerChildren: shouldReduceMotion ? 0 : 0.05,
+        staggerChildren: shouldReduceMotion ? 0 : 0.04,
       },
     },
   };
 
   const logoVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 20 },
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 16 },
     visible: {
       opacity: 1,
       y: 0,
@@ -103,13 +103,13 @@ export function StackPreview() {
   return (
     <section id="stack-preview" className="py-10 md:py-14 lg:py-16 relative px-5 sm:px-6 md:px-10 lg:px-16">
       
-      {/* HEADER — Exact icon & heading preserved, description removed */}
+      {/* HEADER — Exact icon & heading preserved, reduced bottom spacing to first row */}
       <motion.div 
-        initial={{ opacity: 0, y: 16 }}
+        initial={{ opacity: 0, y: 14 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 0.55, ease }}
-        className="flex items-center gap-3 mb-6 md:mb-8"
+        transition={{ duration: 0.5, ease }}
+        className="flex items-center gap-3 mb-2 md:mb-3"
       >
         <div className="p-2 rounded-lg bg-[var(--card)] border border-border-subtle text-muted">
           <Layers size={20} />
@@ -127,40 +127,38 @@ export function StackPreview() {
             variants={rowVariants}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true, amount: 0.25 }}
-            className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 py-8 md:py-10 lg:py-12 border-b border-border-subtle/80 relative group cursor-default"
+            viewport={{ once: true, amount: 0.2 }}
+            className="flex flex-col sm:flex-row sm:items-center justify-between gap-5 py-5 sm:py-6 md:py-7 border-b border-border-subtle/70 relative cursor-default"
           >
-            {/* LEFT: Straight Category name (no category icons) */}
+            {/* LEFT: Prominent Category Name (no icons, larger & readable) */}
             <div className="w-full sm:w-auto shrink-0">
-              <span className="text-[13px] md:text-[14px] lg:text-[15px] font-mono tracking-[0.22em] text-muted font-semibold uppercase transition-colors duration-200 group-hover:text-accent">
+              <span className="text-[14px] md:text-[15px] lg:text-[16px] font-mono tracking-[0.22em] text-foreground font-semibold uppercase">
                 {item.category}
               </span>
             </div>
 
-            {/* RIGHT: Large Original Technology Logos (floating directly, no borders/containers, staggered scroll reveal) */}
-            <div className="flex flex-wrap items-center justify-start sm:justify-end gap-6 sm:gap-7 md:gap-8 lg:gap-10">
+            {/* RIGHT: Normalized Original Brand Logos (floating directly, no borders/containers) */}
+            <div className="flex flex-wrap items-center justify-start sm:justify-end gap-5 sm:gap-6 md:gap-7 lg:gap-8">
               {item.technologies.map((tech) => (
                 <motion.div
                   key={tech.name}
                   variants={logoVariants}
-                  whileHover={shouldReduceMotion ? undefined : { scale: 1.08 }}
+                  whileHover={shouldReduceMotion ? undefined : { scale: 1.06 }}
                   transition={{ duration: 0.2, ease }}
                   className="relative group/logo flex items-center justify-center cursor-pointer"
                 >
-                  <div className="flex items-center justify-center opacity-90 group-hover/logo:opacity-100 transition-opacity duration-200">
-                    <tech.Icon size={46} />
+                  {/* Square bounding box ensures normalized visual scale for every logo */}
+                  <div className="w-10 h-10 md:w-11 md:h-11 flex items-center justify-center opacity-90 group-hover/logo:opacity-100 transition-opacity duration-200">
+                    <tech.Icon size={38} />
                   </div>
 
                   {/* Subtle Tooltip on Hover */}
-                  <div className="absolute -top-9 md:-top-10 left-1/2 -translate-x-1/2 bg-foreground text-[var(--bg)] text-[11px] font-mono font-medium px-2.5 py-1 rounded opacity-0 translate-y-1 group-hover/logo:opacity-100 group-hover/logo:translate-y-0 transition-all duration-150 pointer-events-none whitespace-nowrap z-50 shadow-md">
+                  <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-[var(--bg)] text-[10px] font-mono font-medium px-2 py-0.5 rounded opacity-0 translate-y-1 group-hover/logo:opacity-100 group-hover/logo:translate-y-0 transition-all duration-150 pointer-events-none whitespace-nowrap z-50 shadow-md">
                     {tech.name}
                   </div>
                 </motion.div>
               ))}
             </div>
-
-            {/* Subtle hover accent divider slide */}
-            <div className="absolute bottom-0 left-0 right-0 h-px bg-accent/40 -translate-x-full group-hover:translate-x-0 transition-transform duration-300 ease-out pointer-events-none" />
           </motion.div>
         ))}
       </div>
@@ -170,7 +168,7 @@ export function StackPreview() {
         initial={{ scaleX: 0 }}
         whileInView={{ scaleX: 1 }}
         viewport={{ once: true, amount: 0.18 }}
-        transition={{ duration: 0.8, ease }}
+        transition={{ duration: 0.7, ease }}
         className="absolute bottom-0 left-0 right-0 h-px bg-border-subtle origin-left"
       />
     </section>
