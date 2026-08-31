@@ -19,7 +19,7 @@ export const dynamic = 'force-dynamic';
 export default async function HomePage() {
   const [workProjects, experienceItems, educationItems] = await Promise.all([
     prisma.project.findMany({
-      where: { featured: true, published: true, archived: false },
+      where: { published: true, archived: false },
       include: { images: { orderBy: { order: 'asc' } } },
       orderBy: { orderIndex: 'asc' },
       take: 3,

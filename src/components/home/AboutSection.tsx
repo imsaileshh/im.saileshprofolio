@@ -42,15 +42,15 @@ export function AboutSection() {
           className="flex flex-col max-w-[580px]"
         >
           {/* Section label with small minimal icon */}
-          <div className="flex items-center gap-2 mb-3">
-            <User size={13} className="text-accent shrink-0" strokeWidth={2} />
-            <span className="text-[10px] font-mono tracking-widest text-muted uppercase">
+          <div className="flex items-center gap-2.5 mb-4">
+            <User size={18} className="text-accent shrink-0" strokeWidth={2.5} />
+            <span className="text-xs font-mono tracking-widest text-muted uppercase font-medium">
               ABOUT ME
             </span>
           </div>
 
           {/* Headline */}
-          <h2 className="text-3xl md:text-4xl lg:text-[40px] font-display font-medium tracking-tight text-foreground leading-[1.15] mb-4">
+          <h2 className="text-4xl md:text-5xl lg:text-[52px] font-display font-semibold tracking-tight text-accent leading-[1.15] mb-5">
             I design, build, and ship digital experiences.
           </h2>
 

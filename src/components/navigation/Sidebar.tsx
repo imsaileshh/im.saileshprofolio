@@ -61,6 +61,18 @@ export function Sidebar({ mobile = false, onOpenResume, onOpenHireMe }: { mobile
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={(e) => {
+                  if (pathname === link.href) {
+                    const scrollContainer = document.getElementById('scroll-container');
+                    if (scrollContainer) {
+                      scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                    const mobileScroll = document.querySelector('[data-mobile-scroll]');
+                    if (mobileScroll) {
+                      mobileScroll.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+                  }
+                }}
                 className={`flex items-center gap-3 px-4 h-[44px] rounded-xl transition-all duration-200 group relative overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                   isActive 
                     ? 'bg-nav-active text-foreground font-medium' 

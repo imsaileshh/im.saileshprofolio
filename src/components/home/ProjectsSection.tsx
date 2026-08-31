@@ -7,8 +7,7 @@ import { AnimatePresence, motion, useInView, useScroll, useTransform } from 'fra
 import { ArrowUpRight, ExternalLink } from 'lucide-react';
 import { ProjectModal } from '@/components/projects/ProjectModal';
 
-// ─── Cinematic Card ───────────────────────────────────────────────────────────
-function CinematicCard({
+function CinematicStickyCard({
   project,
   index,
   total,
@@ -19,121 +18,89 @@ function CinematicCard({
   total: number;
   onClick: () => void;
 }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(cardRef, { once: false, margin: '-12% 0px -12% 0px' });
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
-    target: cardRef,
-    offset: ['start end', 'end start'],
+    target: containerRef,
+    offset: ['start start', 'end start'],
   });
 
-  const imageScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.08, 1, 1.08]);
-  const imageY = useTransform(scrollYProgress, [0, 1], ['-6%', '6%']);
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8, 1], [1, 0.8, 0]);
+  const filter = useTransform(scrollYProgress, [0, 1], ['brightness(1)', 'brightness(0.3)']);
+  const y = useTransform(scrollYProgress, [0, 1], ['0%', '-5%']);
 
-  const techBadges = project.technologies?.slice(0, 3) ?? [];
+  const techBadges = project.technologies?.slice(0, 4) ?? [];
 
   return (
-    <motion.div
-      ref={cardRef}
-      initial={{ opacity: 0, y: 60 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 60 }}
-      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1], delay: index * 0.05 }}
-      className="relative"
-    >
-      {/* Index label */}
-      <div className="absolute -top-3 left-0 z-10 flex items-center gap-2">
-        <span className="font-mono text-[10px] tracking-[0.18em] text-muted/50 uppercase select-none">
-          {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
-        </span>
-      </div>
+    <div ref={containerRef} className="h-[130vh] w-full relative -mt-[30vh] first:mt-0">
+      <div className="sticky top-[10vh] md:top-[12vh] w-full h-[65vh] md:h-[75vh] flex items-center justify-center">
+        <motion.div 
+          style={{ scale, opacity, filter, y }} 
+          className="w-full h-full relative origin-top"
+        >
+          <button
+            onClick={onClick}
+            className="group w-full h-full text-left block cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] rounded-3xl"
+          >
+            <div className="relative w-full h-full rounded-3xl overflow-hidden border border-[var(--border)] bg-[var(--card)] shadow-[0_8px_30px_rgba(0,0,0,0.3)]">
+              
+              <div className="absolute inset-0 w-full h-full transition-transform duration-700 ease-out group-hover:scale-105">
+                <Image
+                  src={project.coverUrl || `/images/projects/project${(index % 4) + 1}.svg`}
+                  alt={project.title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 80vw"
+                />
+              </div>
+              
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent pointer-events-none" />
 
-      <motion.button
-        onClick={onClick}
-        whileTap={{ scale: 0.993 }}
-        className="group w-full text-left block cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-[18px]"
-        aria-label={`Open ${project.title}`}
-      >
-        {/* Card shell — adapts to theme */}
-        <div className="relative rounded-[18px] overflow-hidden border border-[var(--border)] bg-[var(--card)] shadow-[0_4px_24px_rgba(0,0,0,0.18)]">
-
-          {/* ── Full-bleed cinematic image ── */}
-          <div className="relative w-full overflow-hidden" style={{ aspectRatio: '16/9' }}>
-            <motion.div
-              className="absolute inset-0 w-full h-full"
-              style={{ scale: imageScale, y: imageY }}
-            >
-              <Image
-                src={project.coverUrl}
-                alt={project.title}
-                fill
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="object-cover"
-              />
-            </motion.div>
-
-            {/* Cinematic vignette gradient */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none" />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-transparent pointer-events-none" />
-
-            {/* Category + year pill — top left */}
-            <div className="absolute top-4 left-4 flex items-center gap-2 z-10">
-              <span className="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-[0.14em] text-white/80 bg-white/10 backdrop-blur-md border border-white/10">
-                {project.category}
-              </span>
-            </div>
-
-            {/* Year pill — top right */}
-            <div className="absolute top-4 right-4 z-10">
-              <span className="px-2.5 py-1 rounded-full text-[10px] font-mono font-semibold text-white/70 bg-black/30 backdrop-blur-md border border-white/10">
-                {project.year || '2025'}
-              </span>
-            </div>
-
-            {/* Bottom meta overlay (slides up on hover) */}
-            <div className="absolute bottom-0 left-0 right-0 z-10 p-5">
-              <div className="flex items-end justify-between gap-3">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-[22px] md:text-[26px] font-display font-semibold text-white leading-tight tracking-tight truncate">
-                    {project.title}
-                  </h3>
-                  <p className="text-white/60 text-[13px] mt-1 line-clamp-2 leading-relaxed">
-                    {project.shortDescription ?? project.description ?? ''}
-                  </p>
-                </div>
-
-                {/* Arrow caret */}
-                <motion.div
-                  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -8 }}
-                  transition={{ duration: 0.4, delay: index * 0.06 + 0.2 }}
-                  className="shrink-0 w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-[var(--accent)] group-hover:border-[var(--accent)] transition-all duration-300"
-                >
-                  <ExternalLink size={15} className="text-white" />
-                </motion.div>
+              <div className="absolute top-6 left-6 md:top-8 md:left-8 flex items-center gap-3 z-10">
+                <span className="font-mono text-[11px] tracking-[0.2em] text-white/50 uppercase">
+                  {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+                </span>
+                <span className="w-1 h-1 rounded-full bg-[var(--accent)]/60"></span>
+                <span className="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-[0.15em] text-white/90 bg-white/10 backdrop-blur-md border border-white/10">
+                  {project.category ?? 'Project'}
+                </span>
               </div>
 
-              {/* Tech tags */}
-              {techBadges.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {techBadges.map((tech: string) => (
-                    <span
-                      key={tech}
-                      className="px-2 py-0.5 rounded-md text-[10px] font-medium text-white/60 bg-white/8 border border-white/10 backdrop-blur-sm"
-                    >
-                      {tech}
-                    </span>
-                  ))}
-                  {(project.technologies?.length ?? 0) > 3 && (
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-medium text-white/40 bg-white/5 border border-white/8">
-                      +{project.technologies.length - 3}
-                    </span>
-                  )}
+              <div className="absolute bottom-0 left-0 right-0 z-10 p-6 md:p-10 lg:p-12">
+                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+                  
+                  <div className="flex-1 max-w-3xl">
+                    <h3 className="text-3xl md:text-4xl lg:text-[44px] font-display font-medium text-white tracking-tight leading-[1.1] mb-3 group-hover:text-[var(--accent)] transition-colors duration-300">
+                      {project.title}
+                    </h3>
+                    <p className="text-[15px] md:text-base text-white/70 leading-relaxed line-clamp-2 md:line-clamp-3 mb-6 max-w-2xl">
+                      {project.shortDescription ?? project.description}
+                    </p>
+                    
+                    {techBadges.length > 0 && (
+                      <div className="flex flex-wrap gap-x-2 gap-y-1 mb-2">
+                        {techBadges.map((tech: string, i: number, arr: string[]) => (
+                          <span key={tech} className="text-[13px] font-medium text-white/50">
+                            {tech}{i < arr.length - 1 ? ',' : ''}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="shrink-0 inline-flex items-center gap-2 text-sm font-medium text-white group-hover:text-[var(--accent)] transition-colors duration-300">
+                    View Project 
+                    <ArrowUpRight size={18} className="transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </div>
                 </div>
-              )}
+              </div>
             </div>
-          </div>
-        </div>
-      </motion.button>
-    </motion.div>
+          </button>
+        </motion.div>
+      </div>
+    </div>
   );
 }
 
@@ -144,8 +111,7 @@ export function ProjectsSection({ projects }: { projects: any[] }) {
   const headerRef = useRef<HTMLDivElement>(null);
   const headerInView = useInView(headerRef, { once: true, margin: '-8% 0px' });
 
-  // Split projects: featured large card + grid
-  const [featured, ...rest] = projects;
+  // We render all projects in the cinematic stack
 
   return (
     <section
@@ -190,27 +156,14 @@ export function ProjectsSection({ projects }: { projects: any[] }) {
         </motion.div>
       </div>
 
-      {/* ── Layout: Large featured + side grid ── */}
+      {/* ── Layout: Cinematic Sticky Stack ── */}
       {projects.length > 0 ? (
-        <div className="flex flex-col gap-5 lg:grid lg:grid-cols-[1fr_1fr] lg:gap-5">
-          {/* Featured (left/top) — taller */}
-          {featured && (
-            <div className="lg:row-span-2">
-              <CinematicCard
-                project={featured}
-                index={0}
-                total={projects.length}
-                onClick={() => setSelectedProject(featured)}
-              />
-            </div>
-          )}
-
-          {/* Rest (right/bottom stacked) */}
-          {rest.map((project, i) => (
-            <CinematicCard
+        <div className="flex flex-col relative w-full pb-20">
+          {projects.map((project, i) => (
+            <CinematicStickyCard
               key={project.id ?? i}
               project={project}
-              index={i + 1}
+              index={i}
               total={projects.length}
               onClick={() => setSelectedProject(project)}
             />

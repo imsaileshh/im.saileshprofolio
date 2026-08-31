@@ -52,59 +52,68 @@ export default async function ProjectsPage() {
         ))}
       </SectionReveal>
 
-      <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 md:gap-6">
+      <div className="flex flex-col gap-16 md:gap-24 lg:gap-32">
         {projects.map((project, idx) => {
           const coverUrl = project.images.find((image) => image.isCover)?.url ?? project.images[0]?.url ?? `/images/projects/project${(idx % 4) + 1}.svg`;
           const category = project.category ?? project.technologies[0] ?? 'Project';
           const year = project.year ?? project.createdAt.getFullYear().toString();
 
           return (
-          <StaggerItem key={project.id || idx}>
-            <Link href={`/projects/${project.slug}`} className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-2xl h-full">
-              <div className="flex flex-col gap-4 group p-5 rounded-2xl bg-[var(--card)] border border-border-subtle hover:border-muted/50 hover:-translate-y-1 transition-all duration-300 h-full">
+            <SectionReveal key={project.id || idx}>
+              <Link href={`/projects/${project.slug}`} className="group flex flex-col md:flex-row gap-6 md:gap-10 lg:gap-16 items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-3xl">
                 
-                <div className="relative w-full aspect-[16/10] rounded-xl overflow-hidden border border-border-subtle/50 mb-2">
-                  <Image 
-                    src={coverUrl}
-                    alt={project.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                {/* Left Side: Image */}
+                <div className="w-full md:w-3/5 lg:w-[60%] shrink-0">
+                  <div className="relative w-full aspect-[16/10] rounded-2xl md:rounded-3xl overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
+                    <Image 
+                      src={coverUrl}
+                      alt={project.title}
+                      fill
+                      className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-500" />
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-[10px] font-bold text-muted uppercase tracking-widest">
-                  <span>{year}</span>
-                  <span className="w-1 h-1 rounded-full bg-border-subtle"></span>
-                  <span>{category}</span>
-                </div>
-                
-                <h2 className="text-xl font-display font-medium group-hover:text-accent transition-colors">
-                  {project.title}
-                </h2>
-                
-                <p className="text-sm text-muted leading-relaxed line-clamp-2 mb-4 flex-1">
-                  {project.description}
-                </p>
+                {/* Right Side: Content */}
+                <div className="w-full md:w-2/5 lg:w-[40%] flex flex-col justify-center py-4 md:py-0">
+                  <div className="flex items-center gap-3 text-[11px] font-bold text-muted uppercase tracking-[0.2em] mb-4">
+                    <span>{year}</span>
+                    <span className="w-[3px] h-[3px] rounded-full bg-accent/60"></span>
+                    <span>{category}</span>
+                  </div>
+                  
+                  <h2 className="text-3xl md:text-4xl lg:text-[40px] font-display font-medium text-foreground tracking-tight leading-[1.1] mb-5 group-hover:text-accent transition-colors duration-300">
+                    {project.title}
+                  </h2>
+                  
+                  <p className="text-[15px] md:text-base text-muted leading-relaxed mb-8 max-w-lg">
+                    {project.description}
+                  </p>
 
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {project.technologies.slice(0, 3).map((tech: string, i: number) => (
-                    <span key={i} className="text-[10px] px-2 py-1 rounded bg-[var(--bg)] border border-border-subtle text-muted">
-                      {tech}
-                    </span>
-                  ))}
+                  <div className="mb-10">
+                    <h3 className="text-[10px] font-mono font-medium tracking-[0.2em] text-muted/60 uppercase mb-3">
+                      Development Tools
+                    </h3>
+                    <div className="flex flex-wrap gap-x-2 gap-y-1">
+                      {project.technologies.slice(0, 5).map((tech: string, i: number, arr: string[]) => (
+                        <span key={i} className="text-[13px] text-muted group-hover:text-foreground/80 transition-colors duration-300">
+                          {tech}{i < arr.length - 1 ? ',' : ''}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="inline-flex items-center gap-2 text-[14px] font-medium text-foreground group-hover:text-accent transition-colors duration-300 w-fit">
+                    View Project 
+                    <ArrowUpRight size={18} className="transition-transform duration-300 ease-out group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  </div>
                 </div>
-                
-                <div className="mt-auto pt-4 border-t border-border-subtle/50 flex items-center text-sm font-medium text-foreground group-hover:text-accent transition-colors">
-                  View Project 
-                  <ArrowUpRight size={16} className="ml-1 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </div>
-              </div>
-            </Link>
-          </StaggerItem>
-        );
+              </Link>
+            </SectionReveal>
+          );
         })}
-      </StaggerContainer>
+      </div>
     </div>
   );
 }
