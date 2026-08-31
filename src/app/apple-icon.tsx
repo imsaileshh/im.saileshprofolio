@@ -16,14 +16,11 @@ export default function AppleIcon() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#090A0C',
-          borderRadius: '38px',
-          border: '4px solid rgba(255, 255, 255, 0.1)',
-          fontSize: 110,
-          fontWeight: 800,
+          background: 'transparent',
+          fontSize: 140,
+          fontWeight: 900,
           fontFamily: 'system-ui, -apple-system, sans-serif',
-          letterSpacing: '-2px',
-          paddingBottom: '4px',
+          letterSpacing: '-4px',
         }}
       >
         <span style={{ color: '#FFFFFF', fontWeight: 900 }}>S</span>
@@ -31,7 +28,7 @@ export default function AppleIcon() {
           style={{
             color: '#2DD4BF',
             fontWeight: 900,
-            fontSize: 120,
+            fontSize: 150,
             marginLeft: '4px',
           }}
         >
