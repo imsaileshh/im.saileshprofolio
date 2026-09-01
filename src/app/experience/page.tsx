@@ -1,4 +1,5 @@
 import { SectionReveal, StaggerContainer, StaggerItem } from '@/components/ui/SectionReveal';
+import { ScrollTimelineLine, ScrollTimelineNode } from '@/components/ui/ScrollTimeline';
 import { prisma } from '@/lib/database/prisma';
 
 function formatYearRange(startDate: Date, endDate?: Date | null) {
@@ -35,14 +36,14 @@ export default async function ExperiencePage() {
 
       {/* TIMELINE */}
       <div className="flex flex-col max-w-4xl relative">
-        <div className="absolute left-4 md:left-[180px] top-2 bottom-0 w-[1px] bg-border-subtle origin-top" style={{ animation: 'scaleY 1s cubic-bezier(0.22, 1, 0.36, 1) forwards' }}></div>
+        <ScrollTimelineLine className="absolute left-4 md:left-[180px] top-2 bottom-0 w-[1px] bg-border-subtle overflow-hidden origin-top" />
         
         <StaggerContainer className="flex flex-col gap-2">
           {experiences.length ? experiences.map((exp, idx) => (
             <StaggerItem key={idx}>
               <div className="flex flex-col md:flex-row gap-2 md:gap-8 relative group p-4 pl-10 md:p-5 md:pl-6 -mx-4 md:-mx-5 rounded-[12px] hover:bg-border-subtle/20 transition-all duration-[250ms] cursor-default">
                 {/* Timeline node */}
-                <div className="absolute left-[32px] md:left-[204px] top-[24px] md:top-[32px] -translate-x-[50%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-border-subtle md:bg-[var(--bg)] md:border md:border-border-subtle group-hover:bg-accent group-hover:border-accent group-hover:scale-[1.12] transition-all duration-[250ms] z-10"></div>
+                <ScrollTimelineNode className="absolute left-[32px] md:left-[204px] top-[24px] md:top-[32px] -translate-x-[50%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border z-10" />
                 
                 <div className="w-full md:w-[150px] shrink-0 pt-0 md:pt-[6px] mb-1 md:mb-0">
                   <span className="text-[11px] md:text-xs font-medium text-muted opacity-80 group-hover:opacity-100 tracking-widest font-mono transition-opacity duration-200">
@@ -84,14 +85,14 @@ export default async function ExperiencePage() {
       </SectionReveal>
 
       <div className="flex flex-col max-w-4xl relative">
-        <div className="absolute left-4 md:left-[180px] top-2 bottom-0 w-[1px] bg-border-subtle origin-top" style={{ animation: 'scaleY 1s cubic-bezier(0.22, 1, 0.36, 1) forwards' }}></div>
+        <ScrollTimelineLine className="absolute left-4 md:left-[180px] top-2 bottom-0 w-[1px] bg-border-subtle overflow-hidden origin-top" />
         
         <StaggerContainer className="flex flex-col gap-2">
           {education.length ? education.map((edu, idx) => (
             <StaggerItem key={idx}>
               <div className="flex flex-col md:flex-row gap-2 md:gap-8 relative group p-4 pl-10 md:p-5 md:pl-6 -mx-4 md:-mx-5 rounded-[12px] hover:bg-border-subtle/20 transition-all duration-[250ms] cursor-default">
                 {/* Timeline node */}
-                <div className="absolute left-[32px] md:left-[204px] top-[24px] md:top-[32px] -translate-x-[50%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-border-subtle md:bg-[var(--bg)] md:border md:border-border-subtle group-hover:bg-accent group-hover:border-accent group-hover:scale-[1.12] transition-all duration-[250ms] z-10"></div>
+                <ScrollTimelineNode className="absolute left-[32px] md:left-[204px] top-[24px] md:top-[32px] -translate-x-[50%] w-2 h-2 md:w-2.5 md:h-2.5 rounded-full border z-10" />
                 
                 <div className="w-full md:w-[150px] shrink-0 pt-0 md:pt-[6px] mb-1 md:mb-0">
                   <span className="text-[11px] md:text-xs font-medium text-muted opacity-80 group-hover:opacity-100 tracking-widest font-mono transition-opacity duration-200">

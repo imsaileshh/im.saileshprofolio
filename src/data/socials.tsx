@@ -13,10 +13,10 @@ const BehanceIcon = (props: any) => (
 );
 
 export const socials = [
-  { href: 'mailto:hello@sailesh.com', icon: Mail, label: 'Email' },
-  { href: 'https://github.com', icon: Github, label: 'GitHub' },
+  { href: 'mailto:im.saileshh@gmail.com', icon: Mail, label: 'Email' },
+  { href: 'https://github.com/imsaileshh', icon: Github, label: 'GitHub' },
   { href: 'https://linkedin.com', icon: Linkedin, label: 'LinkedIn' },
-  { href: 'https://behance.net', icon: BehanceIcon, label: 'Behance' },
+  { href: 'https://www.behance.net/im_saileshh', icon: BehanceIcon, label: 'Behance' },
   { href: 'https://instagram.com', icon: Instagram, label: 'Instagram' },
-  { href: 'https://discord.com', icon: DiscordIcon, label: 'Discord' },
+  { href: 'https://discord.gg/QreMgErQT', icon: DiscordIcon, label: 'Discord' },
 ];

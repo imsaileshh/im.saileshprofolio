@@ -146,7 +146,7 @@ export function ResumeModal({ isOpen, onClose }: ResumeModalProps) {
                   <div className="flex flex-wrap items-center justify-center sm:justify-start gap-x-4 gap-y-2 text-sm text-[#444] mt-2">
                     <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="hover:text-black transition-colors underline underline-offset-4 decoration-[#D5D0C8]">LinkedIn</a>
                     <span className="w-1 h-1 rounded-full bg-[#D5D0C8]"></span>
-                    <a href="https://behance.net" target="_blank" rel="noreferrer" className="hover:text-black transition-colors underline underline-offset-4 decoration-[#D5D0C8]">Behance</a>
+                    <a href="https://www.behance.net/im_saileshh" target="_blank" rel="noreferrer" className="hover:text-black transition-colors underline underline-offset-4 decoration-[#D5D0C8]">Behance</a>
                     <span className="w-1 h-1 rounded-full bg-[#D5D0C8]"></span>
                     <a href="https://dribbble.com" target="_blank" rel="noreferrer" className="hover:text-black transition-colors underline underline-offset-4 decoration-[#D5D0C8]">Dribbble</a>
                   </div>

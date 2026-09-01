@@ -22,7 +22,7 @@ function ProjectGridCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
+      viewport={{ once: true, margin: "100% 0px 100% 0px" }}
       transition={{ duration: 0.5, delay: index * 0.08, ease }}
       className="flex shrink-0 w-[85vw] sm:w-[340px] snap-start md:w-full md:max-w-none"
     >
@@ -134,7 +134,7 @@ export function ProjectsSection({ projects }: { projects: any[] }) {
             ref={scrollContainerRef}
             onScroll={handleScroll}
             style={{ WebkitOverflowScrolling: 'touch' }}
-            className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-2 -mx-5 px-5 sm:-mx-6 sm:px-6 no-scrollbar touch-pan-x overscroll-x-contain md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 lg:gap-7 md:mx-0 md:px-0 md:pb-0"
+            className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-2 -mx-5 px-5 sm:-mx-6 sm:px-6 no-scrollbar overscroll-x-contain md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 lg:gap-7 md:mx-0 md:px-0 md:pb-0"
           >
             {projects.map((project, i) => (
               <ProjectGridCard
@@ -143,6 +143,8 @@ export function ProjectsSection({ projects }: { projects: any[] }) {
                 index={i}
               />
             ))}
+            {/* Spacer for mobile right padding */}
+            <div className="w-1 shrink-0 md:hidden" aria-hidden="true"></div>
           </div>
 
           {/* Subtle Mobile Pagination Dots */}

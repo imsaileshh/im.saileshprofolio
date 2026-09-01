@@ -37,7 +37,7 @@ export function EditorialContact() {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <Link 
-            href="mailto:hello@sailesh.com"
+            href="mailto:im.saileshh@gmail.com"
             className="group flex items-center justify-center gap-3 bg-card text-foreground px-10 py-5 rounded-full font-medium text-lg hover:scale-105 transition-transform duration-300"
           >
             Start a Conversation 

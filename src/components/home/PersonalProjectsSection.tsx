@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
 import { ArrowUpRight, Github, Globe, Terminal } from 'lucide-react';
 import { SectionHeader } from '@/components/ui/SectionHeader';
+import { BrowserPreviewModal } from '@/components/ui/BrowserPreviewModal';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -26,15 +27,17 @@ export type PersonalProjectItem = {
 function PersonalProjectHomeCard({
   project,
   index,
+  onPreview,
 }: {
   project: PersonalProjectItem;
   index: number;
+  onPreview: (project: PersonalProjectItem) => void;
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
+      viewport={{ once: true, margin: "100% 0px 100% 0px" }}
       transition={{ duration: 0.5, delay: index * 0.08, ease }}
       className="flex shrink-0 w-[85vw] sm:w-[340px] snap-start md:w-full md:max-w-none"
     >
@@ -124,15 +127,14 @@ function PersonalProjectHomeCard({
               </a>
             )}
             {project.liveUrl && (
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="p-1.5 rounded-lg text-muted hover:text-foreground hover:bg-white/5 transition-colors"
-                title="Live Demo"
+              <button
+                type="button"
+                onClick={() => onPreview(project)}
+                className="p-1.5 rounded-lg text-muted hover:text-accent hover:bg-white/5 transition-colors cursor-pointer"
+                title="Open In-App Live Preview"
               >
                 <Globe size={15} />
-              </a>
+              </button>
             )}
           </div>
 
@@ -158,6 +160,7 @@ export function PersonalProjectsSection({
   const headerRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [previewProject, setPreviewProject] = useState<PersonalProjectItem | null>(null);
   const headerInView = useInView(headerRef, { once: true, margin: '-8% 0px' });
 
   // Handle active index tracking on scroll
@@ -222,15 +225,18 @@ export function PersonalProjectsSection({
           ref={scrollContainerRef}
           onScroll={handleScroll}
           style={{ WebkitOverflowScrolling: 'touch' }}
-          className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-2 -mx-5 px-5 sm:-mx-6 sm:px-6 no-scrollbar touch-pan-x overscroll-x-contain md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 lg:gap-7 md:mx-0 md:px-0 md:pb-0"
+          className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-2 -mx-5 px-5 sm:-mx-6 sm:px-6 no-scrollbar overscroll-x-contain md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-6 lg:gap-7 md:mx-0 md:px-0 md:pb-0"
         >
           {personalProjects.slice(0, 3).map((project, i) => (
             <PersonalProjectHomeCard
               key={project.id}
               project={project}
               index={i}
+              onPreview={(p) => setPreviewProject(p)}
             />
           ))}
+          {/* Spacer for mobile right padding */}
+          <div className="w-1 shrink-0 md:hidden" aria-hidden="true"></div>
         </div>
 
         {/* Subtle Mobile Pagination Dots */}
@@ -265,6 +271,17 @@ export function PersonalProjectsSection({
           </Link>
         </div>
       </div>
+
+      {/* Browser Preview Modal */}
+      {previewProject && previewProject.liveUrl && (
+        <BrowserPreviewModal
+          isOpen={!!previewProject}
+          onClose={() => setPreviewProject(null)}
+          title={`${previewProject.title} — Live Preview`}
+          url={previewProject.liveUrl}
+          defaultDevice="desktop"
+        />
+      )}
     </section>
   );
 }

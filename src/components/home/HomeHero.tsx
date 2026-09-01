@@ -157,42 +157,29 @@ export function HomeHero({ heroContent }: { heroContent?: any }) {
             transition={{ duration: 0.5, delay: 0.45, ease }}
             className="flex flex-row items-center gap-3.5 sm:gap-4 w-full sm:w-auto"
           >
-            {/* Primary CTA */}
-            <Link
-              href={content.primaryCtaLink}
-              className="group relative inline-flex items-center justify-center gap-2 bg-foreground text-[var(--bg)] px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl text-[14px] sm:text-[15px] font-medium tracking-tight hover:brightness-95 active:scale-[0.98] transition-all duration-200 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            {/* Primary CTA (Resume) */}
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('open-resume'))}
+              className="group relative inline-flex items-center justify-center gap-2 bg-accent text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-[14px] sm:text-[15px] font-medium tracking-wide hover:bg-accent/90 active:scale-[0.98] transition-all duration-200 shadow-[0_0_20px_rgba(45,212,191,0.15)] hover:shadow-[0_0_25px_rgba(45,212,191,0.25)] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
             >
-              <span>{content.primaryCtaText}</span>
+              <span>Resume</span>
               <ArrowUpRight
                 size={16}
                 className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               />
-            </Link>
+            </button>
 
-            {/* Secondary CTA */}
-            {content.secondaryCtaLink === '#hire' ? (
-              <button
-                onClick={() => window.dispatchEvent(new CustomEvent('open-hire-me'))}
-                className="group inline-flex items-center justify-center gap-2 bg-transparent text-foreground px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl text-[14px] sm:text-[15px] font-medium border border-border-subtle hover:border-foreground/30 hover:bg-border-subtle/20 active:scale-[0.98] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              >
-                <span>{content.secondaryCtaText}</span>
-                <ArrowRight
-                  size={16}
-                  className="transition-transform duration-200 group-hover:translate-x-1"
-                />
-              </button>
-            ) : (
-              <Link
-                href={content.secondaryCtaLink}
-                className="group inline-flex items-center justify-center gap-2 bg-transparent text-foreground px-5 sm:px-6 py-3 sm:py-3.5 rounded-xl text-[14px] sm:text-[15px] font-medium border border-border-subtle hover:border-foreground/30 hover:bg-border-subtle/20 active:scale-[0.98] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              >
-                <span>{content.secondaryCtaText}</span>
-                <ArrowRight
-                  size={16}
-                  className="transition-transform duration-200 group-hover:translate-x-1"
-                />
-              </Link>
-            )}
+            {/* Secondary CTA (Hire Me) */}
+            <button
+              onClick={() => window.dispatchEvent(new CustomEvent('open-hire-me'))}
+              className="group inline-flex items-center justify-center gap-2 bg-[var(--card)] text-foreground px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-[14px] sm:text-[15px] font-medium hover:bg-foreground/5 active:scale-[0.98] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 shadow-sm"
+            >
+              <span>Hire Me</span>
+              <ArrowRight
+                size={16}
+                className="transition-transform duration-200 group-hover:translate-x-1"
+              />
+            </button>
           </motion.div>
 
         </div>

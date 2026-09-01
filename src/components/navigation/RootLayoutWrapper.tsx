@@ -31,8 +31,13 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
   // ── MODAL EVENT BUS ──────────────────────────────────────────────────────
   useEffect(() => {
     const handleOpenHireMe = () => setIsHireMeOpen(true);
+    const handleOpenResume = () => setIsResumeOpen(true);
     window.addEventListener('open-hire-me', handleOpenHireMe);
-    return () => window.removeEventListener('open-hire-me', handleOpenHireMe);
+    window.addEventListener('open-resume', handleOpenResume);
+    return () => {
+      window.removeEventListener('open-hire-me', handleOpenHireMe);
+      window.removeEventListener('open-resume', handleOpenResume);
+    };
   }, []);
 
   // ── SCROLL TO TOP ON ROUTE CHANGE ───────────────────────────────────────

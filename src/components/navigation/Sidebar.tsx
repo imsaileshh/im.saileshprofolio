@@ -333,8 +333,26 @@ export function Sidebar({
           </div>
         ) : (
           /* Wide: Socials and Collapse Button */
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-1.5 flex-wrap">
+          <div className="flex flex-col gap-6 w-full pt-2">
+            <div className="flex items-center justify-between w-full">
+              <span className="text-[11px] font-bold text-foreground uppercase tracking-[0.15em]">Socials</span>
+              {onToggleCollapse && (
+                <div className="relative group/tooltip shrink-0 z-50">
+                  <button 
+                    onClick={onToggleCollapse}
+                    aria-label="Collapse Sidebar"
+                    className="w-[28px] h-[28px] flex items-center justify-center rounded-lg bg-transparent text-muted hover:text-foreground hover:bg-border-subtle transition-all duration-300"
+                  >
+                    <PanelLeftClose size={15} className="opacity-70 group-hover/tooltip:opacity-100 transition-opacity" />
+                  </button>
+                  <div className="absolute bottom-[calc(100%+8px)] right-0 bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 translate-y-1 group-hover/tooltip:opacity-100 group-hover/tooltip:translate-y-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                    Collapse
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            <div className="grid grid-cols-4 gap-y-1 gap-x-2 justify-items-center">
               {socials.map((social, i) => (
                 <motion.a 
                   key={i}
@@ -342,28 +360,24 @@ export function Sidebar({
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.25, delay: i * 0.03 }}
-                  className="w-[32px] h-[32px] flex shrink-0 items-center justify-center rounded-xl bg-[var(--card)] border border-border-subtle/80 text-muted hover:text-accent hover:border-accent/40 hover:bg-accent/10 hover:-translate-y-0.5 transition-all duration-200 group relative focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="w-8 h-8 flex shrink-0 items-center justify-center bg-transparent text-[#888] hover:text-foreground transition-all duration-200 group relative focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   aria-label={social.label}
                 >
-                  <social.icon size={14} className="opacity-75 group-hover:opacity-100 group-hover:scale-110 transition-all duration-200" />
+                  <social.icon size={16} className="opacity-80 group-hover:opacity-100 group-hover:-translate-y-0.5 transition-all duration-200" />
+                  
+                  {/* Tooltip for social icons */}
+                  <div className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-[60]">
+                    {social.label}
+                  </div>
                 </motion.a>
               ))}
             </div>
-            
-            {onToggleCollapse && (
-              <div className="relative group/tooltip shrink-0 ml-2 z-50">
-                <button 
-                  onClick={onToggleCollapse}
-                  aria-label="Collapse Sidebar"
-                  className="w-[32px] h-[32px] flex items-center justify-center rounded-xl bg-[var(--card)] border border-border-subtle/80 text-muted hover:text-accent hover:border-accent/40 hover:bg-accent/10 hover:-translate-y-0.5 transition-all duration-200"
-                >
-                  <PanelLeftClose size={15} className="opacity-75 group-hover/tooltip:opacity-100 transition-opacity" />
-                </button>
-                <div className="absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 translate-y-1 group-hover/tooltip:opacity-100 group-hover/tooltip:translate-y-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
-                  Collapse
-                </div>
-              </div>
-            )}
+
+            <div className="mt-4 text-center w-full">
+              <span className="text-[10px] font-mono tracking-[0.15em] text-accent font-medium opacity-80">
+                10.5276° N, 76.2144° E
+              </span>
+            </div>
           </div>
         )}
       </div>

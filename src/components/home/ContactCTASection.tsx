@@ -34,11 +34,11 @@ export function ContactCTASection() {
 
           {/* Direct Email Link */}
           <a
-            href="mailto:imsaileshp@gmail.com"
-            className="inline-flex items-center gap-2 text-[14px] font-mono text-muted hover:text-accent transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm py-0.5"
+            href="mailto:im.saileshh@gmail.com"
+            className="group inline-flex items-center gap-2 text-[14px] font-mono text-muted hover:text-accent transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm py-0.5"
           >
             <Mail size={15} className="opacity-80" />
-            <span>imsaileshp@gmail.com</span>
+            <span>im.saileshh@gmail.com</span>
           </a>
 
         </div>

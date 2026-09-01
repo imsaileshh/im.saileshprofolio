@@ -15,10 +15,10 @@ export function EditorialFooter() {
         </div>
 
         <nav className="flex flex-wrap items-center justify-center gap-4 md:gap-6 text-sm font-medium text-muted">
-          <Link href="mailto:hello@sailesh.com" className="hover:text-foreground transition-colors">Email</Link>
+          <Link href="mailto:im.saileshh@gmail.com" className="hover:text-foreground transition-colors">Email</Link>
           <Link href="https://linkedin.com" target="_blank" className="hover:text-foreground transition-colors">LinkedIn</Link>
-          <Link href="https://github.com" target="_blank" className="hover:text-foreground transition-colors">GitHub</Link>
-          <Link href="https://behance.net" target="_blank" className="hover:text-foreground transition-colors">Behance</Link>
+          <Link href="https://github.com/imsaileshh" target="_blank" className="hover:text-foreground transition-colors">GitHub</Link>
+          <Link href="https://www.behance.net/im_saileshh" target="_blank" className="hover:text-foreground transition-colors">Behance</Link>
         </nav>
 
         <div className="text-sm text-muted">
