@@ -11,7 +11,7 @@ export function ContactCTASection() {
   return (
     <section
       id="contact-cta"
-      className="py-12 sm:py-16 md:py-20 lg:py-24 px-5 sm:px-6 md:px-10 lg:px-16 relative"
+      className="py-6 sm:py-8 md:py-10 px-5 sm:px-6 md:px-10 lg:px-16 relative"
     >
       <motion.div
         initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 16 }}
@@ -22,15 +22,6 @@ export function ContactCTASection() {
       >
         {/* Left: Headline & Information */}
         <div className="flex flex-col items-start max-w-2xl">
-          
-          {/* Eyebrow Label */}
-          <div className="inline-flex items-center gap-2 mb-3.5 sm:mb-4">
-            <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-            <span className="text-[11px] sm:text-[12px] font-mono font-medium text-accent tracking-[0.2em] uppercase">
-              CONTACT
-            </span>
-          </div>
-
           {/* Main Headline */}
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-[50px] font-display font-semibold tracking-tight text-foreground leading-[1.1] mb-4">
             Let&apos;s work together<span className="text-accent">.</span>

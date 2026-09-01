@@ -8,12 +8,14 @@ import { HomeHero } from '@/components/home/HomeHero';
 import { ExperienceEducationPreview } from '@/components/home/ExperienceEducationPreview';
 import { LetsTalkButton } from '@/components/hire/LetsTalkButton';
 import { ContactCTASection } from '@/components/home/ContactCTASection';
+import { WORK_WHERE_CLAUSE, PERSONAL_PROJECT_WHERE_CLAUSE } from '@/lib/constants/project-types';
+
+export const dynamic = 'force-dynamic';
 
 function formatYearRange(startDate: Date, endDate?: Date | null, isCurrent?: boolean) {
   const startYear = startDate.getFullYear();
   const endYear = endDate ? endDate.getFullYear() : 'Present';
   
-  // Calculate duration
   const end = endDate || (isCurrent ? new Date() : new Date());
   const diffInMonths = (end.getFullYear() - startDate.getFullYear()) * 12 + (end.getMonth() - startDate.getMonth());
   const years = Math.floor(diffInMonths / 12);
@@ -27,27 +29,25 @@ function formatYearRange(startDate: Date, endDate?: Date | null, isCurrent?: boo
   return `${startYear} - ${endYear} · ${durationStr}`;
 }
 
-export const dynamic = 'force-dynamic';
-
 export default async function HomePage() {
   const [workProjects, dbPersonalProjects, experienceItems, educationItems, settings, skillSections] = await Promise.all([
-    // 01. Works (Case Studies & Client Work)
+    // 01. Works ONLY (Client Deliverables & Commercial Case Studies)
     prisma.project.findMany({
       where: { 
         published: true, 
         archived: false,
-        projectType: { in: ['Case Study', 'Client Work'] },
+        ...WORK_WHERE_CLAUSE,
       },
       include: { images: { orderBy: { order: 'asc' } } },
-      orderBy: [{ featured: 'desc' }, { orderIndex: 'asc' }],
+      orderBy: [{ featured: 'desc' }, { orderIndex: 'asc' }, { createdAt: 'desc' }],
       take: 3,
     }),
-    // 02. Personal Projects (Independent Builds, Experiments & Open Source)
+    // 02. Personal Projects ONLY (Independent Builds, Experiments & Open Source)
     prisma.project.findMany({
       where: { 
         published: true, 
         archived: false,
-        projectType: { in: ['Personal Project', 'Open Source'] },
+        ...PERSONAL_PROJECT_WHERE_CLAUSE,
       },
       include: { images: { orderBy: { order: 'asc' } } },
       orderBy: [{ featured: 'desc' }, { orderIndex: 'asc' }, { createdAt: 'desc' }],
@@ -77,83 +77,27 @@ export default async function HomePage() {
     })
   ]);
 
-  // Fallback works if no specific Case Study flagged yet
-  const resolvedWorkProjects = workProjects.length > 0 
-    ? workProjects 
-    : await prisma.project.findMany({
-        where: { published: true, archived: false },
-        include: { images: { orderBy: { order: 'asc' } } },
-        orderBy: { orderIndex: 'asc' },
-        take: 3,
-      });
-
-  const projectCards = resolvedWorkProjects.map((project, index) => ({
+  const projectCards = workProjects.map((project, index) => ({
     ...project,
-    coverUrl: project.images.find((image) => image.isCover)?.url ?? project.images[0]?.url ?? `/images/projects/project${(index % 4) + 1}.svg`,
-    category: project.category ?? project.technologies[0] ?? 'Case Study',
+    coverUrl: project.images.find((image) => image.isCover)?.url ?? project.images[0]?.url ?? project.coverImageUrl ?? `/images/projects/project${(index % 4) + 1}.svg`,
+    category: project.category ?? 'Case Study',
     year: project.year ?? project.createdAt.getFullYear().toString(),
   }));
 
-  // Fallback high-craft personal projects if database has none flagged as Personal Project yet
-  const fallbackPersonalProjects: PersonalProjectItem[] = [
-    {
-      id: 'personal-1',
-      title: 'DevScope — Developer Analytics CLI',
-      slug: 'devscope-cli',
-      category: 'CLI / DEVTOOLS',
-      year: '2025',
-      description: 'A lightning-fast terminal tool for visualizing Git contributions, commit velocity, and code review trends.',
-      technologies: ['TypeScript', 'Rust', 'Node.js'],
-      coverUrl: '/images/projects/project1.svg',
-      liveUrl: 'https://github.com',
-      githubUrl: 'https://github.com',
-      featured: true,
-    },
-    {
-      id: 'personal-2',
-      title: 'VibeEngine — Motion Design Preset Library',
-      slug: 'vibeengine-motion',
-      category: 'OPEN SOURCE / UI',
-      year: '2024',
-      description: 'An opinionated collection of accessible, fluid Framer Motion spring physics curves and UI micro-interactions.',
-      technologies: ['React', 'Framer Motion', 'Tailwind CSS'],
-      coverUrl: '/images/projects/project2.svg',
-      liveUrl: 'https://github.com',
-      githubUrl: 'https://github.com',
-      featured: false,
-    },
-    {
-      id: 'personal-3',
-      title: 'PaletteGen — Color Space Optimizer',
-      slug: 'palette-gen',
-      category: 'WEB APP / EXPERIMENT',
-      year: '2024',
-      description: 'Algorithmic color generator that computes WCAG 2.2 AAA contrast scales in OKLCH perceptual color space.',
-      technologies: ['Next.js', 'TypeScript', 'Tailwind CSS'],
-      coverUrl: '/images/projects/project3.svg',
-      liveUrl: 'https://github.com',
-      githubUrl: 'https://github.com',
-      featured: false,
-    },
-  ];
+  const personalProjectCards: PersonalProjectItem[] = dbPersonalProjects.map((p, index) => ({
+    id: p.id,
+    title: p.title,
+    slug: p.slug,
+    category: p.category ?? 'Web Development',
+    year: p.year ?? p.createdAt.getFullYear().toString(),
+    description: p.description,
+    technologies: p.technologies,
+    coverUrl: p.images.find((img) => img.isCover)?.url ?? p.images[0]?.url ?? p.coverImageUrl ?? `/images/projects/project${(index % 4) + 1}.svg`,
+    liveUrl: p.liveUrl,
+    githubUrl: p.githubUrl,
+  }));
 
-  const personalProjectCards: PersonalProjectItem[] = dbPersonalProjects.length > 0
-    ? dbPersonalProjects.map((p, idx) => ({
-        id: p.id,
-        title: p.title,
-        slug: p.slug,
-        category: p.category ?? 'Personal Project',
-        year: p.year ?? p.createdAt.getFullYear().toString(),
-        description: p.shortDescription ?? p.description,
-        technologies: p.technologies,
-        coverUrl: p.images.find((img) => img.isCover)?.url ?? p.images[0]?.url ?? `/images/projects/project${(idx % 4) + 1}.svg`,
-        liveUrl: p.liveUrl,
-        githubUrl: p.githubUrl,
-        featured: p.featured,
-      }))
-    : fallbackPersonalProjects;
-
-  const experiencePreviewItems = experienceItems.map((item) => ({
+  const formattedExperience = experienceItems.map((item) => ({
     year: formatYearRange(item.startDate, item.endDate, item.current),
     role: item.role,
     company: item.company,
@@ -161,40 +105,42 @@ export default async function HomePage() {
     technologies: item.technologies,
   }));
 
-  const educationPreviewItems = educationItems.map((item) => ({
-    year: formatYearRange(item.startDate, item.endDate, false),
+  const formattedEducation = educationItems.map((item) => ({
+    year: formatYearRange(item.startDate, item.endDate),
     role: item.degree,
     company: item.institution,
-    description: [item.description ?? item.field ?? 'No description available.'],
-    technologies: [],
+    description: item.description ? [item.description] : [],
   }));
 
   return (
-    <div className="flex flex-col">
-      {/* 01 - INTRODUCTION HERO */}
-      <HomeHero heroContent={settings?.heroContent} />
+    <div className="flex flex-col gap-8 sm:gap-10 md:gap-12 lg:gap-14 pb-12">
+      {/* ── 01. Hero Section ── */}
+      <HomeHero />
 
-      {/* 02 - WORKS (CASE STUDIES & CLIENT PROJECTS) */}
-      <ProjectsSection projects={projectCards} />
+      {/* ── 02. Works Section (Professional & Client Works ONLY) ── */}
+      {projectCards.length > 0 && (
+        <ProjectsSection projects={projectCards} />
+      )}
 
-      {/* 03 - PERSONAL PROJECTS (EXPERIMENTS & INDEPENDENT BUILDS) */}
-      <PersonalProjectsSection personalProjects={personalProjectCards} />
+      {/* ── 03. Personal Projects Section (Independent & Experiments ONLY) ── */}
+      {personalProjectCards.length > 0 && (
+        <PersonalProjectsSection personalProjects={personalProjectCards} />
+      )}
 
-      {/* 04 - ABOUT ME */}
-      <AboutSection aboutContent={settings?.aboutContent} />
+      {/* ── 04. About Me Section ── */}
+      <AboutSection />
 
-      {/* 05 - TOOLS & TECHNOLOGIES */}
+      {/* ── 05. Stack Section ── */}
       <StackPreview skillSections={skillSections} />
 
-      {/* 06 - EXPERIENCE & EDUCATION */}
-      <ExperienceEducationPreview
-        experienceItems={experiencePreviewItems}
-        educationItems={educationPreviewItems}
+      {/* ── 06. Experience & Education Section ── */}
+      <ExperienceEducationPreview 
+        experienceItems={formattedExperience} 
+        educationItems={formattedEducation} 
       />
 
-      {/* 07 - CONTACT CTA */}
+      {/* ── 07. Contact CTA Section ── */}
       <ContactCTASection />
-
     </div>
   );
 }

@@ -68,29 +68,7 @@ export function Sidebar({
     }
   };
 
-  useEffect(() => {
-    if (isCollapsed && !mobile) {
-      // Only auto-show bubble once per session to avoid spamming on scroll-up
-      const hasShown = sessionStorage.getItem('avatar-bubble-shown');
-      if (hasShown) return;
-      const timerId = setTimeout(() => {
-        openBubble(true);
-        sessionStorage.setItem('avatar-bubble-shown', 'true');
-      }, 1200);
-      return () => clearTimeout(timerId);
-    }
-  }, [isCollapsed, mobile]);
 
-  useEffect(() => {
-    const hasAutoOpened = sessionStorage.getItem('socials-auto-opened');
-    if (!hasAutoOpened) {
-      const timer = setTimeout(() => {
-        setShowSocials(true);
-        sessionStorage.setItem('socials-auto-opened', 'true');
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

@@ -43,10 +43,10 @@ export function ExperienceEducationPreview({
   const timelineScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
-    <SectionReveal id="experience-preview" className="py-10 md:py-14 lg:py-16 relative px-5 sm:px-6 md:px-10 lg:px-16">
+    <SectionReveal id="experience-preview" className="py-4 sm:py-6 md:py-8 relative px-5 sm:px-6 md:px-10 lg:px-16">
       <section ref={sectionRef} className="relative">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
-          <SectionHeader icon={Compass} label="EXPERIENCE" className="!mb-0">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6 md:mb-8">
+          <SectionHeader icon={Compass} className="!mb-0">
             <h2 className="text-3xl md:text-4xl lg:text-[40px] font-display font-medium tracking-tight leading-[1.15] mb-2">
               Experience & Education
             </h2>

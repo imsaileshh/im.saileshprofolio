@@ -159,10 +159,10 @@ export function StackPreview({ skillSections = [] }: { skillSections?: any[] }) 
   };
 
   return (
-    <section id="stack-preview" className="py-10 md:py-14 lg:py-16 relative px-5 sm:px-6 md:px-10 lg:px-16">
+    <section id="stack-preview" className="py-4 sm:py-6 md:py-8 relative px-5 sm:px-6 md:px-10 lg:px-16">
 
-      {/* HEADER — unchanged */}
-      <SectionHeader icon={Layers} label="TOOLS & TECHNOLOGIES">
+      {/* HEADER — themed bordered icon + clean heading */}
+      <SectionHeader icon={Layers}>
         <h2 className="text-3xl md:text-4xl lg:text-[40px] font-display font-medium tracking-tight text-foreground leading-[1.15]">
           Tools &amp; Technologies
         </h2>

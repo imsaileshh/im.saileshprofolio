@@ -1,10 +1,28 @@
 'use client';
 
-import { useState, KeyboardEvent, ReactNode, useEffect, useActionState } from 'react';
-import { X, Image as ImageIcon, AlertCircle } from 'lucide-react';
-import { projectStatusLabels, projectTypeLabels, getProjectStatus } from '@/lib/dashboard/projects';
+import { useState, ReactNode, useEffect, useActionState } from 'react';
+import Link from 'next/link';
+import { AlertCircle, BookOpen, Layers, Link as LinkIcon, Image as ImageIcon } from 'lucide-react';
+import { getProjectStatus } from '@/lib/dashboard/projects';
 import { ActionState } from '@/app/dashboard/(protected)/projects/actions';
 import { GalleryInput } from './GalleryInput';
+import { ImageUploader } from '@/components/dashboard/ImageUploader';
+import { TechStackPicker } from '@/components/dashboard/TechStackPicker';
+import { CaseStudyBuilder, CaseStudySectionItem } from './CaseStudyBuilder';
+
+const DEFAULT_CATEGORIES = [
+  'Case Studies',
+  'Web Development',
+  'UI/UX',
+  'Product Design',
+  'Shopify',
+  'E-commerce',
+  'Branding',
+  'Mobile',
+  'SaaS',
+  'Development',
+  'Other',
+];
 
 type ProjectFormProject = {
   id?: string;
@@ -17,11 +35,14 @@ type ProjectFormProject = {
   featured?: boolean;
   published?: boolean;
   archived?: boolean;
+  year?: string | null;
+  client?: string | null;
   liveUrl?: string | null;
   githubUrl?: string | null;
   figmaUrl?: string | null;
   coverImageUrl?: string | null;
   galleryImages?: string[];
+  caseStudy?: any;
   seoTitle?: string | null;
   seoDescription?: string | null;
   ogImage?: string | null;
@@ -38,107 +59,29 @@ function Field({
   name,
   children,
   optional = false,
+  helper,
 }: {
   label: string;
   name: string;
   children: ReactNode;
   optional?: boolean;
+  helper?: string;
 }) {
   return (
     <label className="block text-sm">
       <span className="mb-1.5 flex items-center justify-between font-medium text-zinc-300">
-        {label}
+        <span>{label}</span>
         {optional && <span className="text-xs font-normal text-zinc-500">Optional</span>}
       </span>
       {children}
+      {helper && <p className="mt-1 text-xs text-zinc-500">{helper}</p>}
     </label>
   );
 }
 
-const inputClass = 'h-10 w-full rounded-lg border border-white/10 bg-black/30 px-3 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-[#4F8CFF]';
-const textareaClass = 'min-h-24 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-[#4F8CFF]';
-
-// Tag Input Component
-function TagInput({ name, initialTags = [] }: { name: string; initialTags?: string[] }) {
-  const [tags, setTags] = useState<string[]>(initialTags);
-  const [inputValue, setInputValue] = useState('');
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' || e.key === ',') {
-      e.preventDefault();
-      const newTag = inputValue.trim().replace(/^,|,$/g, '');
-      if (newTag && !tags.includes(newTag)) {
-        setTags([...tags, newTag]);
-      }
-      setInputValue('');
-    }
-  };
-
-  const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter((t) => t !== tagToRemove));
-  };
-
-  return (
-    <div className="space-y-2">
-      <div className="flex flex-wrap gap-2">
-        {tags.map((tag) => (
-          <span key={tag} className="flex items-center gap-1 rounded-md bg-[#4F8CFF]/10 px-2 py-1 text-xs font-medium text-[#4F8CFF] border border-[#4F8CFF]/20">
-            {tag}
-            <button type="button" onClick={() => removeTag(tag)} className="text-[#4F8CFF]/70 hover:text-[#4F8CFF]">
-              <X size={12} />
-            </button>
-          </span>
-        ))}
-      </div>
-      <input
-        type="text"
-        className={inputClass}
-        placeholder="Type and press Enter to add"
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-        onKeyDown={handleKeyDown}
-      />
-      <input type="hidden" name={name} value={tags.join(',')} />
-    </div>
-  );
-}
-
-// Media URL Preview Component
-function MediaUrlInput({ label, name, defaultValue, placeholder }: { label: string; name: string; defaultValue: string; placeholder?: string }) {
-  const [url, setUrl] = useState(defaultValue);
-  const [hasError, setHasError] = useState(false);
-
-  return (
-    <div className="space-y-2">
-      <Field label={label} name={name} optional>
-        <input 
-          className={inputClass} 
-          name={name} 
-          value={url} 
-          onChange={(e) => { setUrl(e.target.value); setHasError(false); }} 
-          placeholder={placeholder || 'https://...'} 
-          type="url" 
-        />
-      </Field>
-      {url && !hasError ? (
-        <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-white/10 bg-black/50">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={url} alt="Preview" className="h-full w-full object-cover" onError={(e) => { e.currentTarget.style.display = 'none'; setHasError(true); }} />
-        </div>
-      ) : url && hasError ? (
-        <div className="flex aspect-video w-full flex-col items-center justify-center rounded-lg border border-dashed border-red-500/30 bg-red-500/5 text-red-400">
-          <AlertCircle size={24} className="mb-2 opacity-50" />
-          <span className="text-xs">Failed to load image</span>
-        </div>
-      ) : (
-        <div className="flex aspect-video w-full flex-col items-center justify-center rounded-lg border border-dashed border-white/10 bg-white/5 text-zinc-500">
-          <ImageIcon size={24} className="mb-2 opacity-50" />
-          <span className="text-xs">No image provided</span>
-        </div>
-      )}
-    </div>
-  );
-}
+const inputClass = 'h-10 w-full rounded-xl border border-white/10 bg-black/40 px-3.5 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-[#4F8CFF] focus:ring-1 focus:ring-[#4F8CFF]/30';
+const selectClass = 'h-10 w-full rounded-xl border border-white/10 bg-[#121316] px-3.5 text-sm text-white outline-none transition focus:border-[#4F8CFF] focus:ring-1 focus:ring-[#4F8CFF]/30';
+const textareaClass = 'min-h-24 w-full rounded-xl border border-white/10 bg-black/40 px-3.5 py-2.5 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-[#4F8CFF] focus:ring-1 focus:ring-[#4F8CFF]/30';
 
 export function ProjectForm({
   project,
@@ -163,6 +106,30 @@ export function ProjectForm({
   const [isDirty, setIsDirty] = useState(false);
   const [title, setTitle] = useState(value(project, 'title'));
   const [slug, setSlug] = useState(value(project, 'slug'));
+  const [coverImageUrl, setCoverImageUrl] = useState(value(project, 'coverImageUrl'));
+  
+  // Progressive Case Study toggle
+  const hasExistingCaseStudy = Boolean(project?.caseStudy);
+  const [enableCaseStudy, setEnableCaseStudy] = useState(hasExistingCaseStudy);
+
+  // Initial sections from database
+  const initialBuilderSections: CaseStudySectionItem[] = (project?.caseStudy?.sections || []).map((sec: any) => ({
+    id: sec.id,
+    title: sec.title,
+    subtitle: sec.metadata?.subtitle || '',
+    type: sec.metadata?.type || 'rich_text',
+    layout: sec.metadata?.layout || 'full_width',
+    content: sec.content || '',
+    media: sec.metadata?.media || (sec.images || []).map((imgUrl: string, idx: number) => ({
+      id: `m-${idx}`,
+      url: imgUrl,
+      type: imgUrl.endsWith('.svg') ? 'svg' : 'image',
+      width: 'full',
+      background: 'transparent',
+    })),
+    stats: sec.metadata?.stats || [],
+    quote: sec.metadata?.quote || undefined,
+  }));
 
   useEffect(() => {
     if (isNew && !showSlug) {
@@ -180,110 +147,163 @@ export function ProjectForm({
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isDirty, isPending]);
 
-  return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-8 lg:flex-row lg:items-start">
-      {/* STICKY SIDE NAVIGATION */}
-      <nav className="hidden w-48 shrink-0 lg:sticky lg:top-24 lg:block">
-        <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-zinc-500">Sections</h3>
-        <div className="flex flex-col gap-2">
-          <a href="#basic" className="text-sm font-medium text-zinc-400 transition hover:text-white">Basic Information</a>
-          <a href="#links" className="text-sm font-medium text-zinc-400 transition hover:text-white">Links</a>
-          <a href="#media" className="text-sm font-medium text-zinc-400 transition hover:text-white">Media</a>
-          <a href="#publishing" className="text-sm font-medium text-zinc-400 transition hover:text-white">Publishing</a>
-          <a href="#seo" className="text-sm font-medium text-zinc-400 transition hover:text-white">SEO</a>
-        </div>
-      </nav>
+  const categoryOptions = Array.from(new Set([...DEFAULT_CATEGORIES, ...categories])).filter(Boolean);
 
-      <form action={formAction} onChange={() => setIsDirty(true)} className="flex-1 space-y-12 pb-24">
-        {project?.id && <input type="hidden" name="id" value={project.id} />}
-      
-      {state.error && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-          {state.error}
+  return (
+    <form action={formAction} onChange={() => setIsDirty(true)} className="mx-auto max-w-4xl space-y-8 pb-28">
+      {project?.id && <input type="hidden" name="id" value={project.id} />}
+      <input type="hidden" name="projectType" value="Client Work" />
+
+      {/* Error Alert */}
+      {state?.error && (
+        <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400 flex items-center gap-2.5 shadow-sm">
+          <AlertCircle size={16} className="shrink-0" />
+          <span>{state.error}</span>
         </div>
       )}
 
-      {/* SECTION 1 - BASIC INFORMATION */}
-      <section id="basic" className="scroll-mt-24 space-y-6 rounded-xl border border-white/5 bg-[#111113] p-6 shadow-xl">
-        <h2 className="text-lg font-semibold text-white">Basic Information</h2>
+      {/* ── 01. BASIC INFO ── */}
+      <section className="space-y-5 rounded-2xl border border-white/[0.08] bg-[#111215] p-6 sm:p-7 shadow-lg">
+        <div className="flex items-center gap-2.5 border-b border-white/[0.06] pb-4">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#4F8CFF]/10 text-[#4F8CFF]">
+            <Layers size={15} />
+          </div>
+          <h2 className="text-base font-semibold text-white tracking-tight">Work Information</h2>
+        </div>
         
-        <div className="space-y-4">
-          <Field label="Project title *" name="title">
-            <input className={inputClass} name="title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Organic E-commerce Platform" required minLength={2} />
+        <div className="space-y-5">
+          {/* Work Title */}
+          <Field label="Work Title *" name="title">
+            <input
+              className={inputClass}
+              name="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. Organic Brand & E-Commerce Platform"
+              required
+              minLength={2}
+            />
           </Field>
           
-          <div className="flex justify-end">
-            {!showSlug && (
-              <button type="button" onClick={() => setShowSlug(true)} className="text-xs font-medium text-[#4F8CFF] hover:underline">
-                Edit slug
-              </button>
+          {/* Slug */}
+          <div className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-zinc-400 font-mono">
+                Slug: <span className="text-zinc-200">/works/{slug || '...'}</span>
+              </span>
+              {!showSlug ? (
+                <button
+                  type="button"
+                  onClick={() => setShowSlug(true)}
+                  className="text-xs font-mono text-[#4F8CFF] hover:underline"
+                >
+                  Edit slug
+                </button>
+              ) : null}
+            </div>
+            {showSlug ? (
+              <Field label="URL Slug *" name="slug">
+                <input
+                  className={inputClass}
+                  name="slug"
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+                  placeholder="organic-brand-ecommerce"
+                  required
+                />
+              </Field>
+            ) : (
+              <input type="hidden" name="slug" value={slug} />
             )}
           </div>
-          {showSlug ? (
-            <Field label="Slug *" name="slug">
-              <input className={inputClass} name="slug" value={slug} onChange={(e) => setSlug(e.target.value)} pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="organic-ecommerce-platform" required />
-            </Field>
-          ) : (
-            <input type="hidden" name="slug" value={slug} />
-          )}
 
-          <Field label="Short description *" name="description">
-            <textarea className={textareaClass} name="description" defaultValue={value(project, 'description')} placeholder="Modern e-commerce experience focused on organic and sustainable products." required minLength={5} />
+          {/* Short Description */}
+          <Field label="Short Description *" name="description">
+            <textarea
+              className={textareaClass}
+              name="description"
+              defaultValue={value(project, 'description')}
+              placeholder="Modern headless e-commerce store with 3D customizer, design system, and fast checkout."
+              required
+              minLength={5}
+              rows={3}
+            />
           </Field>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <Field label="Project type" name="projectType">
-              <select className={inputClass} name="projectType" defaultValue={project?.projectType ?? 'Personal Project'}>
-                {projectTypeLabels.map((type) => <option key={type}>{type}</option>)}
+          {/* Category, Client, Year */}
+          <div className="grid gap-4 sm:grid-cols-3">
+            <Field label="Category *" name="category">
+              <select
+                name="category"
+                defaultValue={value(project, 'category') || 'Web Development'}
+                className={selectClass}
+                required
+              >
+                {categoryOptions.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
               </select>
             </Field>
-            
-            <Field label="Category" name="category">
-              <input list="category-options" className={inputClass} name="category" defaultValue={value(project, 'category')} placeholder="e.g. Mobile App, E-commerce" />
-              <datalist id="category-options">
-                {categories.map((cat) => <option key={cat} value={cat} />)}
-              </datalist>
+
+            <Field label="Client / Organization" name="client" optional>
+              <input
+                className={inputClass}
+                name="client"
+                defaultValue={(project as any)?.client || ''}
+                placeholder="e.g. Acme Corp"
+              />
+            </Field>
+
+            <Field label="Year" name="year">
+              <input
+                className={inputClass}
+                name="year"
+                defaultValue={value(project, 'year') || new Date().getFullYear().toString()}
+                placeholder="2026"
+              />
             </Field>
           </div>
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-zinc-300">Technologies</label>
-            <TagInput name="technologies" initialTags={project?.technologies || []} />
+          {/* Tech Stack */}
+          <div className="pt-2 border-t border-white/[0.04]">
+            <TechStackPicker
+              name="technologies"
+              initialSelected={project?.technologies || []}
+              label="Tech Stack & Tools"
+            />
           </div>
         </div>
       </section>
 
-      {/* SECTION 2 - LINKS */}
-      <section id="links" className="scroll-mt-24 space-y-6 rounded-xl border border-white/5 bg-[#111113] p-6 shadow-xl">
-        <h2 className="text-lg font-semibold text-white">Links</h2>
-        
-        <div className="grid gap-4 md:grid-cols-3">
-          <Field label="Live URL" name="liveUrl" optional>
-            <input className={inputClass} name="liveUrl" defaultValue={value(project, 'liveUrl')} type="url" placeholder="https://" />
-          </Field>
-          <Field label="GitHub URL" name="githubUrl" optional>
-            <input className={inputClass} name="githubUrl" defaultValue={value(project, 'githubUrl')} type="url" placeholder="https://github.com/..." />
-          </Field>
-          <Field label="Figma URL" name="figmaUrl" optional>
-            <input className={inputClass} name="figmaUrl" defaultValue={value(project, 'figmaUrl')} type="url" placeholder="https://figma.com/..." />
-          </Field>
-        </div>
-      </section>
-
-      {/* SECTION 3 - MEDIA */}
-      <section id="media" className="scroll-mt-24 space-y-6 rounded-xl border border-white/5 bg-[#111113] p-6 shadow-xl">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-white">Media</h2>
-          <span className="text-xs text-zinc-500">16:9 aspect ratio recommended</span>
+      {/* ── 02. MEDIA & UPLOADS ── */}
+      <section className="space-y-5 rounded-2xl border border-white/[0.08] bg-[#111215] p-6 sm:p-7 shadow-lg">
+        <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#4F8CFF]/10 text-[#4F8CFF]">
+              <ImageIcon size={15} />
+            </div>
+            <h2 className="text-base font-semibold text-white tracking-tight">Media</h2>
+          </div>
+          <span className="text-xs text-zinc-500 font-mono">16:10 or 16:9 ratio</span>
         </div>
         
-        <div className="grid gap-6 md:grid-cols-2">
-          <MediaUrlInput label="Cover Image URL" name="coverImageUrl" defaultValue={value(project, 'coverImageUrl')} />
+        <div className="space-y-6">
+          <ImageUploader
+            name="coverImageUrl"
+            value={coverImageUrl}
+            onChange={(url) => setCoverImageUrl(url)}
+            label="Cover Image"
+            helperText="Main visual for portfolio grid cards and the project header."
+          />
           
-          <div className="space-y-2">
+          <div className="space-y-2 pt-3 border-t border-white/[0.06]">
             <label className="block text-sm">
               <span className="mb-1.5 flex items-center justify-between font-medium text-zinc-300">
-                Gallery Images (URLs) <span className="text-xs font-normal text-zinc-500">Optional</span>
+                <span>Additional Gallery Screenshots</span>
+                <span className="text-xs font-normal text-zinc-500">Optional</span>
               </span>
             </label>
             <GalleryInput initialUrls={project?.galleryImages || []} />
@@ -291,84 +311,159 @@ export function ProjectForm({
         </div>
       </section>
 
-      {/* SECTION 4 - PUBLISHING */}
-      <section id="publishing" className="scroll-mt-24 space-y-6 rounded-xl border border-white/5 bg-[#111113] p-6 shadow-xl">
-        <h2 className="text-lg font-semibold text-white">Publishing</h2>
-        
-        <div className="grid gap-8 md:grid-cols-2">
-          <div className="space-y-3">
-            <label className="block text-sm font-medium text-zinc-300">Visibility</label>
-            <label className="flex items-center gap-2 text-sm text-zinc-300 cursor-pointer">
-              <input type="checkbox" name="featured" defaultChecked={project?.featured} className="h-4 w-4 rounded border-white/20 bg-black text-[#4F8CFF] focus:ring-[#4F8CFF]" />
-              Featured project
-            </label>
-            <p className="text-xs text-zinc-500">Featured projects appear prominently on the homepage.</p>
+      {/* ── 03. LINKS & PROTOTYPE ── */}
+      <section className="space-y-5 rounded-2xl border border-white/[0.08] bg-[#111215] p-6 sm:p-7 shadow-lg">
+        <div className="flex items-center gap-2.5 border-b border-white/[0.06] pb-4">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-[#4F8CFF]/10 text-[#4F8CFF]">
+            <LinkIcon size={15} />
           </div>
+          <h2 className="text-base font-semibold text-white tracking-tight">Project Links</h2>
+        </div>
+        
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Field label="Live Website" name="liveUrl" optional>
+            <input
+              className={inputClass}
+              name="liveUrl"
+              defaultValue={value(project, 'liveUrl')}
+              type="url"
+              placeholder="https://..."
+            />
+          </Field>
+          <Field label="Prototype / Figma" name="figmaUrl" optional>
+            <input
+              className={inputClass}
+              name="figmaUrl"
+              defaultValue={value(project, 'figmaUrl')}
+              type="url"
+              placeholder="https://figma.com/proto/..."
+            />
+          </Field>
+          <Field label="GitHub / Repository" name="githubUrl" optional>
+            <input
+              className={inputClass}
+              name="githubUrl"
+              defaultValue={value(project, 'githubUrl')}
+              type="url"
+              placeholder="https://github.com/..."
+            />
+          </Field>
         </div>
       </section>
 
-      {/* ADVANCED SETTINGS */}
-      <details id="seo" className="group scroll-mt-24 rounded-xl border border-white/5 bg-[#111113] shadow-xl">
-        <summary className="flex cursor-pointer items-center justify-between p-6 text-lg font-semibold text-white outline-none">
-          Advanced Settings
+      {/* ── 04. OPTIONAL ADVANCED CASE STUDY BUILDER ── */}
+      <section className="space-y-5 rounded-2xl border border-white/[0.08] bg-[#111215] p-6 sm:p-7 shadow-lg">
+        <div className="flex items-center justify-between border-b border-white/[0.06] pb-4">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-400/10 text-emerald-400">
+              <BookOpen size={15} />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold text-white tracking-tight">Case Study Builder</h2>
+              <p className="text-xs text-zinc-400">Optional custom section-by-section breakdown attached to this Work.</p>
+            </div>
+          </div>
+
+          <label className="relative inline-flex items-center gap-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              name="caseStudyEnabled"
+              checked={enableCaseStudy}
+              onChange={(e) => setEnableCaseStudy(e.target.checked)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-zinc-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-500"></div>
+            <span className="text-xs font-mono uppercase tracking-wider text-zinc-300 select-none">
+              {enableCaseStudy ? 'Enabled' : 'Disabled'}
+            </span>
+          </label>
+        </div>
+
+        {/* Visual Section Builder */}
+        {enableCaseStudy ? (
+          <CaseStudyBuilder initialSections={initialBuilderSections} />
+        ) : (
+          <p className="text-xs text-zinc-500 py-1">
+            Toggle on to add custom editorial sections with rich text, vector SVGs, image galleries, and metrics.
+          </p>
+        )}
+      </section>
+
+      {/* ── 05. PUBLISHING & VISIBILITY ── */}
+      <section className="space-y-4 rounded-2xl border border-white/[0.08] bg-[#111215] p-6 sm:p-7 shadow-lg">
+        <h2 className="text-base font-semibold text-white tracking-tight border-b border-white/[0.06] pb-3">
+          Visibility & Home Feature
+        </h2>
+        
+        <label className="flex items-start gap-3 text-sm text-zinc-300 cursor-pointer pt-1">
+          <input
+            type="checkbox"
+            name="featured"
+            defaultChecked={project?.featured}
+            className="mt-0.5 h-4 w-4 rounded border-white/20 bg-black text-[#4F8CFF] focus:ring-[#4F8CFF]"
+          />
+          <div>
+            <span className="font-medium text-white block">Featured Work</span>
+            <span className="text-xs text-zinc-500 block mt-0.5">Showcases this work with priority in the Home page Works collection.</span>
+          </div>
+        </label>
+      </section>
+
+      {/* ── 06. OPTIONAL SEO ACCORDION ── */}
+      <details className="group rounded-2xl border border-white/[0.08] bg-[#111215] shadow-lg">
+        <summary className="flex cursor-pointer items-center justify-between p-6 text-sm font-semibold text-zinc-400 hover:text-white outline-none">
+          <span>SEO & Social Share (Optional)</span>
           <span className="text-zinc-500 transition-transform group-open:rotate-180">▼</span>
         </summary>
-        <div className="space-y-4 border-t border-white/5 p-6 pt-4">
-          <p className="text-xs text-zinc-500 mb-4">SEO fields will default to the project title and description if left blank.</p>
-          <div className="grid gap-4 md:grid-cols-2">
-            <Field label="SEO Title" name="seoTitle" optional><input className={inputClass} name="seoTitle" defaultValue={value(project, 'seoTitle')} /></Field>
-            <Field label="Social/OG Image" name="ogImage" optional><input className={inputClass} name="ogImage" defaultValue={value(project, 'ogImage')} type="url" /></Field>
-            <div className="md:col-span-2">
-              <Field label="SEO Description" name="seoDescription" optional><textarea className={textareaClass} name="seoDescription" defaultValue={value(project, 'seoDescription')} /></Field>
+        <div className="space-y-4 border-t border-white/[0.06] p-6 pt-4">
+          <p className="text-xs text-zinc-500">Defaults to the Work title and description if left blank.</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="SEO Title" name="seoTitle" optional>
+              <input className={inputClass} name="seoTitle" defaultValue={value(project, 'seoTitle')} />
+            </Field>
+            <Field label="Social/OG Image URL" name="ogImage" optional>
+              <input className={inputClass} name="ogImage" defaultValue={value(project, 'ogImage')} type="url" />
+            </Field>
+            <div className="sm:col-span-2">
+              <Field label="SEO Description" name="seoDescription" optional>
+                <textarea className={textareaClass} name="seoDescription" defaultValue={value(project, 'seoDescription')} rows={2} />
+              </Field>
             </div>
           </div>
         </div>
       </details>
 
-      {/* STICKY ACTION BAR */}
-      <div className="sticky bottom-6 z-40 flex items-center justify-end gap-3 rounded-2xl border border-white/10 bg-black/60 p-4 shadow-2xl backdrop-blur-md">
-        <button 
-          type="button" 
-          onClick={() => {
-            if (isDirty && !window.confirm('You have unsaved changes. Leave without saving?')) return;
-            window.history.back();
-          }} 
-          className="rounded-lg px-4 py-2 text-sm font-medium text-zinc-300 transition hover:bg-white/5 hover:text-white"
+      {/* ── 07. STICKY ACTION BAR ── */}
+      <div className="sticky bottom-6 z-40 flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-[#0e0f12]/90 p-4 shadow-2xl backdrop-blur-md">
+        <Link 
+          href="/dashboard/projects"
+          className="rounded-xl px-4 py-2.5 text-sm font-medium text-zinc-400 transition hover:bg-white/5 hover:text-white"
         >
           Cancel
-        </button>
-        {!isNew && status === 'Published' ? (
-          <button 
-            type="submit" 
-            name="action"
-            value="save_changes"
-            disabled={isPending}
-            className="rounded-lg bg-white/10 px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-white/20 disabled:opacity-50"
-          >
-            {isPending ? 'Saving...' : 'Save Changes'}
-          </button>
-        ) : (
+        </Link>
+
+        <div className="flex items-center gap-3">
           <button 
             type="submit" 
             name="action"
             value="save_draft"
             disabled={isPending}
-            className="rounded-lg bg-white/10 px-4 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-white/20 disabled:opacity-50"
+            className="rounded-xl border border-white/10 bg-white/[0.05] px-4 py-2.5 text-sm font-medium text-zinc-200 shadow-sm transition-all hover:bg-white/10 disabled:opacity-50"
           >
             {isPending ? 'Saving...' : 'Save Draft'}
           </button>
-        )}
-        <button 
-          type="submit"
-          name="action"
-          value="publish" 
-          disabled={isPending}
-          className="rounded-lg bg-[#4F8CFF] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#4F8CFF]/20 transition-all hover:bg-[#3B78EB] disabled:opacity-50"
-        >
-          {isPending ? 'Saving...' : (isNew ? 'Create & Publish' : (status === 'Published' ? 'Publish Changes' : 'Publish Project'))}
-        </button>
+          
+          <button 
+            type="submit" 
+            name="action"
+            value="publish" 
+            disabled={isPending}
+            className="rounded-xl bg-[#4F8CFF] px-6 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#4F8CFF]/25 transition-all hover:bg-[#3B78EB] active:scale-[0.98] disabled:opacity-50"
+          >
+            {isPending ? 'Saving...' : (isNew ? 'Publish Work' : (status === 'Published' ? 'Update & Publish' : 'Publish Work'))}
+          </button>
+        </div>
       </div>
     </form>
-    </div>
   );
 }

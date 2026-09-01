@@ -18,112 +18,14 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
   const [isResumeOpen, setIsResumeOpen] = useState(false);
   const [isHireMeOpen, setIsHireMeOpen] = useState(false);
 
-  // true = minimal/narrow, false = maximal/wide
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+  // Clean, stable sidebar state (starts wide / standard or user toggled, NO scroll-down auto opening)
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   const mainPanelRef = useRef<HTMLDivElement>(null);
-  const lastScrollY = useRef(0);
 
-  // Refs for stale-closure-safe priority state
-  const isHoveringRef = useRef(false);
-  const scrollExpandedRef = useRef(false);
-  const hoverLeaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // Gate: intro must finish before hover/scroll take full control
-  const introCompleteRef = useRef(false);
-
-  // ── Priority resolver ────────────────────────────────────────────────────
-  // Hover takes priority over scroll state.
-  const resolveCollapsed = useCallback(() => {
-    if (isHoveringRef.current || scrollExpandedRef.current) {
-      setIsSidebarCollapsed(false);
-    } else {
-      setIsSidebarCollapsed(true);
-    }
-  }, []);
-
-  // ── PAGE-LOAD INTRO ──────────────────────────────────────────────────────
-  // t=0    : MINIMAL (starts collapsed)
-  // t=500ms: MINIMAL → MAXIMAL (demo expansion)
-  // t=3s   : MAXIMAL → MINIMAL (return to rest, unless user is hovering)
-  // t=3s+  : scroll / hover behavior enabled
-  useEffect(() => {
-    const expandTimer = setTimeout(() => {
-      setIsSidebarCollapsed(false); // demo: MINIMAL → MAXIMAL
-
-      const collapseTimer = setTimeout(() => {
-        introCompleteRef.current = true;
-        if (!isHoveringRef.current) {
-          setIsSidebarCollapsed(true); // return: MAXIMAL → MINIMAL
-          scrollExpandedRef.current = false;
-        }
-      }, 2500);
-
-      return () => clearTimeout(collapseTimer);
-    }, 500);
-
-    return () => clearTimeout(expandTimer);
-  }, []);
-
-  // ── HOVER: expand on enter, collapse on leave (200ms debounce) ──────────
-  const handleSidebarMouseEnter = useCallback(() => {
-    if (hoverLeaveTimerRef.current) {
-      clearTimeout(hoverLeaveTimerRef.current);
-      hoverLeaveTimerRef.current = null;
-    }
-    isHoveringRef.current = true;
-    setIsSidebarCollapsed(false);
-  }, []);
-
-  const handleSidebarMouseLeave = useCallback(() => {
-    hoverLeaveTimerRef.current = setTimeout(() => {
-      isHoveringRef.current = false;
-      if (introCompleteRef.current) {
-        resolveCollapsed();
-      }
-    }, 200);
-  }, [resolveCollapsed]);
-
-  // ── SCROLL-DRIVEN expand / collapse ─────────────────────────────────────
-  useEffect(() => {
-    const container = mainPanelRef.current;
-    if (!container) return;
-
-    const handleScroll = () => {
-      if (!introCompleteRef.current) return; // ignore scroll during intro
-
-      const currentY = container.scrollTop;
-      const delta = currentY - lastScrollY.current;
-
-      if (Math.abs(delta) < 3) return; // ignore micro-jitter
-
-      if (delta > 0) {
-        // Scrolling DOWN → MAXIMAL
-        scrollExpandedRef.current = true;
-      } else {
-        // Scrolling UP → MINIMAL
-        scrollExpandedRef.current = false;
-      }
-
-      lastScrollY.current = currentY;
-
-      // Hover still takes priority
-      if (!isHoveringRef.current) {
-        resolveCollapsed();
-      }
-    };
-
-    container.addEventListener('scroll', handleScroll, { passive: true });
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [resolveCollapsed]);
-
-  // ── MANUAL TOGGLE (sidebar buttons) ─────────────────────────────────────
+  // ── MANUAL TOGGLE (sidebar toggle button) ───────────────────────────────
   const handleToggleCollapse = useCallback(() => {
-    setIsSidebarCollapsed((prev) => {
-      const next = !prev;
-      // Sync scroll ref so the manual state "sticks" after hover
-      scrollExpandedRef.current = !next;
-      return next;
-    });
+    setIsSidebarCollapsed((prev) => !prev);
   }, []);
 
   // ── MODAL EVENT BUS ──────────────────────────────────────────────────────
@@ -137,13 +39,10 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (mainPanelRef.current) {
       mainPanelRef.current.scrollTop = 0;
-      lastScrollY.current = 0;
     }
     window.scrollTo({ top: 0, behavior: 'instant' });
     const mobileMain = document.querySelector('[data-mobile-scroll]');
     if (mobileMain) mobileMain.scrollTo({ top: 0, behavior: 'instant' });
-    // Reset scroll expansion state on route change
-    scrollExpandedRef.current = false;
   }, [pathname]);
 
   if (isDashboard) {
@@ -197,21 +96,13 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
         />
       </div>
 
-      {/* Desktop: Floating Island Shell */}
+      {/* Desktop: Steady Sidebar Shell (NO scroll-down auto expansion) */}
       <div className="hidden md:flex h-[100dvh] w-full bg-[var(--bg)] overflow-hidden p-5 lg:p-6 gap-5 lg:gap-6">
 
-        {/* ── FLOATING ISLAND SIDEBAR ── */}
-        <motion.div
-          animate={{ width: isSidebarCollapsed ? 72 : 275 }}
-          transition={{
-            type: 'spring',
-            stiffness: 320,
-            damping: 32,
-            mass: 0.85,
-          }}
-          className="shrink-0 h-full relative z-40"
-          onMouseEnter={handleSidebarMouseEnter}
-          onMouseLeave={handleSidebarMouseLeave}
+        {/* ── SIDEBAR ── */}
+        <div
+          style={{ width: isSidebarCollapsed ? 72 : 275 }}
+          className="shrink-0 h-full relative z-40 transition-[width] duration-300 ease-in-out"
         >
           <Sidebar
             isCollapsed={isSidebarCollapsed}
@@ -219,7 +110,7 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
             onOpenResume={() => setIsResumeOpen(true)}
             onOpenHireMe={() => setIsHireMeOpen(true)}
           />
-        </motion.div>
+        </div>
 
         {/* Main Content Area */}
         <main className="flex-1 min-w-0 min-h-0 h-full flex flex-col overflow-hidden relative">

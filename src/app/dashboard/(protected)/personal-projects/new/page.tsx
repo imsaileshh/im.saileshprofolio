@@ -1,10 +1,21 @@
+import { prisma } from '@/lib/database/prisma';
 import { PersonalProjectForm } from '@/components/dashboard/personal-projects/PersonalProjectForm';
 
 export const metadata = {
   title: 'Add Personal Project | CMS Dashboard',
 };
 
-export default function NewPersonalProjectPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function NewPersonalProjectPage() {
+  const featuredCount = await prisma.project.count({
+    where: {
+      projectType: { in: ['Personal Project', 'Open Source'] },
+      featured: true,
+      archived: false,
+    },
+  });
+
   return (
     <main className="space-y-6">
       <header className="border-b border-white/5 pb-5">
@@ -16,7 +27,7 @@ export default function NewPersonalProjectPage() {
         </p>
       </header>
 
-      <PersonalProjectForm />
+      <PersonalProjectForm featuredCount={featuredCount} />
     </main>
   );
 }

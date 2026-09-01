@@ -1,11 +1,8 @@
 import Link from 'next/link';
-import { Archive, CheckCircle2, FileText, FolderGit2, Search, Star, Trash2 } from 'lucide-react';
-import { ConfirmSubmitButton } from '@/components/dashboard/ConfirmSubmitButton';
+import { FolderGit2, Plus, Search, CheckCircle2, FileText, Star } from 'lucide-react';
 import { ProjectRows } from '@/components/dashboard/projects/ProjectRows';
-import { TaxonomyManager } from '@/components/dashboard/projects/TaxonomyManager';
 import { ProjectSearchForm } from '@/components/dashboard/projects/ProjectSearchForm';
-import { bulkProjectAction } from './actions';
-import { getDashboardProjects, projectStatusLabels } from '@/lib/dashboard/projects';
+import { getDashboardProjects } from '@/lib/dashboard/projects';
 import { pickParam } from '@/lib/dashboard/data';
 import { projectListQuerySchema } from '@/lib/validation/schemas';
 
@@ -26,16 +23,6 @@ function queryHref(params: Record<string, string | undefined>, updates: Record<s
   return `/dashboard/projects?${query.toString()}`;
 }
 
-function statCards(stats: Awaited<ReturnType<typeof getDashboardProjects>>['stats']) {
-  return [
-    { label: 'Total Projects', value: stats.total, icon: FolderGit2 },
-    { label: 'Published', value: stats.published, icon: CheckCircle2 },
-    { label: 'Drafts', value: stats.drafts, icon: FileText },
-    { label: 'Case Studies', value: stats.caseStudies, icon: FileText },
-    { label: 'Featured', value: stats.featured, icon: Star },
-  ];
-}
-
 export default async function DashboardProjectsPage({ searchParams }: PageProps) {
   const resolvedParams = (await searchParams) ?? {};
   const parsed = projectListQuerySchema.parse({
@@ -49,6 +36,7 @@ export default async function DashboardProjectsPage({ searchParams }: PageProps)
     year: pickParam(resolvedParams, 'year'),
     sort: pickParam(resolvedParams, 'sort'),
   });
+
   const data = await getDashboardProjects(parsed);
   const currentParams = {
     search: parsed.search,
@@ -63,83 +51,124 @@ export default async function DashboardProjectsPage({ searchParams }: PageProps)
   const saved = pickParam(resolvedParams, 'saved');
 
   return (
-    <main className="space-y-6">
+    <main className="space-y-6 max-w-7xl mx-auto">
+      {/* Alert banner if saved */}
       {saved ? (
-        <div className="rounded-lg border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">
-          Project {saved} successfully.
+        <div className="rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-200">
+          Work {saved} successfully.
         </div>
       ) : null}
 
-      <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      {/* Header & Primary CTA */}
+      <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-white">Works</h1>
-          <p className="mt-1 text-sm text-zinc-400">Manage curated portfolio works and case studies.</p>
+          <p className="mt-0.5 text-sm text-zinc-400">
+            Curate and manage client deliverables, production websites, and case studies.
+          </p>
         </div>
-        <Link href="/dashboard/projects/new" className="rounded-lg bg-[#4F8CFF] px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-[#4F8CFF]/20 transition-all hover:bg-[#3B78EB]">
-          + Add Work
+        <Link
+          href="/dashboard/projects/new"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#4F8CFF] px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#4F8CFF]/20 transition-all hover:bg-[#3B78EB] active:scale-[0.98]"
+        >
+          <Plus size={16} />
+          <span>Add Work</span>
         </Link>
       </header>
 
-      <section className="grid grid-cols-2 gap-3 xl:grid-cols-5">
-        {statCards(data.stats).map((item) => (
-          <div key={item.label} className="rounded-lg border border-white/10 bg-[#111113] p-3">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-[10px] uppercase tracking-wider text-zinc-500">{item.label}</p>
-              <item.icon className="h-3.5 w-3.5 text-[#4F8CFF]/80" />
-            </div>
-            <p className="mt-2 text-xl font-bold text-white">{item.value}</p>
+      {/* Simple Summary Metrics */}
+      <section className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="rounded-xl border border-white/[0.08] bg-[#111215] p-3.5 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">Total Works</p>
+            <p className="mt-1 text-xl font-bold text-white">{data.stats.total}</p>
           </div>
-        ))}
+          <FolderGit2 className="h-5 w-5 text-zinc-600" />
+        </div>
+
+        <div className="rounded-xl border border-white/[0.08] bg-[#111215] p-3.5 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">Published</p>
+            <p className="mt-1 text-xl font-bold text-emerald-400">{data.stats.published}</p>
+          </div>
+          <CheckCircle2 className="h-5 w-5 text-emerald-500/40" />
+        </div>
+
+        <div className="rounded-xl border border-white/[0.08] bg-[#111215] p-3.5 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">Drafts</p>
+            <p className="mt-1 text-xl font-bold text-amber-400">{data.stats.drafts}</p>
+          </div>
+          <FileText className="h-5 w-5 text-amber-500/40" />
+        </div>
+
+        <div className="rounded-xl border border-white/[0.08] bg-[#111215] p-3.5 flex items-center justify-between">
+          <div>
+            <p className="text-[11px] font-mono uppercase tracking-wider text-zinc-500">Featured on Home</p>
+            <p className="mt-1 text-xl font-bold text-[#4F8CFF]">{data.stats.featured}</p>
+          </div>
+          <Star className="h-5 w-5 text-[#4F8CFF]/40" />
+        </div>
       </section>
 
-      <section className="rounded-lg border border-white/10 bg-[#111113] p-2">
+      {/* Search & Filter bar */}
+      <section className="rounded-xl border border-white/[0.08] bg-[#111215] p-2">
         <ProjectSearchForm initialSearch={parsed.search} initialView={parsed.view} />
       </section>
 
-      <section className="rounded-lg border border-white/10 bg-[#111113]">
-        {data.projects.length ? (
-          <ProjectRows projects={data.projects} />
-        ) : (
-          <div className="flex min-h-72 flex-col items-center justify-center gap-3 px-4 text-center">
-            <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
-              <FolderGit2 className="h-8 w-8 text-[#4F8CFF]" />
-            </div>
-            <div>
-              <h2 className="text-lg font-semibold text-white">No projects found</h2>
-              <p className="mt-1 text-sm text-zinc-500 mb-4">
-                {data.stats.total === 0 
-                  ? "Add your first project to showcase your work, case studies, and technical experience." 
-                  : "No projects match your current search filters."}
-              </p>
-              {data.stats.total === 0 && (
-                <Link href="/dashboard/projects/new" className="inline-flex h-10 items-center justify-center rounded-lg bg-[#4F8CFF] px-4 text-sm font-semibold text-white shadow-lg shadow-[#4F8CFF]/20 transition-all hover:bg-[#3B78EB]">
-                  + Add Project
-                </Link>
-              )}
-            </div>
+      {/* Works Listing */}
+      {data.projects.length > 0 ? (
+        <ProjectRows projects={data.projects} />
+      ) : (
+        <div className="flex min-h-64 flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-white/10 bg-[#111215] p-8 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.03] text-zinc-500">
+            <FolderGit2 size={24} />
           </div>
-        )}
-      </section>
-
-      <footer className="flex flex-col gap-3 text-sm text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
-        <span>
-          Showing {data.pagination.from}-{data.pagination.to} of {data.pagination.total} projects
-        </span>
-        <div className="flex flex-wrap items-center gap-2">
-          <form>
-            {Object.entries(currentParams).map(([key, value]) => key !== 'limit' && value ? <input key={key} type="hidden" name={key} value={value} /> : null)}
-            <select name="limit" defaultValue={parsed.limit} className="h-9 rounded border border-white/10 bg-black/30 px-2 text-xs text-white">
-              {[12, 24, 48, 100].map((size) => <option key={size} value={size}>{size} / page</option>)}
-            </select>
-            <button className="ml-2 h-9 rounded border border-white/10 px-3 text-xs text-zinc-200 hover:bg-white/10">Apply</button>
-          </form>
-          <Link className="rounded border border-white/10 px-3 py-2 hover:bg-white/10" href={queryHref(currentParams, { page: Math.max(1, data.pagination.page - 1) })}>Previous</Link>
-          <span>Page {data.pagination.page} of {data.pagination.pageCount}</span>
-          <Link className="rounded border border-white/10 px-3 py-2 hover:bg-white/10" href={queryHref(currentParams, { page: Math.min(data.pagination.pageCount, data.pagination.page + 1) })}>Next</Link>
+          <div>
+            <h2 className="text-base font-semibold text-white">No works found</h2>
+            <p className="mt-1 text-xs text-zinc-500 max-w-sm">
+              {data.stats.total === 0
+                ? 'Create your first professional work to showcase on your portfolio.'
+                : 'No works match the active search or category filters.'}
+            </p>
+          </div>
+          {data.stats.total === 0 && (
+            <Link
+              href="/dashboard/projects/new"
+              className="mt-2 inline-flex items-center gap-2 rounded-xl bg-[#4F8CFF] px-4 py-2 text-xs font-semibold text-white transition-all hover:bg-[#3B78EB]"
+            >
+              <Plus size={14} />
+              <span>Create Work</span>
+            </Link>
+          )}
         </div>
-      </footer>
+      )}
 
-      <TaxonomyManager taxonomies={data.taxonomies} />
+      {/* Pagination Footer */}
+      {data.pagination.pageCount > 1 && (
+        <footer className="flex flex-col gap-3 text-xs text-zinc-500 sm:flex-row sm:items-center sm:justify-between pt-2">
+          <span>
+            Showing {data.pagination.from}-{data.pagination.to} of {data.pagination.total} works
+          </span>
+          <div className="flex items-center gap-2">
+            <Link
+              className="rounded-lg border border-white/10 px-3 py-1.5 hover:bg-white/10 text-zinc-300 transition-colors"
+              href={queryHref(currentParams, { page: Math.max(1, data.pagination.page - 1) })}
+            >
+              Previous
+            </Link>
+            <span className="font-mono">
+              {data.pagination.page} / {data.pagination.pageCount}
+            </span>
+            <Link
+              className="rounded-lg border border-white/10 px-3 py-1.5 hover:bg-white/10 text-zinc-300 transition-colors"
+              href={queryHref(currentParams, { page: Math.min(data.pagination.pageCount, data.pagination.page + 1) })}
+            >
+              Next
+            </Link>
+          </div>
+        </footer>
+      )}
     </main>
   );
 }

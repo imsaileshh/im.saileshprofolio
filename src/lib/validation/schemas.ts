@@ -13,11 +13,43 @@ export const allowedAnalyticsEventTypes = [
   'scroll_depth',
 ] as const;
 
+export function sanitizeUrlInput(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.trim();
+  if (!trimmed || trimmed === 'https://' || trimmed === 'http://') return undefined;
+
+  // Local assets, relative paths, SVGs, uploads, data URLs
+  if (trimmed.startsWith('/') || trimmed.startsWith('data:') || trimmed.startsWith('blob:')) {
+    return trimmed;
+  }
+
+  // Prepend https:// if user omitted protocol (e.g. github.com/user/repo, mywebsite.com)
+  if (!/^https?:\/\//i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+
+  return trimmed;
+}
+
+export const flexibleUrlSchema = z.preprocess(
+  sanitizeUrlInput,
+  z.string().max(2000).refine((val) => {
+    if (!val) return true;
+    if (val.startsWith('/') || val.startsWith('data:') || val.startsWith('blob:')) return true;
+    try {
+      new URL(val);
+      return true;
+    } catch {
+      return false;
+    }
+  }, 'Please enter a valid URL or path.').nullable().optional()
+);
+
 const analyticsMetadataSchema = z
   .object({
     projectId: z.string().min(1).max(120).optional(),
     projectSlug: z.string().min(1).max(160).optional(),
-    href: z.string().url().max(500).optional(),
+    href: flexibleUrlSchema,
     label: z.string().min(1).max(120).optional(),
     referrer: z.string().max(500).optional(),
     scrollDepth: z.number().int().min(0).max(100).optional(),
@@ -76,13 +108,8 @@ export const projectStatusSchema = z.preprocess(
 );
 
 export const projectTypeSchema = z.preprocess(
-  (val) => (val === null || val === undefined || val === '' ? 'Personal Project' : val),
-  z.enum([
-    'Case Study',
-    'Client Work',
-    'Personal Project',
-    'Open Source',
-  ])
+  (val) => (val === null || val === undefined || val === '' ? 'Client Work' : val),
+  z.string().trim().max(80)
 );
 export const projectTaxonomyTypeSchema = z.enum(['category', 'technology', 'tag']);
 
@@ -92,10 +119,7 @@ const optionalText = (max = 4000) =>
     z.string().trim().max(max).nullable().optional(),
   );
 
-const optionalUrl = z.preprocess(
-  (value) => (typeof value === 'string' && value.trim() === '' ? undefined : value),
-  z.string().trim().url().max(500).nullable().optional(),
-);
+const optionalUrl = flexibleUrlSchema;
 
 const stringListSchema = z.preprocess((value) => {
   if (Array.isArray(value)) return value;
@@ -162,7 +186,7 @@ export const projectMutationSchema = z.object({
   ),
   description: z.string().trim().min(5).max(500),
   longText: optionalText(12000),
-  projectType: projectTypeSchema.default('Personal Project'),
+  projectType: projectTypeSchema.default('Client Work'),
   category: optionalText(120),
   tags: stringListSchema,
   technologies: stringListSchema,
@@ -180,11 +204,23 @@ export const projectMutationSchema = z.object({
   coverImageUrl: optionalUrl,
   thumbnailUrl: optionalUrl,
   galleryImages: z.preprocess((value) => {
-    if (Array.isArray(value)) return value;
-    if (typeof value === 'string') return value.split('\n').map((item) => item.trim()).filter(Boolean);
+    if (Array.isArray(value)) return value.map((v) => sanitizeUrlInput(v)).filter(Boolean);
+    if (typeof value === 'string') {
+      return value
+        .split('\n')
+        .map((item) => sanitizeUrlInput(item.trim()))
+        .filter(Boolean);
+    }
     return [];
-  }, z.array(z.string().trim().url().max(500)).max(20).default([])),
+  }, z.array(z.string().max(2000)).max(30).default([])),
   demoVideoUrl: optionalUrl,
+  caseStudyEnabled: checkboxBooleanSchema.optional().default(false),
+  caseStudySectionsData: optionalText(50000),
+  caseStudyOverview: optionalText(5000),
+  caseStudyProblem: optionalText(5000),
+  caseStudyProcess: optionalText(5000),
+  caseStudySolution: optionalText(5000),
+  caseStudyResults: optionalText(5000),
   seoTitle: optionalText(180),
   seoDescription: optionalText(300),
   seoKeywords: stringListSchema,
@@ -198,8 +234,8 @@ export const projectMutationSchema = z.object({
     if (!data.slug) {
       ctx.addIssue({ code: 'custom', path: ['slug'], message: 'Slug is required to publish.' });
     }
-    if (!data.description || data.description.length < 10 || data.description.length > 160) {
-      ctx.addIssue({ code: 'custom', path: ['description'], message: 'Short description must be between 10 and 160 characters to publish.' });
+    if (!data.description || data.description.length < 5 || data.description.length > 500) {
+      ctx.addIssue({ code: 'custom', path: ['description'], message: 'Short description must be between 5 and 500 characters to publish.' });
     }
     if (!data.coverImageUrl) {
       ctx.addIssue({ code: 'custom', path: ['coverImageUrl'], message: 'Cover Image is required to publish.' });
@@ -304,16 +340,16 @@ export const caseStudySectionSchema = z.object({
   id: z.string().optional(),
   title: z.string().trim().min(1).max(160),
   content: optionalText(60000),
-  images: z.array(z.string().url()).optional().default([]), // Kept for backwards compatibility / simple storing
+  images: z.array(z.string()).optional().default([]),
   metadata: z.object({
     media: z.array(z.object({
-      url: z.string().url(),
+      url: z.string(),
       type: z.enum(['image', 'pdf', 'svg']),
-      size: z.enum(['full', 'half', 'original']),
+      size: z.enum(['full', 'half', 'original']).optional(),
     })).optional(),
-    layout: z.string().optional(), // Kept for backwards compatibility but unused now
+    layout: z.string().optional(),
     sourcePage: z.number().int().optional(),
-    visualNotes: z.any().optional()
+    visualNotes: z.any().optional(),
   }).optional(),
 });
 

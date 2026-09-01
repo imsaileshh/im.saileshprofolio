@@ -10,7 +10,7 @@ export const navigation = [
   },
   {
     label: "Works",
-    href: "/projects",
+    href: "/works",
     icon: Folder
   },
   {

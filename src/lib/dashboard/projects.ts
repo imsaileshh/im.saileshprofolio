@@ -270,13 +270,24 @@ function whereForQuery(query: ProjectQuery, fields: ProjectFieldSet): Prisma.Pro
     ].filter(Boolean) as Prisma.ProjectWhereInput[];
   }
 
+  // Works CMS views must not leak Personal Projects
   if (query.view === 'caseStudies') {
     where.caseStudy = { isNot: null };
+    where.NOT = [{ projectType: 'Personal Project' }, { projectType: 'Open Source' }];
+  } else if (query.view === 'featured') {
+    where.featured = true;
+    where.NOT = [{ projectType: 'Personal Project' }, { projectType: 'Open Source' }];
+  } else if (query.view === 'clientWork' && hasProjectField(fields, 'projectType')) {
+    where.projectType = 'Client Work';
+  } else if (query.view === 'personalProjects' && hasProjectField(fields, 'projectType')) {
+    where.projectType = 'Personal Project';
+  } else if (query.view === 'openSource' && hasProjectField(fields, 'projectType')) {
+    where.projectType = 'Open Source';
+  } else {
+    // Default works listing excludes personal projects
+    where.NOT = [{ projectType: 'Personal Project' }, { projectType: 'Open Source' }];
   }
-  if (query.view === 'featured') where.featured = true;
-  if (query.view === 'clientWork' && hasProjectField(fields, 'projectType')) where.projectType = 'Client Work';
-  if (query.view === 'personalProjects' && hasProjectField(fields, 'projectType')) where.projectType = 'Personal Project';
-  if (query.view === 'openSource' && hasProjectField(fields, 'projectType')) where.projectType = 'Open Source';
+
   if (query.category) where.category = query.category;
   if (query.technology) where.technologies = { has: query.technology };
   if (query.year) where.year = query.year;
@@ -366,9 +377,55 @@ export async function getDashboardProjects(query: ProjectQuery) {
 }
 
 export async function getProjectForEdit(id: string) {
-  const project = await prisma.project.findUnique({ where: { id }, include: { images: { orderBy: { order: 'asc' } } } });
+  const project = await prisma.project.findUnique({
+    where: { id },
+    include: {
+      images: { orderBy: { order: 'asc' } },
+      caseStudy: { include: { sections: { orderBy: { order: 'asc' } } } },
+    },
+  });
   if (!project) notFound();
-  return normalizeProjectForDashboard(project);
+  return {
+    ...normalizeProjectForDashboard(project),
+    caseStudy: project.caseStudy,
+  };
+}
+
+function parseCaseStudySections(rawJson?: string | null) {
+  if (!rawJson) return null;
+  try {
+    const parsed = JSON.parse(rawJson);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed.map((item: any, index: number) => {
+        const title = (item.title || `Section ${index + 1}`).trim();
+        const cleanSlug = slugifyProject(title) || `sec-${index + 1}`;
+        const content = item.content || '';
+        const mediaItems = Array.isArray(item.media) ? item.media : [];
+        const imageUrls = mediaItems.map((m: any) => m.url).filter(Boolean);
+
+        return {
+          title,
+          slug: `${cleanSlug}-${index + 1}`,
+          order: index,
+          content,
+          images: imageUrls,
+          metadata: {
+            subtitle: item.subtitle || '',
+            type: item.type || 'rich_text',
+            layout: item.layout || 'full_width',
+            blocks: Array.isArray(item.blocks) ? item.blocks : [],
+            media: mediaItems,
+            stats: item.stats || [],
+            quote: item.quote || null,
+            settings: item.settings || {},
+          },
+        };
+      });
+    }
+  } catch (e) {
+    console.error('Failed to parse caseStudySectionsData', e);
+  }
+  return null;
 }
 
 export async function createProjectRecord(input: ProjectInput) {
@@ -377,13 +434,41 @@ export async function createProjectRecord(input: ProjectInput) {
   const data = supportedProjectWriteData({ ...input, slug }, projectFields);
   const images = projectImages(input);
 
-  return prisma.project.create({
+  const project = await prisma.project.create({
     data: {
       ...data,
       ...(images.length ? { images: { create: images } } : {}),
     } as Prisma.ProjectCreateInput,
     include: { images: true },
   });
+
+  // If Case Study is enabled, create the associated CaseStudy record
+  if (input.caseStudyEnabled) {
+    const csStatus = input.status === 'Published' ? 'PUBLISHED' : 'DRAFT';
+    const dynamicSections = parseCaseStudySections((input as any).caseStudySectionsData);
+
+    await prisma.caseStudy.create({
+      data: {
+        projectId: project.id,
+        title: input.title,
+        slug: slug,
+        description: input.caseStudyOverview || input.description,
+        coverImage: input.coverImageUrl,
+        status: csStatus as any,
+        sections: {
+          create: dynamicSections || [
+            ...(input.caseStudyOverview ? [{ title: 'Overview', slug: 'overview', order: 0, content: input.caseStudyOverview }] : []),
+            ...(input.caseStudyProblem ? [{ title: 'Challenge', slug: 'challenge', order: 1, content: input.caseStudyProblem }] : []),
+            ...(input.caseStudyProcess ? [{ title: 'Process', slug: 'process', order: 2, content: input.caseStudyProcess }] : []),
+            ...(input.caseStudySolution ? [{ title: 'Solution', slug: 'solution', order: 3, content: input.caseStudySolution }] : []),
+            ...(input.caseStudyResults ? [{ title: 'Results', slug: 'results', order: 4, content: input.caseStudyResults }] : []),
+          ],
+        },
+      },
+    });
+  }
+
+  return project;
 }
 
 export async function updateProjectRecord(id: string, input: ProjectInput) {
@@ -392,7 +477,7 @@ export async function updateProjectRecord(id: string, input: ProjectInput) {
   const data = supportedProjectWriteData({ ...input, slug }, projectFields);
   const images = projectImages(input);
 
-  return prisma.project.update({
+  const project = await prisma.project.update({
     where: { id },
     data: {
       ...data,
@@ -401,8 +486,71 @@ export async function updateProjectRecord(id: string, input: ProjectInput) {
         ...(images.length ? { create: images } : {}),
       },
     } as Prisma.ProjectUpdateInput,
-    include: { images: true },
+    include: { images: true, caseStudy: true },
   });
+
+  // Upsert or delete associated CaseStudy
+  if (input.caseStudyEnabled) {
+    const csStatus = input.status === 'Published' ? 'PUBLISHED' : 'DRAFT';
+    const existingCs = await prisma.caseStudy.findUnique({ where: { projectId: id } });
+    const dynamicSections = parseCaseStudySections((input as any).caseStudySectionsData);
+
+    if (existingCs) {
+      await prisma.caseStudy.update({
+        where: { id: existingCs.id },
+        data: {
+          title: input.title,
+          slug,
+          description: input.caseStudyOverview || input.description,
+          coverImage: input.coverImageUrl,
+          status: csStatus as any,
+        },
+      });
+
+      // Sync sections
+      await prisma.caseStudySection.deleteMany({ where: { caseStudyId: existingCs.id } });
+      if (dynamicSections && dynamicSections.length > 0) {
+        await prisma.caseStudySection.createMany({
+          data: dynamicSections.map((sec) => ({
+            ...sec,
+            caseStudyId: existingCs.id,
+          })),
+        });
+      } else if (input.caseStudyOverview || input.caseStudyProblem || input.caseStudyProcess || input.caseStudySolution || input.caseStudyResults) {
+        await prisma.caseStudySection.createMany({
+          data: [
+            ...(input.caseStudyOverview ? [{ caseStudyId: existingCs.id, title: 'Overview', slug: 'overview', order: 0, content: input.caseStudyOverview }] : []),
+            ...(input.caseStudyProblem ? [{ caseStudyId: existingCs.id, title: 'Challenge', slug: 'challenge', order: 1, content: input.caseStudyProblem }] : []),
+            ...(input.caseStudyProcess ? [{ caseStudyId: existingCs.id, title: 'Process', slug: 'process', order: 2, content: input.caseStudyProcess }] : []),
+            ...(input.caseStudySolution ? [{ caseStudyId: existingCs.id, title: 'Solution', slug: 'solution', order: 3, content: input.caseStudySolution }] : []),
+            ...(input.caseStudyResults ? [{ caseStudyId: existingCs.id, title: 'Results', slug: 'results', order: 4, content: input.caseStudyResults }] : []),
+          ],
+        });
+      }
+    } else {
+      await prisma.caseStudy.create({
+        data: {
+          projectId: id,
+          title: input.title,
+          slug,
+          description: input.caseStudyOverview || input.description,
+          coverImage: input.coverImageUrl,
+          status: csStatus as any,
+          sections: {
+            create: dynamicSections || [
+              ...(input.caseStudyOverview ? [{ title: 'Overview', slug: 'overview', order: 0, content: input.caseStudyOverview }] : []),
+              ...(input.caseStudyProblem ? [{ title: 'Challenge', slug: 'challenge', order: 1, content: input.caseStudyProblem }] : []),
+              ...(input.caseStudyProcess ? [{ title: 'Process', slug: 'process', order: 2, content: input.caseStudyProcess }] : []),
+              ...(input.caseStudySolution ? [{ title: 'Solution', slug: 'solution', order: 3, content: input.caseStudySolution }] : []),
+              ...(input.caseStudyResults ? [{ title: 'Results', slug: 'results', order: 4, content: input.caseStudyResults }] : []),
+            ],
+          },
+        },
+      });
+    }
+  }
+
+  return project;
 }
 
 export async function duplicateProjectRecord(id: string) {

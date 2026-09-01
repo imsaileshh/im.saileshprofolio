@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Archive, Copy, Eye, FileText, MoreHorizontal, Pencil, Star, Trash2, FolderGit2 } from 'lucide-react';
+import { Archive, Copy, Eye, MoreHorizontal, Pencil, Star, Trash2, FolderGit2, BookOpen, ExternalLink } from 'lucide-react';
 import { ConfirmSubmitButton } from '@/components/dashboard/ConfirmSubmitButton';
 import { getProjectStatus } from '@/lib/dashboard/projects';
 import {
@@ -46,44 +46,73 @@ function ProjectActions({ project }: { project: ProjectRow }) {
   const nextFeaturedAction = project.featured ? 'removeFeatured' : 'markFeatured';
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Link href={`/dashboard/projects/${project.id}/edit`} className="inline-flex items-center gap-1 rounded border border-white/10 px-2.5 py-1.5 text-xs text-zinc-200 hover:bg-white/10">
-        <Pencil size={14} /> Edit
+    <div className="flex items-center gap-1.5 justify-end">
+      <Link
+        href={`/dashboard/projects/${project.id}/edit`}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-zinc-200 hover:bg-white/10 hover:text-white transition-colors"
+      >
+        <Pencil size={13} />
+        <span>Edit</span>
       </Link>
-      <Link href={`/dashboard/projects/${project.id}/case-study`} className={`inline-flex items-center gap-1 rounded border px-2.5 py-1.5 text-xs ${project.caseStudy ? 'border-emerald-400/30 text-emerald-300 hover:bg-emerald-400/10' : 'border-white/10 text-zinc-200 hover:bg-white/10'}`}>
-        <FileText size={14} /> Case Study {project.caseStudy ? '✓' : ''}
+
+      <Link
+        href={`/works/${project.slug}`}
+        target="_blank"
+        className="inline-flex items-center gap-1 rounded-lg border border-white/10 bg-white/[0.03] px-2.5 py-1.5 text-xs font-medium text-zinc-400 hover:bg-white/10 hover:text-zinc-200 transition-colors"
+        title="View public page"
+      >
+        <Eye size={13} />
       </Link>
-      <Link href={`/projects/${project.slug}`} target="_blank" className="inline-flex items-center gap-1 rounded border border-white/10 px-2.5 py-1.5 text-xs text-zinc-200 hover:bg-white/10">
-        <Eye size={14} /> Preview
-      </Link>
+
       <details className="relative">
-        <summary className="flex h-8 w-8 cursor-pointer list-none items-center justify-center rounded border border-white/10 text-zinc-300 hover:bg-white/10" aria-label="More project actions">
-          <MoreHorizontal size={16} />
+        <summary
+          className="flex h-8 w-8 cursor-pointer list-none items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-zinc-400 hover:bg-white/10 hover:text-white transition-colors"
+          aria-label="More project actions"
+        >
+          <MoreHorizontal size={15} />
         </summary>
-        <div className="absolute right-0 z-20 mt-2 w-48 rounded-lg border border-white/10 bg-zinc-950 p-2 shadow-xl">
+        <div className="absolute right-0 z-30 mt-2 w-44 rounded-xl border border-white/10 bg-[#121316] p-1.5 shadow-2xl">
           <form action={duplicateProjectAction}>
             <input type="hidden" name="id" value={project.id} />
-            <button className="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs text-zinc-200 hover:bg-white/10"><Copy size={14} /> Duplicate</button>
-          </form>
-          <form action={quickProjectAction}>
-            <input type="hidden" name="id" value={project.id} />
-            <button name="action" value={nextFeaturedAction} className="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs text-zinc-200 hover:bg-white/10">
-              <Star size={14} /> {project.featured ? 'Remove Featured' : 'Mark Featured'}
+            <button className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs text-zinc-300 hover:bg-white/10 hover:text-white transition-colors">
+              <Copy size={13} /> Duplicate
             </button>
           </form>
+          
           <form action={quickProjectAction}>
             <input type="hidden" name="id" value={project.id} />
-            <button name="action" value={project.published ? 'unpublish' : 'publish'} className="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs text-zinc-200 hover:bg-white/10">
-              <FileText size={14} /> {project.published ? 'Unpublish' : 'Publish'}
+            <button
+              name="action"
+              value={nextFeaturedAction}
+              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs text-zinc-300 hover:bg-white/10 hover:text-white transition-colors"
+            >
+              <Star size={13} className={project.featured ? 'text-amber-400 fill-amber-400' : ''} />
+              {project.featured ? 'Unfeature' : 'Feature on Home'}
             </button>
           </form>
+
           <form action={quickProjectAction}>
             <input type="hidden" name="id" value={project.id} />
-            <ConfirmSubmitButton name="action" value="archive" message="Archive this project?" className="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs text-zinc-200 hover:bg-white/10"><Archive size={14} /> Archive</ConfirmSubmitButton>
+            <button
+              name="action"
+              value={project.published ? 'unpublish' : 'publish'}
+              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs text-zinc-300 hover:bg-white/10 hover:text-white transition-colors"
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${project.published ? 'bg-amber-400' : 'bg-emerald-400'}`} />
+              {project.published ? 'Unpublish to Draft' : 'Publish'}
+            </button>
           </form>
+
+          <div className="my-1 border-t border-white/[0.06]" />
+
           <form action={deleteProjectAction}>
             <input type="hidden" name="id" value={project.id} />
-            <ConfirmSubmitButton message="Delete this project permanently?" className="flex w-full items-center gap-2 rounded px-3 py-2 text-left text-xs text-red-200 hover:bg-red-500/10"><Trash2 size={14} /> Delete</ConfirmSubmitButton>
+            <ConfirmSubmitButton
+              message="Delete this work permanently?"
+              className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-left text-xs text-red-400 hover:bg-red-500/10 transition-colors"
+            >
+              <Trash2 size={13} /> Delete Work
+            </ConfirmSubmitButton>
           </form>
         </div>
       </details>
@@ -105,82 +134,145 @@ export function ProjectRows({ projects }: { projects: ProjectRow[] }) {
     if (selectedIds.size === projects.length) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(projects.map(p => p.id)));
+      setSelectedIds(new Set(projects.map((p) => p.id)));
     }
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col">
+      {/* Bulk action toolbar if selected */}
       {selectedIds.size > 0 && (
-        <form action={bulkProjectAction} className="sticky top-0 z-30 flex flex-col gap-3 rounded-lg border border-[#4F8CFF]/30 bg-[#4F8CFF]/10 p-4 shadow-xl backdrop-blur-md xl:flex-row xl:items-center xl:justify-between">
-          {Array.from(selectedIds).map(id => (
+        <form action={bulkProjectAction} className="sticky top-0 z-30 mb-4 flex flex-col gap-3 rounded-xl border border-[#4F8CFF]/30 bg-[#4F8CFF]/10 p-3.5 shadow-xl backdrop-blur-md sm:flex-row sm:items-center sm:justify-between">
+          {Array.from(selectedIds).map((id) => (
             <input key={id} type="hidden" name="ids" value={id} />
           ))}
-          <div>
-            <p className="text-sm font-semibold text-[#4F8CFF]">{selectedIds.size} project{selectedIds.size !== 1 ? 's' : ''} selected</p>
-            <p className="text-xs text-[#4F8CFF]/80">Choose an action to apply to all selected projects.</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <button name="action" value="publish" className="rounded bg-[#4F8CFF]/20 px-3 py-2 text-xs font-medium text-[#4F8CFF] hover:bg-[#4F8CFF]/30">Publish</button>
-            <button name="action" value="unpublish" className="rounded bg-[#4F8CFF]/20 px-3 py-2 text-xs font-medium text-[#4F8CFF] hover:bg-[#4F8CFF]/30">Unpublish</button>
-            <ConfirmSubmitButton name="action" value="archive" message={`Archive ${selectedIds.size} selected projects?`} className="inline-flex items-center gap-1.5 rounded bg-zinc-500/20 px-3 py-2 text-xs font-medium text-zinc-300 hover:bg-zinc-500/30"><Archive size={14} /> Archive</ConfirmSubmitButton>
-            <button name="action" value="markFeatured" className="rounded bg-[#4F8CFF]/20 px-3 py-2 text-xs font-medium text-[#4F8CFF] hover:bg-[#4F8CFF]/30">Mark Featured</button>
-            <button name="action" value="removeFeatured" className="rounded bg-[#4F8CFF]/20 px-3 py-2 text-xs font-medium text-[#4F8CFF] hover:bg-[#4F8CFF]/30">Remove Featured</button>
-            <ConfirmSubmitButton name="action" value="delete" message={`Delete ${selectedIds.size} selected projects permanently? This cannot be undone.`} className="inline-flex items-center gap-1.5 rounded bg-red-500/20 px-3 py-2 text-xs font-medium text-red-400 hover:bg-red-500/30"><Trash2 size={14} /> Delete</ConfirmSubmitButton>
+          <p className="text-xs font-semibold text-[#4F8CFF]">
+            {selectedIds.size} work{selectedIds.size !== 1 ? 's' : ''} selected
+          </p>
+          <div className="flex flex-wrap items-center gap-2">
+            <button name="action" value="publish" className="rounded-lg bg-[#4F8CFF]/20 px-3 py-1.5 text-xs font-medium text-[#4F8CFF] hover:bg-[#4F8CFF]/30">Publish</button>
+            <button name="action" value="unpublish" className="rounded-lg bg-white/10 px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-white/20">Unpublish</button>
+            <ConfirmSubmitButton name="action" value="delete" message={`Delete ${selectedIds.size} selected works?`} className="rounded-lg bg-red-500/20 px-3 py-1.5 text-xs font-medium text-red-400 hover:bg-red-500/30">Delete</ConfirmSubmitButton>
           </div>
         </form>
       )}
 
-      <div className="hidden overflow-x-auto rounded-lg border border-white/10 bg-[#111113] lg:block">
-        <table className="min-w-full divide-y divide-white/10 text-sm">
-          <thead className="bg-white/[0.03] text-left text-xs uppercase tracking-wide text-zinc-500">
+      {/* Modern Clean Works List (Desktop & Tablet) */}
+      <div className="hidden lg:block overflow-hidden rounded-2xl border border-white/[0.08] bg-[#111215]">
+        <table className="min-w-full divide-y divide-white/[0.06] text-sm">
+          <thead className="bg-white/[0.02] text-left text-[11px] font-mono uppercase tracking-wider text-zinc-500">
             <tr>
-              <th className="px-4 py-3"><input type="checkbox" className="h-4 w-4 rounded border-white/20 bg-black" checked={selectedIds.size === projects.length && projects.length > 0} onChange={toggleAll} /></th>
-              <th className="px-4 py-3">Project</th>
-              <th className="px-4 py-3">Category</th>
-              <th className="px-4 py-3">Type</th>
-              <th className="px-4 py-3">Technologies</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Featured</th>
-              <th className="px-4 py-3">Updated</th>
-              <th className="px-4 py-3">Actions</th>
+              <th className="w-12 px-4 py-3.5">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-white/20 bg-black text-[#4F8CFF] focus:ring-0"
+                  checked={selectedIds.size === projects.length && projects.length > 0}
+                  onChange={toggleAll}
+                />
+              </th>
+              <th className="px-4 py-3.5">Work</th>
+              <th className="px-4 py-3.5">Category</th>
+              <th className="px-4 py-3.5">Status</th>
+              <th className="px-4 py-3.5">Featured</th>
+              <th className="px-4 py-3.5">Updated</th>
+              <th className="px-4 py-3.5 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/10">
+          <tbody className="divide-y divide-white/[0.04]">
             {projects.map((project) => {
               const status = getProjectStatus(project);
               const cover = coverForProject(project);
+              const formattedDate = new Date(project.updatedAt).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+              });
+
               return (
-                <tr key={project.id} className={`align-top transition-colors ${selectedIds.has(project.id) ? 'bg-white/5' : ''}`}>
-                  <td className="px-4 py-4"><input type="checkbox" checked={selectedIds.has(project.id)} onChange={() => toggleSelection(project.id)} className="h-4 w-4 rounded border-white/20 bg-black text-[#4F8CFF] focus:ring-[#4F8CFF]" /></td>
-                  <td className="min-w-80 px-4 py-4">
-                    <div className="flex gap-3">
-                      <div className="relative h-14 w-20 overflow-hidden rounded border border-white/10 bg-black/30 flex items-center justify-center">
-                        {cover ? <Image src={cover} alt={project.title} fill className="object-cover" /> : <FolderGit2 className="h-6 w-6 text-zinc-600" />}
+                <tr
+                  key={project.id}
+                  className={`transition-colors hover:bg-white/[0.02] ${
+                    selectedIds.has(project.id) ? 'bg-[#4F8CFF]/5' : ''
+                  }`}
+                >
+                  {/* Select */}
+                  <td className="px-4 py-3.5">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(project.id)}
+                      onChange={() => toggleSelection(project.id)}
+                      className="h-4 w-4 rounded border-white/20 bg-black text-[#4F8CFF] focus:ring-0"
+                    />
+                  </td>
+
+                  {/* Work Name & Thumbnail */}
+                  <td className="min-w-[300px] px-4 py-3.5">
+                    <div className="flex items-center gap-3.5">
+                      <div className="relative h-12 w-16 shrink-0 overflow-hidden rounded-lg border border-white/[0.08] bg-black/40">
+                        {cover ? (
+                          <Image src={cover} alt={project.title} fill className="object-cover" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-zinc-600">
+                            <FolderGit2 size={16} />
+                          </div>
+                        )}
                       </div>
-                      <div>
-                        <p className="font-semibold text-white">{project.title}</p>
-                        <p className="mt-1 line-clamp-1 max-w-[280px] text-xs text-zinc-500" title={project.description}>{project.description}</p>
-                        <div className="mt-2 flex flex-wrap gap-1">
-                          {project.tags.slice(0, 3).map((tag) => <span key={tag} className="rounded bg-white/5 px-2 py-0.5 text-[11px] text-zinc-400">{tag}</span>)}
+                      <div className="space-y-0.5 overflow-hidden">
+                        <div className="flex items-center gap-2">
+                          <Link
+                            href={`/dashboard/projects/${project.id}/edit`}
+                            className="font-medium text-white hover:text-[#4F8CFF] transition-colors truncate block"
+                          >
+                            {project.title}
+                          </Link>
+                          {project.caseStudy && (
+                            <span className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-[10px] font-mono font-medium text-emerald-400 bg-emerald-400/10 border border-emerald-400/20 shrink-0">
+                              <BookOpen size={10} /> Case Study
+                            </span>
+                          )}
                         </div>
+                        <p className="truncate text-xs text-zinc-500 max-w-sm">
+                          {project.description}
+                        </p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-4">{project.category ?? 'Uncategorized'}</td>
-                  <td className="px-4 py-4">
-                    <span className="rounded bg-white/5 px-2 py-1 text-xs font-medium text-zinc-400 border border-white/10">{project.projectType}</span>
+
+                  {/* Category */}
+                  <td className="px-4 py-3.5">
+                    <span className="inline-flex rounded-lg bg-white/[0.04] border border-white/[0.06] px-2.5 py-1 text-xs text-zinc-300 font-mono">
+                      {project.category || 'Website'}
+                    </span>
                   </td>
-                  <td className="max-w-52 px-4 py-4">
-                    <div className="flex flex-wrap gap-1">
-                      {project.technologies.slice(0, 3).map((tech) => <span key={tech} className="rounded border border-white/10 bg-white/[0.02] px-2 py-0.5 text-[11px] text-zinc-300">{tech}</span>)}
-                      {project.technologies.length > 3 && <span className="rounded border border-white/10 bg-white/[0.02] px-2 py-0.5 text-[11px] text-zinc-500">+{project.technologies.length - 3}</span>}
-                    </div>
+
+                  {/* Status */}
+                  <td className="px-4 py-3.5">
+                    <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${statusTone(status)}`}>
+                      {status}
+                    </span>
                   </td>
-                  <td className="px-4 py-4"><span className={`inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-xs font-medium ${statusTone(status)}`}>{status}</span></td>
-                  <td className="px-4 py-4">{project.featured ? <span className="inline-flex items-center gap-1 rounded-full border border-[#4F8CFF]/30 bg-[#4F8CFF]/10 px-2 py-0.5 text-[11px] font-medium text-[#9DBDFF]"><Star size={10} className="fill-current" /> Featured</span> : <span className="text-xs text-zinc-600">-</span>}</td>
-                  <td className="whitespace-nowrap px-4 py-4 text-xs text-zinc-400">{project.updatedAt.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
-                  <td className="px-4 py-4"><ProjectActions project={project} /></td>
+
+                  {/* Featured */}
+                  <td className="px-4 py-3.5">
+                    {project.featured ? (
+                      <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-400">
+                        <Star size={12} className="fill-amber-400" />
+                        <span>Home</span>
+                      </span>
+                    ) : (
+                      <span className="text-zinc-600 font-mono text-xs">—</span>
+                    )}
+                  </td>
+
+                  {/* Updated */}
+                  <td className="px-4 py-3.5 text-xs text-zinc-500 font-mono">
+                    {formattedDate}
+                  </td>
+
+                  {/* Actions */}
+                  <td className="px-4 py-3.5 text-right">
+                    <ProjectActions project={project} />
+                  </td>
                 </tr>
               );
             })}
@@ -188,34 +280,50 @@ export function ProjectRows({ projects }: { projects: ProjectRow[] }) {
         </table>
       </div>
 
+      {/* Mobile Card List View */}
       <div className="grid gap-3 lg:hidden">
         {projects.map((project) => {
           const status = getProjectStatus(project);
           const cover = coverForProject(project);
+
           return (
-            <article key={project.id} className={`rounded-lg border transition-colors p-4 ${selectedIds.has(project.id) ? 'border-[#4F8CFF]/30 bg-[#4F8CFF]/5' : 'border-white/10 bg-[#111113]'}`}>
+            <div
+              key={project.id}
+              className="rounded-2xl border border-white/[0.08] bg-[#111215] p-4 space-y-3"
+            >
               <div className="flex gap-3">
-                <input type="checkbox" checked={selectedIds.has(project.id)} onChange={() => toggleSelection(project.id)} className="mt-1 h-4 w-4 rounded border-white/20 bg-black text-[#4F8CFF]" />
-                <div className="relative h-16 w-20 shrink-0 overflow-hidden rounded border border-white/10 bg-black/30 flex items-center justify-center">
-                  {cover ? <Image src={cover} alt={project.title} fill className="object-cover" /> : <FolderGit2 className="h-6 w-6 text-zinc-600" />}
+                <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-xl border border-white/[0.08] bg-black/40">
+                  {cover ? (
+                    <Image src={cover} alt={project.title} fill className="object-cover" />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center text-zinc-600">
+                      <FolderGit2 size={18} />
+                    </div>
+                  )}
                 </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="truncate text-sm font-semibold text-white">{project.title}</h3>
-                    <span className={`inline-flex items-center justify-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${statusTone(status)}`}>{status}</span>
-                    {project.featured ? <span className="inline-flex items-center gap-1 rounded-full border border-[#4F8CFF]/30 bg-[#4F8CFF]/10 px-2 py-0.5 text-[10px] font-medium text-[#9DBDFF]"><Star size={8} className="fill-current" /> Featured</span> : null}
+
+                <div className="flex-1 min-w-0 space-y-1">
+                  <div className="flex items-center justify-between gap-2">
+                    <h3 className="font-semibold text-white truncate text-sm">
+                      {project.title}
+                    </h3>
+                    <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium shrink-0 ${statusTone(status)}`}>
+                      {status}
+                    </span>
                   </div>
-                  <p className="mt-1 line-clamp-1 text-xs text-zinc-500" title={project.description}>{project.description}</p>
-                  <p className="mt-2 text-xs text-zinc-400">{project.category ?? 'Uncategorized'} · <span className="font-medium">{project.projectType}</span></p>
+                  <p className="text-xs text-zinc-500 line-clamp-2">
+                    {project.description}
+                  </p>
                 </div>
               </div>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {project.technologies.slice(0, 4).map((tech) => <span key={tech} className="rounded border border-white/10 px-2 py-0.5 text-[11px] text-zinc-300">{tech}</span>)}
-              </div>
-              <div className="mt-4">
+
+              <div className="flex items-center justify-between pt-2 border-t border-white/[0.06] text-xs">
+                <span className="font-mono text-zinc-400 text-[11px]">
+                  {project.category || 'Website'}
+                </span>
                 <ProjectActions project={project} />
               </div>
-            </article>
+            </div>
           );
         })}
       </div>

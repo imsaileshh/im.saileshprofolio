@@ -3,7 +3,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { User, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
-import { SectionHeader } from '@/components/ui/SectionHeader';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -18,7 +17,6 @@ export function AboutSection({ aboutContent }: { aboutContent?: any }) {
   const shouldReduceMotion = useReducedMotion();
 
   const content = aboutContent || {
-    eyebrow: 'ABOUT ME',
     heading: 'Design. Build. Ship.',
     role: 'Frontend Developer & UI/UX Designer',
     paragraph:
@@ -33,17 +31,17 @@ export function AboutSection({ aboutContent }: { aboutContent?: any }) {
       opacity: 1,
       transition: {
         staggerChildren: shouldReduceMotion ? 0 : 0.08,
-        delayChildren: 0.05,
+        delayChildren: 0.04,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 12 },
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 10 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.45, ease },
+      transition: { duration: 0.4, ease },
     },
   };
 
@@ -53,92 +51,110 @@ export function AboutSection({ aboutContent }: { aboutContent?: any }) {
       opacity: 1,
       transition: {
         staggerChildren: shouldReduceMotion ? 0 : 0.08,
-        delayChildren: 0.12,
+        delayChildren: 0.08,
       },
     },
   };
 
   const listItemVariants = {
-    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 14 },
+    hidden: { opacity: 0, y: shouldReduceMotion ? 0 : 10 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.45, ease },
+      transition: { duration: 0.4, ease },
     },
   };
 
   return (
     <section
       id="about-preview"
-      className="py-10 md:py-14 lg:py-16 relative px-5 sm:px-6 md:px-10 lg:px-16"
+      className="py-4 sm:py-6 md:py-8 relative px-5 sm:px-6 md:px-10 lg:px-16"
     >
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 xl:gap-16 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 xl:gap-14 items-start">
         
-        {/* ── LEFT: Primary About Introduction (Col 1-7) ── */}
+        {/* ── LEFT COLUMN (Col 1–7: ~58%) ── */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          className="lg:col-span-7 flex flex-col justify-between"
+          className="lg:col-span-7 flex flex-col items-start text-left"
         >
-          <div>
-            <SectionHeader icon={User} label={content.eyebrow} className="!mb-5">
-              <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[46px] font-display font-medium tracking-tight text-foreground leading-[1.12] mb-4">
-                {content.heading}
-              </h2>
+          {/* Section Eyebrow + Icon Header */}
+          <motion.div variants={itemVariants} className="flex items-center gap-3.5 sm:gap-4 mb-3">
+            <div className="flex items-center justify-center w-11 h-11 sm:w-12 sm:h-12 rounded-[14px] sm:rounded-2xl bg-[var(--card)] border border-border-subtle text-accent shadow-xs shrink-0">
+              <User size={21} strokeWidth={2} className="text-accent" />
+            </div>
+            <h2 className="text-3xl sm:text-4xl md:text-[42px] lg:text-[46px] font-display font-semibold tracking-tight text-foreground leading-[1.1]">
+              About Me
+            </h2>
+          </motion.div>
 
-              <p className="text-[13px] md:text-[14px] font-mono tracking-wide text-accent font-medium uppercase mb-3.5">
-                {content.role}
-              </p>
+          {/* Subheading: Design. Build. Ship. */}
+          <motion.h3
+            variants={itemVariants}
+            className="text-xl sm:text-2xl md:text-[28px] lg:text-[32px] font-display font-semibold text-foreground tracking-tight mb-2 leading-[1.2]"
+          >
+            {content.heading || 'Design. Build. Ship.'}
+          </motion.h3>
 
-              <p className="text-[15px] md:text-[16px] text-muted leading-[1.68] font-normal max-w-[520px]">
-                {content.paragraph}
-              </p>
-            </SectionHeader>
-          </div>
+          {/* Role Label */}
+          <motion.p
+            variants={itemVariants}
+            className="text-xs sm:text-sm md:text-[14px] font-mono tracking-widest text-accent font-semibold uppercase mb-3"
+          >
+            {content.role}
+          </motion.p>
+
+          {/* Paragraph */}
+          <motion.p
+            variants={itemVariants}
+            className="text-[15px] sm:text-base md:text-[17px] lg:text-[18px] text-muted leading-[1.7] font-normal max-w-[560px] mb-5"
+          >
+            {content.paragraph}
+          </motion.p>
 
           {/* Connected CTA Link */}
-          <motion.div variants={itemVariants} className="pt-2">
+          <motion.div variants={itemVariants}>
             <Link
               href={content.ctaLink}
-              className="inline-flex items-center gap-2 text-[14px] font-medium text-foreground hover:text-accent transition-colors duration-200 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm py-0.5"
+              className="inline-flex items-center gap-2 text-sm sm:text-base font-medium text-foreground hover:text-accent transition-colors duration-200 group focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-sm py-0.5"
             >
               <span className="border-b border-border-subtle group-hover:border-accent transition-colors duration-200 pb-0.5">
                 {content.ctaText}
               </span>
               <ArrowUpRight
-                size={15}
+                size={16}
                 className="text-muted group-hover:text-accent group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all duration-200"
               />
             </Link>
           </motion.div>
         </motion.div>
 
-        {/* ── RIGHT: Minimal 4-Item Role List (Col 8-12) ── */}
+        {/* ── RIGHT COLUMN: Editorial 4-Role Index (Col 8–12: ~42%) ── */}
         <motion.div
           variants={listContainerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
-          className="lg:col-span-5 flex flex-col w-full gap-5 sm:gap-6 pt-2 lg:pt-1"
+          className="lg:col-span-5 flex flex-col w-full lg:pt-2 space-y-3.5 sm:space-y-4 lg:space-y-5"
         >
           {ROLES.map((role) => (
             <motion.div
               key={role.number}
               variants={listItemVariants}
               tabIndex={0}
-              className="group py-1 flex flex-col cursor-default focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded-sm"
+              className="group flex items-baseline cursor-default focus:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded-sm py-0.5"
             >
-              {/* Role Row */}
-              <div className="flex items-baseline gap-4 sm:gap-6">
-                <span className="text-[12px] sm:text-[13px] font-mono tracking-widest text-muted/50 group-hover:text-accent transition-colors duration-200 shrink-0">
-                  {role.number}
-                </span>
-                <h3 className="text-lg sm:text-xl md:text-[22px] lg:text-[24px] font-display font-medium text-foreground tracking-tight uppercase leading-none transition-all duration-200 group-hover:text-accent group-hover:translate-x-1.5">
-                  {role.title}
-                </h3>
-              </div>
+              {/* Column 1: Aligned Two-Digit Number */}
+              <span className="w-9 sm:w-11 text-xs sm:text-sm md:text-[14px] font-mono font-medium tracking-widest text-muted/60 group-hover:text-accent transition-colors duration-200 shrink-0 tabular-nums">
+                {role.number}
+              </span>
+
+              {/* Column 2: Aligned Role Title */}
+              <h3 className="text-lg sm:text-xl md:text-[24px] lg:text-[26px] xl:text-[28px] font-display font-semibold text-foreground tracking-tight uppercase leading-tight transition-all duration-200 group-hover:text-accent group-hover:translate-x-1.5">
+                {role.title}
+              </h3>
             </motion.div>
           ))}
         </motion.div>

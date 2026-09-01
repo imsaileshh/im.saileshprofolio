@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 import { prisma } from '@/lib/database/prisma';
 import { SectionReveal, StaggerContainer, StaggerItem } from '@/components/ui/SectionReveal';
+import { WORK_WHERE_CLAUSE } from '@/lib/constants/project-types';
 
 export const metadata = {
   title: 'Projects | Sailesh P',
@@ -12,10 +13,15 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function ProjectsPage() {
+  // WORKS ONLY — Personal Projects must never appear here
   const projects = await prisma.project.findMany({
-    where: { published: true, archived: false },
+    where: {
+      published: true,
+      archived: false,
+      ...WORK_WHERE_CLAUSE,
+    },
     include: { images: { orderBy: { order: 'asc' } } },
-    orderBy: { orderIndex: 'asc' },
+    orderBy: [{ featured: 'desc' }, { orderIndex: 'asc' }],
   });
 
   const categories = [
@@ -54,13 +60,13 @@ export default async function ProjectsPage() {
 
       <div className="flex flex-col gap-16 md:gap-24 lg:gap-32">
         {projects.map((project, idx) => {
-          const coverUrl = project.images.find((image) => image.isCover)?.url ?? project.images[0]?.url ?? `/images/projects/project${(idx % 4) + 1}.svg`;
+          const coverUrl = project.images.find((image) => image.isCover)?.url ?? project.images[0]?.url ?? project.coverImageUrl ?? `/images/projects/project${(idx % 4) + 1}.svg`;
           const category = project.category ?? project.technologies[0] ?? 'Project';
           const year = project.year ?? project.createdAt.getFullYear().toString();
 
           return (
             <SectionReveal key={project.id || idx}>
-              <Link href={`/projects/${project.slug}`} className="group flex flex-col md:flex-row gap-6 md:gap-10 lg:gap-16 items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-3xl">
+              <Link href={`/works/${project.slug}`} className="group flex flex-col md:flex-row gap-6 md:gap-10 lg:gap-16 items-center focus:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-3xl">
                 
                 {/* Left Side: Image */}
                 <div className="w-full md:w-3/5 lg:w-[60%] shrink-0">

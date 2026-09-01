@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { prisma } from '@/lib/database/prisma';
 import { PersonalProjectCard } from '@/components/dashboard/personal-projects/PersonalProjectCard';
+import { PERSONAL_PROJECT_WHERE_CLAUSE } from '@/lib/constants/project-types';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,7 +25,7 @@ export default async function PersonalProjectsDashboardPage({
   // Fetch only Personal Projects & Open Source (completely separate from Works)
   const projects = await prisma.project.findMany({
     where: {
-      projectType: { in: ['Personal Project', 'Open Source'] },
+      ...PERSONAL_PROJECT_WHERE_CLAUSE,
       archived: false,
     },
     include: { images: { orderBy: { order: 'asc' } } },

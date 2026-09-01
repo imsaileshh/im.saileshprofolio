@@ -63,6 +63,7 @@ function projectPayload(formData: FormData) {
     galleryImages: optionalString(formData.get('galleryImages')),
     demoVideoUrl: optionalString(formData.get('demoVideoUrl')),
     caseStudyEnabled: checked(formData, 'caseStudyEnabled'),
+    caseStudySectionsData: optionalString(formData.get('caseStudySectionsData')),
     caseStudyOverview: optionalString(formData.get('caseStudyOverview')),
     caseStudyProblem: optionalString(formData.get('caseStudyProblem')),
     caseStudyGoals: optionalString(formData.get('caseStudyGoals')),

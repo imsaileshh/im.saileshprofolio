@@ -32,6 +32,44 @@ function parseTechnologies(value: FormDataEntryValue | null): string[] {
 function revalidatePersonalProjects() {
   revalidatePath('/dashboard/personal-projects');
   revalidatePath('/personal-projects');
+  revalidatePath('/');
+}
+
+function parseStorySections(rawJson?: string | null) {
+  if (!rawJson) return null;
+  try {
+    const parsed = JSON.parse(rawJson);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed.map((item: any, index: number) => {
+        const title = (item.title || `Section ${index + 1}`).trim();
+        const cleanSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '') || `sec-${index + 1}`;
+        const content = item.content || '';
+        const mediaItems = Array.isArray(item.media) ? item.media : [];
+        const imageUrls = mediaItems.map((m: any) => m.url).filter(Boolean);
+
+        return {
+          title,
+          slug: `${cleanSlug}-${index + 1}`,
+          order: index,
+          content,
+          images: imageUrls,
+          metadata: {
+            subtitle: item.subtitle || '',
+            type: item.type || 'rich_text',
+            layout: item.layout || 'full_width',
+            blocks: Array.isArray(item.blocks) ? item.blocks : [],
+            media: mediaItems,
+            stats: item.stats || [],
+            quote: item.quote || null,
+            settings: item.settings || {},
+          },
+        };
+      });
+    }
+  } catch (e) {
+    console.error('Failed to parse caseStudySectionsData', e);
+  }
+  return null;
 }
 
 export async function createPersonalProjectAction(
@@ -56,22 +94,17 @@ export async function createPersonalProjectAction(
         .replace(/(^-|-$)+/g, '');
     }
 
-    const category = optionalString(formData.get('category')) ?? 'Personal Project';
+    const category = optionalString(formData.get('category')) ?? 'CLI / DevTool';
+    const role = optionalString(formData.get('role')) ?? 'Completed';
     const year = optionalString(formData.get('year')) ?? new Date().getFullYear().toString();
     const technologies = parseTechnologies(formData.get('technologies'));
     const liveUrl = optionalString(formData.get('liveUrl'));
     const githubUrl = optionalString(formData.get('githubUrl'));
     const coverImageUrl = optionalString(formData.get('coverImageUrl'));
     const featured = checked(formData, 'featured');
-    
-    // Status resolution based on submit action or select
-    const submitAction = formData.get('action');
-    let published = true;
-    if (submitAction === 'save_draft') {
-      published = false;
-    } else if (formData.get('status') === 'Draft') {
-      published = false;
-    }
+    const published = checked(formData, 'published');
+    const caseStudyEnabled = checked(formData, 'caseStudyEnabled');
+    const dynamicSections = parseStorySections(optionalString(formData.get('caseStudySectionsData')));
 
     const created = await prisma.project.create({
       data: {
@@ -80,14 +113,16 @@ export async function createPersonalProjectAction(
         description,
         projectType: 'Personal Project',
         category,
+        role,
         year,
         technologies,
         liveUrl,
         githubUrl,
+        coverImageUrl,
         featured,
         published,
         archived: false,
-        showOnHomepage: false, // Keep independent from main Works homepage showcase
+        showOnHomepage: false,
         publishedAt: published ? new Date() : null,
         images: coverImageUrl
           ? {
@@ -102,6 +137,22 @@ export async function createPersonalProjectAction(
           : undefined,
       },
     });
+
+    if (caseStudyEnabled && dynamicSections && dynamicSections.length > 0) {
+      await prisma.caseStudy.create({
+        data: {
+          projectId: created.id,
+          title,
+          slug,
+          description,
+          coverImage: coverImageUrl,
+          status: published ? 'PUBLISHED' : 'DRAFT',
+          sections: {
+            create: dynamicSections,
+          },
+        },
+      });
+    }
 
     revalidatePersonalProjects();
     redirect('/dashboard/personal-projects?saved=created');
@@ -140,21 +191,17 @@ export async function updatePersonalProjectAction(
         .replace(/(^-|-$)+/g, '');
     }
 
-    const category = optionalString(formData.get('category')) ?? 'Personal Project';
+    const category = optionalString(formData.get('category')) ?? 'CLI / DevTool';
+    const role = optionalString(formData.get('role')) ?? 'Completed';
     const year = optionalString(formData.get('year')) ?? new Date().getFullYear().toString();
     const technologies = parseTechnologies(formData.get('technologies'));
     const liveUrl = optionalString(formData.get('liveUrl'));
     const githubUrl = optionalString(formData.get('githubUrl'));
     const coverImageUrl = optionalString(formData.get('coverImageUrl'));
     const featured = checked(formData, 'featured');
-    
-    const submitAction = formData.get('action');
-    let published = true;
-    if (submitAction === 'save_draft') {
-      published = false;
-    } else if (formData.get('status') === 'Draft') {
-      published = false;
-    }
+    const published = checked(formData, 'published');
+    const caseStudyEnabled = checked(formData, 'caseStudyEnabled');
+    const dynamicSections = parseStorySections(optionalString(formData.get('caseStudySectionsData')));
 
     await prisma.project.update({
       where: { id },
@@ -164,10 +211,12 @@ export async function updatePersonalProjectAction(
         description,
         projectType: 'Personal Project',
         category,
+        role,
         year,
         technologies,
         liveUrl,
         githubUrl,
+        coverImageUrl,
         featured,
         published,
         archived: false,
@@ -177,7 +226,6 @@ export async function updatePersonalProjectAction(
     });
 
     if (coverImageUrl) {
-      // Upsert cover image
       await prisma.projectImage.deleteMany({ where: { projectId: id, isCover: true } });
       await prisma.projectImage.create({
         data: {
@@ -187,6 +235,50 @@ export async function updatePersonalProjectAction(
           order: 0,
         },
       });
+    }
+
+    // Upsert or remove Project Story
+    if (caseStudyEnabled) {
+      const existingCs = await prisma.caseStudy.findUnique({ where: { projectId: id } });
+      if (existingCs) {
+        await prisma.caseStudy.update({
+          where: { id: existingCs.id },
+          data: {
+            title,
+            slug,
+            description,
+            coverImage: coverImageUrl,
+            status: published ? 'PUBLISHED' : 'DRAFT',
+          },
+        });
+
+        if (dynamicSections && dynamicSections.length > 0) {
+          await prisma.caseStudySection.deleteMany({ where: { caseStudyId: existingCs.id } });
+          await prisma.caseStudySection.createMany({
+            data: dynamicSections.map((sec) => ({
+              ...sec,
+              caseStudyId: existingCs.id,
+            })),
+          });
+        }
+      } else if (dynamicSections && dynamicSections.length > 0) {
+        await prisma.caseStudy.create({
+          data: {
+            projectId: id,
+            title,
+            slug,
+            description,
+            coverImage: coverImageUrl,
+            status: published ? 'PUBLISHED' : 'DRAFT',
+            sections: {
+              create: dynamicSections,
+            },
+          },
+        });
+      }
+    } else {
+      // If disabled, remove existing case study for clean state
+      await prisma.caseStudy.deleteMany({ where: { projectId: id } });
     }
 
     revalidatePersonalProjects();
