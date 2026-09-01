@@ -9,56 +9,56 @@ const currentYear = new Date().getFullYear();
 
 export function MobileFooter() {
   return (
-    <footer className="mt-10 px-5 pb-[calc(88px+env(safe-area-inset-bottom,0px))] pt-10 border-t border-[var(--border)]">
+    <footer className="mt-8 sm:mt-12 md:mt-16 px-5 sm:px-6 md:px-10 lg:px-16 pt-10 sm:pt-12 pb-[calc(90px+env(safe-area-inset-bottom,0px))] md:pb-16 lg:pb-20 flex flex-col items-center text-center w-full relative">
 
-      {/* Wordmark */}
+      {/* ── Top Subtle Divider Line Above Footer ── */}
+      <div className="w-full h-px bg-border-subtle/50 mb-10 sm:mb-12" />
+
+      {/* ── 01. Brand Wordmark ── */}
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-        className="flex flex-col items-center mb-8"
-      >
-        <span className="font-display text-[22px] font-semibold tracking-tight text-[var(--text)]">
-          Sailesh<span className="text-[var(--accent)]">.</span>
-        </span>
-        <p className="text-[10px] font-mono tracking-[0.18em] text-[var(--muted)] uppercase mt-1">
-          UI/UX Designer │ Product Designer
-        </p>
-      </motion.div>
-
-      {/* Nav links */}
-      <motion.nav
         initial={{ opacity: 0, y: 12 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.5, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-        className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 mb-8"
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="mb-7"
+      >
+        <span className="font-display text-[20px] sm:text-[22px] font-bold tracking-[0.22em] text-foreground uppercase">
+          SAILESH P<span className="text-accent">.</span>
+        </span>
+      </motion.div>
+
+      {/* ── 02. Navigation Menu Links ── */}
+      <motion.nav
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.5, delay: 0.06, ease: [0.22, 1, 0.36, 1] }}
+        className="flex flex-wrap items-center justify-center gap-x-6 sm:gap-x-8 gap-y-2.5 mb-8 max-w-xl"
       >
         {navigation.map((item) => (
           <Link
             key={item.href}
             href={item.href}
-            className="text-[12px] font-medium text-[var(--muted)] hover:text-[var(--text)] transition-colors duration-200 uppercase tracking-[0.1em]"
+            className="text-[11px] sm:text-[11.5px] font-mono tracking-[0.16em] uppercase text-muted hover:text-accent transition-colors duration-200"
           >
             {item.label}
           </Link>
         ))}
         <Link
           href="/hire"
-          className="text-[12px] font-medium text-[var(--muted)] hover:text-[var(--accent)] transition-colors duration-200 uppercase tracking-[0.1em]"
+          className="text-[11px] sm:text-[11.5px] font-mono tracking-[0.16em] uppercase text-muted hover:text-accent transition-colors duration-200"
         >
-          Hire Me
+          CONTACT
         </Link>
       </motion.nav>
 
-      {/* Social icons */}
+      {/* ── 03. Social Media Icon Boxes (Refined Compact Size) ── */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.48, delay: 0.14, ease: [0.22, 1, 0.36, 1] }}
-        className="flex items-center justify-center gap-2 mb-8"
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+        className="flex items-center justify-center gap-2.5 sm:gap-3 mb-9 flex-wrap"
       >
         {socials.map((social) => (
           <a
@@ -67,31 +67,28 @@ export function MobileFooter() {
             target="_blank"
             rel="noreferrer"
             aria-label={social.label}
-            className="w-9 h-9 flex items-center justify-center rounded-full border border-[var(--border)] bg-[var(--card)] text-[var(--muted)] hover:text-[var(--text)] hover:border-[var(--muted)]/40 hover:-translate-y-[2px] transition-all duration-200 active:scale-90"
+            className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl bg-[var(--card)] border border-border-subtle/80 text-muted hover:text-accent hover:border-accent/40 hover:bg-accent/10 active:scale-95 transition-all duration-200 shadow-sm"
           >
-            <social.icon size={15} />
+            <social.icon size={15} className="transition-transform duration-200 hover:scale-110" />
           </a>
         ))}
       </motion.div>
 
-      {/* Divider */}
-      <div className="w-full h-px bg-[var(--border)] mb-5" />
-
-      {/* Copyright */}
+      {/* ── 04. Copyright & Legal Metadata ── */}
       <motion.div
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="flex flex-col items-center gap-2"
+        transition={{ duration: 0.5, delay: 0.18 }}
+        className="flex flex-col items-center gap-2.5 text-center"
       >
-        <p className="text-[11px] text-[var(--muted)] text-center font-mono">
-          © {currentYear} Sailesh P. All rights reserved.
+        <p className="text-[11px] sm:text-[11.5px] text-muted/80 font-mono tracking-wide">
+          &copy; {currentYear} Sailesh P. All rights reserved.
         </p>
-        <div className="flex items-center gap-4">
-          <span className="text-[10px] text-[var(--muted)]/50 hover:text-[var(--muted)] transition-colors cursor-pointer">Privacy Policy</span>
-          <span className="text-[var(--border)] text-[10px]">·</span>
-          <span className="text-[10px] text-[var(--muted)]/50 hover:text-[var(--muted)] transition-colors cursor-pointer">Terms of Service</span>
+        <div className="flex items-center gap-4 text-[10.5px] font-mono text-muted/50 tracking-wider">
+          <span className="hover:text-muted transition-colors cursor-pointer">Privacy Policy</span>
+          <span>&middot;</span>
+          <span className="hover:text-muted transition-colors cursor-pointer">Terms of Service</span>
         </div>
       </motion.div>
 

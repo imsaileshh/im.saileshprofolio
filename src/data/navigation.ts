@@ -1,5 +1,5 @@
 import { 
-  Home, User, Code2, Folder, BriefcaseBusiness 
+  Home, User, Code2, Folder, BriefcaseBusiness, Layers 
 } from 'lucide-react';
 
 export const navigation = [
@@ -9,9 +9,14 @@ export const navigation = [
     icon: Home
   },
   {
-    label: "Projects",
+    label: "Works",
     href: "/projects",
     icon: Folder
+  },
+  {
+    label: "Personal Projects",
+    href: "/personal-projects",
+    icon: Code2
   },
   {
     label: "About",
@@ -21,7 +26,7 @@ export const navigation = [
   {
     label: "Stack",
     href: "/stack",
-    icon: Code2
+    icon: Layers
   },
   {
     label: "Experience",

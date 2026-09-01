@@ -151,3 +151,24 @@ body {
   from { transform: scaleY(0); }
   to { transform: scaleY(1); }
 }
+
+/* ── Tech Badge light-mode overrides ──────────────────────────────────────── */
+/* Inline styles supply dark-mode colors by default.                           */
+/* Light mode overrides these via data-theme attribute on <html>.              */
+[data-theme='light'] [data-badge] {
+  background-color: var(--b-lbg) !important;
+  border-color: var(--b-lbr) !important;
+  color: var(--b-ltx) !important;
+}
+
+/* ── Sidebar Floating Island Theme Styles ─────────────────────────────────── */
+.sidebar-island {
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 45px rgba(0, 0, 0, 0.45);
+}
+
+[data-theme='light'] .sidebar-island {
+  border: 1px solid var(--border);
+  box-shadow: none !important;
+}
+

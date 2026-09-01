@@ -99,14 +99,6 @@ export function ExperienceEducationPreview({
             ))}
           </StaggerContainer>
         </div>
-
-        <motion.div
-          initial={{ scaleX: 0 }}
-          whileInView={{ scaleX: 1 }}
-          viewport={{ once: true, amount: 0.18 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          className="absolute bottom-0 left-0 right-0 h-px bg-border-subtle transform origin-left"
-        />
       </section>
     </SectionReveal>
   );

@@ -62,15 +62,28 @@ export const heartbeatSchema = z.object({
   sessionKey: z.string().min(16).max(128).optional(),
 });
 
-export const messageStatusSchema = z.enum(['New', 'Read', 'Replied', 'Archived']);
-export const messagePrioritySchema = z.enum(['Low', 'Normal', 'High', 'Urgent']);
-export const projectStatusSchema = z.enum(['Draft', 'Published', 'Archived']);
-export const projectTypeSchema = z.enum([
-  'Case Study',
-  'Client Work',
-  'Personal Project',
-  'Open Source',
-]);
+export const messageStatusSchema = z.preprocess(
+  (val) => (val === null || val === undefined || val === '' ? 'New' : val),
+  z.enum(['New', 'Read', 'Replied', 'Archived'])
+);
+export const messagePrioritySchema = z.preprocess(
+  (val) => (val === null || val === undefined || val === '' ? 'Normal' : val),
+  z.enum(['Low', 'Normal', 'High', 'Urgent'])
+);
+export const projectStatusSchema = z.preprocess(
+  (val) => (val === null || val === undefined || val === '' ? 'Draft' : val),
+  z.enum(['Draft', 'Published', 'Archived'])
+);
+
+export const projectTypeSchema = z.preprocess(
+  (val) => (val === null || val === undefined || val === '' ? 'Personal Project' : val),
+  z.enum([
+    'Case Study',
+    'Client Work',
+    'Personal Project',
+    'Open Source',
+  ])
+);
 export const projectTaxonomyTypeSchema = z.enum(['category', 'technology', 'tag']);
 
 const optionalText = (max = 4000) =>

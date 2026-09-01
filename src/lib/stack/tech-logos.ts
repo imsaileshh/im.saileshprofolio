@@ -26,6 +26,7 @@ const WHITE = 'brightness(0) invert(1)'; // makes black SVG logos white
 export const TECH_LOGOS: Record<string, TechLogoEntry> = {
   // ── Frontend ─────────────────────────────────────────────────────────────
   react:            { url: `${B}/react/react-original.svg` },
+  reactjs:          { url: `${B}/react/react-original.svg` },
   nextjs:           { url: `${B}/nextjs/nextjs-original.svg`, filter: WHITE },
   typescript:       { url: `${B}/typescript/typescript-original.svg` },
   javascript:       { url: `${B}/javascript/javascript-original.svg` },
@@ -48,6 +49,7 @@ export const TECH_LOGOS: Record<string, TechLogoEntry> = {
   nodejs:           { url: `${B}/nodejs/nodejs-original.svg` },
   node:             { url: `${B}/nodejs/nodejs-original.svg` },
   express:          { url: `${B}/express/express-original.svg`, filter: WHITE },
+  expressjs:        { url: `${B}/express/express-original.svg`, filter: WHITE },
   fastify:          { url: `${B}/fastify/fastify-original.svg`, filter: WHITE },
   nestjs:           { url: `${B}/nestjs/nestjs-original.svg` },
   python:           { url: `${B}/python/python-original.svg` },
@@ -71,8 +73,12 @@ export const TECH_LOGOS: Record<string, TechLogoEntry> = {
   prisma:           { url: `${B}/prisma/prisma-original.svg`, filter: WHITE },
   // ── Design ───────────────────────────────────────────────────────────────
   figma:            { url: `${B}/figma/figma-original.svg` },
+  framer:           { url: `${B}/framermotion/framermotion-original.svg` },
+  framermotion:     { url: `${B}/framermotion/framermotion-original.svg` },
   photoshop:        { url: `${B}/photoshop/photoshop-original.svg` },
+  adobephotoshop:   { url: `${B}/photoshop/photoshop-original.svg` },
   illustrator:      { url: `${B}/illustrator/illustrator-plain.svg` },
+  adobeillustrator: { url: `${B}/illustrator/illustrator-plain.svg` },
   xd:               { url: `${B}/xd/xd-original.svg` },
   sketch:           { url: `${B}/sketch/sketch-original.svg` },
   blender:          { url: `${B}/blender/blender-original.svg` },
@@ -83,6 +89,7 @@ export const TECH_LOGOS: Record<string, TechLogoEntry> = {
   docker:           { url: `${B}/docker/docker-original.svg` },
   kubernetes:       { url: `${B}/kubernetes/kubernetes-original.svg` },
   vscode:           { url: `${B}/vscode/vscode-original.svg` },
+  vercel:           { url: `${B}/vercel/vercel-original.svg`, filter: WHITE },
   linux:            { url: `${B}/linux/linux-original.svg` },
   bash:             { url: `${B}/bash/bash-original.svg`, filter: WHITE },
   aws:              { url: `${B}/amazonwebservices/amazonwebservices-plain-wordmark.svg` },

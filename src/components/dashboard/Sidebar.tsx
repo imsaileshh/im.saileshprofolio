@@ -30,7 +30,8 @@ const navigationGroups = [
   {
     title: 'Workspace',
     items: [
-      { name: 'Projects', href: '/dashboard/projects', icon: FolderGit2, exact: false },
+      { name: 'Works', href: '/dashboard/projects', icon: FolderGit2, exact: false },
+      { name: 'Personal Projects', href: '/dashboard/personal-projects', icon: Code2, exact: false },
       { name: 'Resumes', href: '/dashboard/resume', icon: FileText, exact: false },
       { name: 'Hero', href: '/dashboard/hero', icon: LayoutTemplate, exact: false },
       { name: 'Stack', href: '/dashboard/stack', icon: Code2, exact: false },

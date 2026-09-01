@@ -5,9 +5,11 @@ import type { CaseStudy, CaseStudySection } from '@prisma/client';
 import Image from 'next/image';
 import { ArrowRight, MapPin, Search, Navigation, Heart, SquareParking, Bell, Filter, ChevronLeft, ChevronRight, CreditCard, Car, Clock, ShieldCheck, Map } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { PrototypePreviewModal } from './PrototypePreviewModal';
 
 export function SteeGoCaseStudyContent({ caseStudy }: { caseStudy: CaseStudy & { sections: CaseStudySection[] } }) {
   const [activeSection, setActiveSection] = useState<string>('hero');
+  const [showPrototypeModal, setShowPrototypeModal] = useState(false);
 
   const navigationSections = [
     { id: 'hero', title: 'Hero' },
@@ -112,10 +114,19 @@ export function SteeGoCaseStudyContent({ caseStudy }: { caseStudy: CaseStudy & {
               </div>
 
               <div className="flex flex-wrap gap-4 pt-4">
-                <button className="rounded-full bg-gradient-to-r from-[#FF5858] to-[#F09819] px-8 py-4 text-sm font-bold text-white shadow-[0_0_20px_rgba(255,88,88,0.3)] transition-transform hover:scale-105 active:scale-95">
+                <button 
+                  onClick={() => setShowPrototypeModal(true)}
+                  className="rounded-full bg-gradient-to-r from-[#FF5858] to-[#F09819] px-8 py-4 text-sm font-bold text-white shadow-[0_0_20px_rgba(255,88,88,0.3)] transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+                >
                   View Prototype
                 </button>
-                <button className="rounded-full bg-white/5 border border-white/10 px-8 py-4 text-sm font-bold text-white transition-colors hover:bg-white/10">
+                <button 
+                  onClick={() => {
+                    const el = document.getElementById('overview');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="rounded-full bg-white/5 border border-white/10 px-8 py-4 text-sm font-bold text-white transition-colors hover:bg-white/10 cursor-pointer"
+                >
                   Explore Case Study
                 </button>
               </div>
@@ -1117,16 +1128,31 @@ export function SteeGoCaseStudyContent({ caseStudy }: { caseStudy: CaseStudy & {
             </p>
             
             <div className="flex flex-wrap gap-4 justify-center relative z-10">
-              <button className="rounded-full bg-white px-10 py-5 text-sm font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95">
+              <button 
+                onClick={() => setShowPrototypeModal(true)}
+                className="rounded-full bg-white px-10 py-5 text-sm font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+              >
                 View Figma Prototype
               </button>
-              <button className="rounded-full bg-white/5 border border-white/10 px-10 py-5 text-sm font-bold text-white transition-colors hover:bg-white/10">
-                Back to Projects
-              </button>
+              <a 
+                href="/projects"
+                className="rounded-full bg-white/5 border border-white/10 px-10 py-5 text-sm font-bold text-white transition-colors hover:bg-white/10"
+              >
+                Back to Works
+              </a>
             </div>
           </div>
         </section>
       </article>
+
+      {/* Prototype Preview Modal (Desktop & Mobile Frames) */}
+      <PrototypePreviewModal
+        isOpen={showPrototypeModal}
+        onClose={() => setShowPrototypeModal(false)}
+        title="SteeGo Parking App — Interactive Prototype"
+        prototypeUrl="https://www.figma.com/proto/preview"
+        defaultDevice="mobile"
+      />
     </div>
   );
 }

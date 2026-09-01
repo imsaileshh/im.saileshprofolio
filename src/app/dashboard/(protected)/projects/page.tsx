@@ -72,11 +72,11 @@ export default async function DashboardProjectsPage({ searchParams }: PageProps)
 
       <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">Projects</h1>
-          <p className="mt-1 text-sm text-zinc-400">Manage portfolio projects and case studies.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white">Works</h1>
+          <p className="mt-1 text-sm text-zinc-400">Manage curated portfolio works and case studies.</p>
         </div>
         <Link href="/dashboard/projects/new" className="rounded-lg bg-[#4F8CFF] px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-[#4F8CFF]/20 transition-all hover:bg-[#3B78EB]">
-          + Add Project
+          + Add Work
         </Link>
       </header>
 
