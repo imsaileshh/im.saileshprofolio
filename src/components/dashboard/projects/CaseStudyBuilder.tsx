@@ -519,37 +519,35 @@ export function CaseStudyBuilder({
                       </select>
                     </div>
 
+                    {/* Standard Narrative / Text Content */}
+                    <div className="pt-2">
+                      <label className="block text-xs font-medium text-zinc-300 mb-1">
+                        Narrative / Story Content
+                      </label>
+                      <textarea
+                        value={section.content || ''}
+                        onChange={(e) => updateSectionField(sIdx, 'content', e.target.value)}
+                        placeholder="Explain the background, challenge, technical approach, or milestones..."
+                        rows={4}
+                        className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-xs text-white outline-none focus:border-[#4F8CFF]"
+                      />
+                    </div>
+
                     {/* DEDICATED CUSTOM SECTION CONTENT BLOCKS */}
-                    {section.type === 'custom' ? (
-                      <div className="space-y-3 pt-2 border-t border-white/[0.06]">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-mono uppercase tracking-wider text-purple-400 font-semibold">
-                            Content Blocks
-                          </span>
-                          <span className="text-[11px] text-zinc-500">
-                            {blockCount} block{blockCount !== 1 ? 's' : ''} configured
-                          </span>
-                        </div>
-                        <CustomBlockEditor
-                          blocks={section.blocks || []}
-                          onChange={(blocks) => updateSectionField(sIdx, 'blocks', blocks)}
-                        />
+                    <div className="space-y-3 pt-4 border-t border-white/[0.06]">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-mono uppercase tracking-wider text-purple-400 font-semibold">
+                          Content Blocks
+                        </span>
+                        <span className="text-[11px] text-zinc-500">
+                          {blockCount} block{blockCount !== 1 ? 's' : ''} configured
+                        </span>
                       </div>
-                    ) : (
-                      /* Standard Narrative / Text Content */
-                      <div>
-                        <label className="block text-xs font-medium text-zinc-300 mb-1">
-                          Narrative / Story Content
-                        </label>
-                        <textarea
-                          value={section.content || ''}
-                          onChange={(e) => updateSectionField(sIdx, 'content', e.target.value)}
-                          placeholder="Explain the background, challenge, technical approach, or milestones..."
-                          rows={4}
-                          className="w-full rounded-xl border border-white/10 bg-black/40 px-3 py-2.5 text-xs text-white outline-none focus:border-[#4F8CFF]"
-                        />
-                      </div>
-                    )}
+                      <CustomBlockEditor
+                        blocks={section.blocks || []}
+                        onChange={(blocks) => updateSectionField(sIdx, 'blocks', blocks)}
+                      />
+                    </div>
 
                     {/* Stats metrics if type is stats or has metrics */}
                     {(section.type === 'stats' || section.type === 'metrics' || (section.stats && section.stats.length > 0)) && (

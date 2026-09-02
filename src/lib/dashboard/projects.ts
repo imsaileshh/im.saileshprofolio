@@ -69,6 +69,8 @@ export type DashboardProjectRecord = ProjectRecord & {
   seoDescription: string | null;
   seoKeywords: string[];
   ogImage: string | null;
+  useCustomBackground: boolean;
+  customBackground: string | null;
 };
 
 function getProjectTaxonomyDelegate(): ProjectTaxonomyDelegate | null {
@@ -119,6 +121,8 @@ function getProjectFieldSet(): ProjectFieldSet {
     'createdAt',
     'updatedAt',
     'images',
+    'useCustomBackground',
+    'customBackground',
   ]);
 }
 
@@ -149,6 +153,8 @@ function normalizeProjectForDashboard(project: ProjectRecord): DashboardProjectR
     seoDescription: project.seoDescription ?? null,
     seoKeywords: Array.isArray(project.seoKeywords) ? project.seoKeywords : [],
     ogImage: project.ogImage ?? null,
+    useCustomBackground: project.useCustomBackground ?? false,
+    customBackground: project.customBackground ?? null,
   } as DashboardProjectRecord;
 }
 
@@ -235,6 +241,8 @@ function projectWriteData(input: ProjectInput) {
     seoKeywords: input.seoKeywords,
     ogImage: input.ogImage,
     orderIndex: input.orderIndex,
+    useCustomBackground: input.useCustomBackground,
+    customBackground: input.customBackground,
     ...flags,
   };
 }

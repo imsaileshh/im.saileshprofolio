@@ -551,7 +551,7 @@ export function CustomBlockEditor({
           className="inline-flex items-center gap-1.5 rounded-xl border border-[#4F8CFF]/30 bg-[#4F8CFF]/10 px-3.5 py-2 text-xs font-semibold text-[#4F8CFF] hover:bg-[#4F8CFF]/20 transition-all shadow-xs"
         >
           <Plus size={14} />
-          <span>+ Add Content Block</span>
+          <span>Add Content</span>
         </button>
 
         {showBlockPicker && (
@@ -589,7 +589,7 @@ export function CustomBlockEditor({
                   className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 hover:bg-white/10 hover:text-white text-left transition-colors"
                 >
                   <Type size={13} className="text-[#4F8CFF]" />
-                  <span>Paragraph</span>
+                  <span>Text</span>
                 </button>
                 <button
                   type="button"
@@ -597,7 +597,7 @@ export function CustomBlockEditor({
                   className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 hover:bg-white/10 hover:text-white text-left transition-colors"
                 >
                   <Type size={13} className="text-[#4F8CFF]" />
-                  <span>Rich Text</span>
+                  <span>Custom Content</span>
                 </button>
                 <button
                   type="button"
@@ -605,7 +605,7 @@ export function CustomBlockEditor({
                   className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 hover:bg-white/10 hover:text-white text-left transition-colors"
                 >
                   <List size={13} className="text-[#4F8CFF]" />
-                  <span>Bullet List</span>
+                  <span>Bullet Points</span>
                 </button>
                 <button
                   type="button"
@@ -613,7 +613,7 @@ export function CustomBlockEditor({
                   className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 hover:bg-white/10 hover:text-white text-left transition-colors"
                 >
                   <ListOrdered size={13} className="text-[#4F8CFF]" />
-                  <span>Numbered List</span>
+                  <span>Numbered Points</span>
                 </button>
                 <button
                   type="button"
@@ -621,7 +621,7 @@ export function CustomBlockEditor({
                   className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 hover:bg-white/10 hover:text-white text-left transition-colors"
                 >
                   <Quote size={13} className="text-[#4F8CFF]" />
-                  <span>Quote</span>
+                  <span>Quote / Insight</span>
                 </button>
               </div>
             </div>
@@ -654,7 +654,7 @@ export function CustomBlockEditor({
                   className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 hover:bg-white/10 hover:text-white text-left transition-colors"
                 >
                   <Layers size={13} className="text-[#4F8CFF]" />
-                  <span>Image Grid</span>
+                  <span>Image Gallery</span>
                 </button>
                 <button
                   type="button"
@@ -687,7 +687,7 @@ export function CustomBlockEditor({
                   className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 hover:bg-white/10 hover:text-white text-left transition-colors"
                 >
                   <BarChart2 size={13} className="text-emerald-400" />
-                  <span>Metric Group</span>
+                  <span>Stats / Metrics</span>
                 </button>
                 <button
                   type="button"
@@ -695,7 +695,7 @@ export function CustomBlockEditor({
                   className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 hover:bg-white/10 hover:text-white text-left transition-colors"
                 >
                   <Sparkles size={13} className="text-purple-400" />
-                  <span>Feature List</span>
+                  <span>Key Features</span>
                 </button>
               </div>
             </div>
@@ -728,7 +728,7 @@ export function CustomBlockEditor({
                   className="flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs text-zinc-200 hover:bg-white/10 hover:text-white text-left transition-colors"
                 >
                   <Video size={13} className="text-red-400" />
-                  <span>Embed</span>
+                  <span>Video / Prototype</span>
                 </button>
               </div>
             </div>

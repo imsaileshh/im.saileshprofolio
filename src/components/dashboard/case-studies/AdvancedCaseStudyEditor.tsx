@@ -83,6 +83,9 @@ export function AdvancedCaseStudyEditor({
   const [technologies, setTechnologies] = useState<string[]>(caseStudy?.metadata?.technologies || caseStudy?.project?.technologies || ['Figma', 'React', 'Tailwind CSS']);
   const [showOnHome, setShowOnHome] = useState<boolean>(caseStudy?.metadata?.showOnHome ?? true);
   const [status, setStatus] = useState(caseStudy?.status || 'DRAFT');
+  
+  const [useCustomBackground, setUseCustomBackground] = useState<boolean>(caseStudy?.useCustomBackground || false);
+  const [customBackground, setCustomBackground] = useState<string>(caseStudy?.customBackground || '#000000');
 
   // Dynamic Sections Array
   const [sections, setSections] = useState<any[]>(() => {
@@ -201,6 +204,8 @@ export function AdvancedCaseStudyEditor({
       formData.append('technologies', technologies.join(','));
       formData.append('showOnHome', showOnHome ? 'true' : 'false');
       formData.append('sectionsJson', JSON.stringify(sections));
+      formData.append('useCustomBackground', String(useCustomBackground));
+      if (useCustomBackground) formData.append('customBackground', customBackground);
       if (publishAction) formData.append('action', publishAction);
 
       const res = isNew 
@@ -506,6 +511,55 @@ export function AdvancedCaseStudyEditor({
                   onChange={(selected) => { setTechnologies(selected); setIsDirty(true); }}
                   label="Technologies & Tools (Central Stack Library)"
                 />
+              </div>
+
+              {/* Appearance & Theme (Under Project Info) */}
+              <div className="pt-8 mt-8 border-t border-white/5 space-y-4">
+                <h3 className="text-base font-bold text-white">Appearance & Theme</h3>
+                <p className="text-xs text-zinc-400">Override the ambient header glow background color for this specific case study.</p>
+                
+                <label className="flex items-start gap-3 text-sm text-zinc-300 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="useCustomBackground"
+                    id="useCustomBackground"
+                    checked={!!useCustomBackground}
+                    value="true"
+                    onChange={(e) => {
+                      setUseCustomBackground(e.target.checked);
+                      setIsDirty(true);
+                    }}
+                    className="mt-0.5 h-4 w-4 rounded border-white/20 bg-black text-[#4F8CFF] checked:bg-[#4F8CFF] focus:ring-[#4F8CFF]"
+                  />
+                  <div className="flex-1">
+                    <span className="font-medium text-white block">Custom Animated Ambient Glow</span>
+                    <span className="text-xs text-zinc-500 block mt-0.5">Applies a glowing color behind the page title.</span>
+                  </div>
+                </label>
+                
+                {useCustomBackground && (
+                  <div className="flex items-center gap-4 pl-7">
+                    <input
+                      type="color"
+                      value={customBackground}
+                      onChange={(e) => {
+                        setCustomBackground(e.target.value);
+                        setIsDirty(true);
+                      }}
+                      className="h-10 w-16 rounded cursor-pointer bg-transparent border border-white/10 p-1"
+                    />
+                    <input
+                      type="text"
+                      value={customBackground}
+                      onChange={(e) => {
+                        setCustomBackground(e.target.value);
+                        setIsDirty(true);
+                      }}
+                      className="h-10 w-32 rounded-lg border border-white/10 bg-black/40 px-3 text-sm text-white uppercase font-mono outline-none focus:border-[#4F8CFF]"
+                      placeholder="#FF5500"
+                    />
+                  </div>
+                )}
               </div>
             </div>
           )}

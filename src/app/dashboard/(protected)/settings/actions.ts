@@ -103,3 +103,25 @@ export async function updateHomeContentAction(formData: FormData) {
   revalidatePath('/dashboard/settings');
   revalidatePath('/'); 
 }
+
+export async function updateThemeSettingsAction(formData: FormData) {
+  const session = await verifySession();
+  if (!session || session.user.role !== 'ADMIN') {
+    throw new Error('Unauthorized');
+  }
+
+  const themeConfigStr = formData.get('themeConfig') as string;
+  const themeConfig = themeConfigStr ? JSON.parse(themeConfigStr) : null;
+
+  await prisma.siteSettings.upsert({
+    where: { id: 'singleton' },
+    update: { themeConfig },
+    create: {
+      id: 'singleton',
+      themeConfig,
+    }
+  });
+
+  revalidatePath('/dashboard/settings');
+  revalidatePath('/', 'layout'); // Revalidate all pages using the layout/theme
+}

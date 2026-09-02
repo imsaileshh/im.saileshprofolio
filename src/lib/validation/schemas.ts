@@ -226,6 +226,8 @@ export const projectMutationSchema = z.object({
   seoKeywords: stringListSchema,
   ogImage: optionalUrl,
   orderIndex: z.coerce.number().int().min(0).max(9999).optional().default(0),
+  useCustomBackground: checkboxBooleanSchema.optional().default(false),
+  customBackground: optionalText(50),
   submitAction: z.enum(['publish', 'save_draft', 'save_changes']).optional().default('save_draft'),
 }).superRefine((data, ctx) => {
   const isPublishing = data.submitAction === 'publish' || data.submitAction === 'save_changes';

@@ -105,6 +105,9 @@ export async function createPersonalProjectAction(
     const published = checked(formData, 'published');
     const caseStudyEnabled = checked(formData, 'caseStudyEnabled');
     const dynamicSections = parseStorySections(optionalString(formData.get('caseStudySectionsData')));
+    
+    const useCustomBackground = checked(formData, 'useCustomBackground');
+    const customBackground = optionalString(formData.get('customBackground'));
 
     const created = await prisma.project.create({
       data: {
@@ -124,6 +127,8 @@ export async function createPersonalProjectAction(
         archived: false,
         showOnHomepage: false,
         publishedAt: published ? new Date() : null,
+        useCustomBackground,
+        customBackground,
         images: coverImageUrl
           ? {
               create: [
@@ -202,6 +207,9 @@ export async function updatePersonalProjectAction(
     const published = checked(formData, 'published');
     const caseStudyEnabled = checked(formData, 'caseStudyEnabled');
     const dynamicSections = parseStorySections(optionalString(formData.get('caseStudySectionsData')));
+    
+    const useCustomBackground = checked(formData, 'useCustomBackground');
+    const customBackground = optionalString(formData.get('customBackground'));
 
     await prisma.project.update({
       where: { id },
@@ -222,6 +230,8 @@ export async function updatePersonalProjectAction(
         archived: false,
         showOnHomepage: false,
         publishedAt: published ? new Date() : null,
+        useCustomBackground,
+        customBackground,
       },
     });
 

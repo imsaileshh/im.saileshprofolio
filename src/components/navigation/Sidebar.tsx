@@ -225,7 +225,7 @@ export function Sidebar({
                   </AnimatePresence>
                 </Link>
                 {isCollapsed && (
-                  <div className="absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2 bg-foreground text-[var(--bg)] text-[11px] font-medium px-2.5 py-1.5 rounded opacity-0 -translate-x-1 group-hover/nav-tooltip:opacity-100 group-hover/nav-tooltip:translate-x-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                  <div className="sidebar-tooltip absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2 bg-foreground text-[var(--bg)] text-[11px] font-medium px-2.5 py-1.5 rounded opacity-0 -translate-x-1 group-hover/nav-tooltip:opacity-100 group-hover/nav-tooltip:translate-x-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
                     {link.label}
                   </div>
                 )}
@@ -257,7 +257,7 @@ export function Sidebar({
               </AnimatePresence>
             </button>
             {isCollapsed && (
-              <div className="absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2 bg-foreground text-[var(--bg)] text-[11px] font-medium px-2.5 py-1.5 rounded opacity-0 -translate-x-1 group-hover/nav-tooltip:opacity-100 group-hover/nav-tooltip:translate-x-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+              <div className="sidebar-tooltip absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2 bg-foreground text-[var(--bg)] text-[11px] font-medium px-2.5 py-1.5 rounded opacity-0 -translate-x-1 group-hover/nav-tooltip:opacity-100 group-hover/nav-tooltip:translate-x-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
                 Hire me
               </div>
             )}
@@ -287,7 +287,7 @@ export function Sidebar({
               </AnimatePresence>
             </button>
             {isCollapsed && (
-              <div className="absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2 bg-foreground text-[var(--bg)] text-[11px] font-medium px-2.5 py-1.5 rounded opacity-0 -translate-x-1 group-hover/nav-tooltip:opacity-100 group-hover/nav-tooltip:translate-x-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+              <div className="sidebar-tooltip absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2 bg-foreground text-[var(--bg)] text-[11px] font-medium px-2.5 py-1.5 rounded opacity-0 -translate-x-1 group-hover/nav-tooltip:opacity-100 group-hover/nav-tooltip:translate-x-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
                 Resume
               </div>
             )}
@@ -310,7 +310,7 @@ export function Sidebar({
               </button>
               
               {!showSocials && (
-                <div className="absolute top-1/2 -translate-y-1/2 left-[calc(100%+16px)] bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 -translate-x-1 group-hover/tooltip:opacity-100 group-hover/tooltip:translate-x-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-[110]">
+                <div className="sidebar-tooltip absolute top-1/2 -translate-y-1/2 left-[calc(100%+16px)] bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 -translate-x-1 group-hover/tooltip:opacity-100 group-hover/tooltip:translate-x-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-[110]">
                   Socials
                 </div>
               )}
@@ -325,7 +325,7 @@ export function Sidebar({
                 >
                   <PanelLeftOpen size={16} className="opacity-70 group-hover/tooltip:opacity-100 transition-opacity" />
                 </button>
-                <div className="absolute top-1/2 -translate-y-1/2 left-[calc(100%+16px)] bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 -translate-x-1 group-hover/tooltip:opacity-100 group-hover/tooltip:translate-x-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                <div className="sidebar-tooltip absolute top-1/2 -translate-y-1/2 left-[calc(100%+16px)] bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 -translate-x-1 group-hover/tooltip:opacity-100 group-hover/tooltip:translate-x-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
                   Expand
                 </div>
               </div>
@@ -345,7 +345,7 @@ export function Sidebar({
                   >
                     <PanelLeftClose size={15} className="opacity-70 group-hover/tooltip:opacity-100 transition-opacity" />
                   </button>
-                  <div className="absolute bottom-[calc(100%+8px)] right-0 bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 translate-y-1 group-hover/tooltip:opacity-100 group-hover/tooltip:translate-y-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
+                  <div className="sidebar-tooltip absolute bottom-[calc(100%+8px)] right-0 bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 translate-y-1 group-hover/tooltip:opacity-100 group-hover/tooltip:translate-y-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
                     Collapse
                   </div>
                 </div>
@@ -366,7 +366,7 @@ export function Sidebar({
                   <social.icon size={16} className="opacity-80 group-hover:opacity-100 group-hover:-translate-y-0.5 transition-all duration-200" />
                   
                   {/* Tooltip for social icons */}
-                  <div className="absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-[60]">
+                  <div className="sidebar-tooltip absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-[60]">
                     {social.label}
                   </div>
                 </motion.a>
@@ -403,7 +403,7 @@ export function Sidebar({
                 className="w-[36px] h-[36px] flex shrink-0 items-center justify-center rounded-xl bg-[var(--card)] border border-border-subtle/80 text-muted hover:text-accent hover:border-accent/40 hover:bg-accent/10 hover:-translate-y-0.5 transition-all duration-200 group/social relative focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               >
                 <social.icon size={15} className="opacity-75 group-hover/social:opacity-100 group-hover/social:scale-110 transition-all duration-200 relative z-10" />
-                <div className="absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 translate-y-1 group-hover/social:opacity-100 group-hover/social:translate-y-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-[130]">
+                <div className="sidebar-tooltip absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2 bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 translate-y-1 group-hover/social:opacity-100 group-hover/social:translate-y-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-[130]">
                   {social.label}
                 </div>
               </motion.a>

@@ -7,6 +7,7 @@ import { CaseStudyContent } from '@/components/case-study/CaseStudyContent';
 import { PdfPagesViewer } from '@/components/case-study/PdfPagesViewerDynamic';
 import { SteeGoCaseStudyContent } from '@/components/case-study/SteeGoCaseStudyContent';
 import { ProjectDetailHeader } from '@/components/projects/ProjectDetailHeader';
+import { LocalBackgroundOverride } from '@/components/theme/LocalBackgroundOverride';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,8 +41,9 @@ export default async function PublicCaseStudyDetailPage({
   const metadata = (caseStudy.metadata as any) || {};
 
   return (
-    <main className="min-h-screen bg-[var(--bg)]">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:px-8 lg:py-12">
+    <>
+    <main className="min-h-screen bg-[var(--bg)] relative">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:px-8 lg:py-12 relative z-10">
         
         {/* ── 01. Case Study Header & Metadata ── */}
         <ProjectDetailHeader
@@ -59,21 +61,24 @@ export default async function PublicCaseStudyDetailPage({
             figmaUrl: metadata.figmaUrl || null,
             role: metadata.role || caseStudy.project?.role || 'Lead Product Designer',
           }}
-          backHref="/case-studies"
-          backLabel="Back to Case Studies"
+          backHref={caseStudy.project?.projectType === 'Personal Project' ? `/personal-projects/${caseStudy.project.slug}` : `/works/${caseStudy.project?.slug || ''}`}
+          backLabel={caseStudy.project?.projectType === 'Personal Project' ? "Back to Project" : "Back to Work"}
+          customGlowColor={caseStudy.useCustomBackground ? caseStudy.customBackground : (caseStudy.project?.useCustomBackground ? caseStudy.project?.customBackground : null)}
         />
 
         {/* ── 02. Cover Image ── */}
         {cover && (
-          <div className="relative mb-14 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-border-subtle/80 bg-black/40 shadow-xl">
-            <Image
-              src={cover}
-              alt={caseStudy.title}
-              fill
-              className="object-cover"
-              priority
-              sizes="(max-width: 1024px) 100vw, 1152px"
-            />
+          <div className="w-full max-w-[960px] mx-auto mb-14 rounded-2xl border border-border-subtle/80 bg-[var(--card)] p-1.5 shadow-sm">
+            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-black/5 dark:bg-black/50 border border-border-subtle/40">
+              <Image
+                src={cover}
+                alt={caseStudy.title}
+                fill
+                className="object-contain sm:object-cover"
+                priority
+                sizes="(max-width: 1024px) 100vw, 1152px"
+              />
+            </div>
           </div>
         )}
 
@@ -88,7 +93,7 @@ export default async function PublicCaseStudyDetailPage({
             <SteeGoCaseStudyContent caseStudy={caseStudy} />
           </div>
         ) : caseStudy.sections && caseStudy.sections.length > 0 ? (
-          <div className="mt-12 pt-8 border-t border-border-subtle/60">
+          <div className="mt-12 pt-8 border-t border-border-subtle/60 relative z-0">
             <CaseStudyContent caseStudy={caseStudy} />
           </div>
         ) : (
@@ -99,5 +104,6 @@ export default async function PublicCaseStudyDetailPage({
 
       </div>
     </main>
+    </>
   );
 }

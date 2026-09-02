@@ -21,6 +21,7 @@ export interface ContentBlockItem {
     | 'metric'
     | 'metric_group'
     | 'feature_list'
+    | 'project_details'
     | 'divider'
     | 'callout'
     | 'embed';
@@ -44,7 +45,8 @@ export interface ContentBlockItem {
   metricLabel?: string;
   metricDescription?: string;
   metrics?: Array<{ value: string; label: string; description?: string }>;
-  features?: Array<{ number?: string; title: string; description: string }>;
+  features?: Array<{ number?: string; title: string; description: string; imageUrl?: string; svg?: string }>;
+  projectDetails?: Array<{ label: string; value: string }>;
   calloutTitle?: string;
   calloutDescription?: string;
   calloutLink?: string;
@@ -315,18 +317,35 @@ export function CustomBlockRenderer({ block }: { block: ContentBlockItem }) {
 
     case 'feature_list': {
       const feats = block.features || [];
-      if (feats.length === 0) return null;
+      if (feats.length === 0 && !block.headingText) return null;
       return (
         <div className="my-6 space-y-3.5">
+          {block.headingText && (
+            <h3 className="text-xl sm:text-2xl font-display font-semibold text-foreground tracking-tight mb-4">
+              {block.headingText}
+            </h3>
+          )}
           {feats.map((feat, i) => (
             <div
               key={i}
-              className="flex items-start gap-3.5 rounded-2xl border border-border-subtle/80 bg-[var(--card)] p-4 sm:p-5 shadow-xs"
+              className="flex flex-col sm:flex-row items-start gap-4 rounded-2xl border border-border-subtle/80 bg-[var(--card)] p-4 sm:p-5 shadow-xs overflow-hidden relative"
             >
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent/10 font-mono text-xs font-bold text-accent">
-                {feat.number || String(i + 1).padStart(2, '0')}
-              </span>
-              <div className="space-y-1">
+              {feat.svg ? (
+                <div
+                  className="w-16 h-16 shrink-0 rounded-xl flex items-center justify-center bg-white/5 border border-white/10"
+                  dangerouslySetInnerHTML={{ __html: feat.svg }}
+                />
+              ) : feat.imageUrl ? (
+                <div className="w-20 h-20 shrink-0 rounded-xl overflow-hidden bg-black/20 border border-white/10">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={feat.imageUrl} alt={feat.title} className="w-full h-full object-cover" />
+                </div>
+              ) : (
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-accent/10 font-mono text-xs font-bold text-accent">
+                  {feat.number || String(i + 1).padStart(2, '0')}
+                </span>
+              )}
+              <div className="space-y-1.5 flex-1 min-w-0">
                 <h4 className="text-sm sm:text-base font-semibold text-foreground">
                   {feat.title}
                 </h4>
@@ -342,17 +361,43 @@ export function CustomBlockRenderer({ block }: { block: ContentBlockItem }) {
       );
     }
 
+    case 'project_details': {
+      const details = block.projectDetails || [];
+      if (details.length === 0 && !block.headingText) return null;
+      return (
+        <div className="my-6">
+          {block.headingText && (
+            <h3 className="text-xl sm:text-2xl font-display font-semibold text-foreground tracking-tight mb-5">
+              {block.headingText}
+            </h3>
+          )}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6 rounded-2xl border border-border-subtle/80 bg-[var(--card)] p-5 sm:p-6 shadow-xs">
+            {details.map((detail, idx) => (
+              <div key={idx} className="space-y-1">
+                <span className="text-[11px] font-mono uppercase tracking-wider text-muted font-medium block">
+                  {detail.label}
+                </span>
+                <p className="text-sm sm:text-base font-medium text-foreground">
+                  {detail.value}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     case 'callout': {
       return (
         <div className="my-6 rounded-2xl border border-[#4F8CFF]/30 bg-[#4F8CFF]/5 p-5 sm:p-6 space-y-2 shadow-sm">
           <div className="flex items-center gap-2 text-[#4F8CFF]">
             <Info size={16} />
-            <h4 className="text-sm sm:text-base font-semibold text-white">
+            <h4 className="text-sm sm:text-base font-semibold text-foreground">
               {block.calloutTitle || 'Key Insight'}
             </h4>
           </div>
           {block.calloutDescription && (
-            <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed">
+            <p className="text-xs sm:text-sm text-muted leading-relaxed">
               {block.calloutDescription}
             </p>
           )}

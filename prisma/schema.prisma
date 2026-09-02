@@ -72,6 +72,10 @@ model Project {
   seoKeywords              String[]       @default([])
   ogImage                  String?
   orderIndex               Int            @default(0)
+  
+  useCustomBackground      Boolean        @default(false)
+  customBackground         String?
+
   images                   ProjectImage[]
   caseStudy                CaseStudy?
   createdAt                DateTime       @default(now())
@@ -106,6 +110,10 @@ model CaseStudy {
   status      CaseStudyStatus     @default(DRAFT)
   sections    CaseStudySection[]
   metadata    Json?
+  
+  useCustomBackground Boolean     @default(false)
+  customBackground    String?
+
   publishedAt DateTime?
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
@@ -543,6 +551,8 @@ model SiteSettings {
   
   stackTitle      String?
   stackDescription String?
+
+  themeConfig    Json?
 
   updatedAt      DateTime @updatedAt
 }

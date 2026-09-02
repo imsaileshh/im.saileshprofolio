@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { prisma } from '@/lib/database/prisma';
 import { ProjectDetailTemplate, ProjectDetailData, AdjacentProject } from '@/components/projects/ProjectDetailTemplate';
 import { WORK_WHERE_CLAUSE } from '@/lib/constants/project-types';
+import { LocalBackgroundOverride } from '@/components/theme/LocalBackgroundOverride';
 
 export const dynamic = 'force-dynamic';
 
@@ -70,15 +71,18 @@ export default async function WorkDetailPage({
     coverUrl: coverUrl,
     galleryUrls: galleryUrls,
     caseStudy: project.caseStudy ? { slug: project.caseStudy.slug, status: project.caseStudy.status } : null,
+    customGlowColor: project.useCustomBackground ? project.customBackground : null,
   };
 
   return (
-    <ProjectDetailTemplate
-      project={formattedData}
-      prevProject={prevProject}
-      nextProject={nextProject}
-      backHref="/works"
-      backLabel="Back to Works"
-    />
+    <>
+      <ProjectDetailTemplate
+        project={formattedData}
+        prevProject={prevProject}
+        nextProject={nextProject}
+        backHref="/works"
+        backLabel="Back to Works"
+      />
+    </>
   );
 }

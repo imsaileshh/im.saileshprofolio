@@ -80,6 +80,8 @@ function projectPayload(formData: FormData) {
     seoKeywords: formData.get('seoKeywords'),
     ogImage: optionalString(formData.get('ogImage')),
     orderIndex: formData.get('orderIndex') ?? 0,
+    useCustomBackground: checked(formData, 'useCustomBackground'),
+    customBackground: optionalString(formData.get('customBackground')),
     submitAction: formData.get('action'),
   };
 }

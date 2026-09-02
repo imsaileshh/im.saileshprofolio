@@ -105,6 +105,9 @@ export function PersonalProjectForm({
   const [featured, setFeatured] = useState(project?.featured ?? false);
   const [published, setPublished] = useState(project?.published ?? true);
 
+  const [useCustomBackground, setUseCustomBackground] = useState(project?.useCustomBackground ?? false);
+  const [customBackground, setCustomBackground] = useState(project?.customBackground ?? '#111113');
+
   // Progressive Project Story toggle
   const hasExistingStory = Boolean(project?.caseStudy);
   const [enableStory, setEnableStory] = useState(hasExistingStory);
@@ -160,6 +163,8 @@ export function PersonalProjectForm({
           liveUrl,
           featured,
           published,
+          useCustomBackground,
+          customBackground,
           enableStory,
           storySections,
           savedAt: new Date().toISOString(),
@@ -187,6 +192,8 @@ export function PersonalProjectForm({
     liveUrl,
     featured,
     published,
+    useCustomBackground,
+    customBackground,
     enableStory,
     storySections,
     storageDraftKey,
@@ -609,7 +616,63 @@ export function PersonalProjectForm({
           </div>
         </section>
 
-        {/* ── 06. STICKY ACTION BAR ── */}
+        {/* ── 06. APPEARANCE & THEME OVERRIDE ── */}
+        <section className="space-y-4 rounded-2xl border border-white/[0.08] bg-[#111215] p-6 sm:p-7 shadow-lg">
+          <h2 className="text-base font-semibold text-white tracking-tight border-b border-white/[0.06] pb-3">
+            Appearance & Theme
+          </h2>
+          
+          <div className="pt-2">
+            <label className="flex items-start gap-3 text-sm text-zinc-300 cursor-pointer mb-4">
+              <input
+                type="checkbox"
+                name="useCustomBackground"
+                id="useCustomBackground"
+                checked={!!useCustomBackground}
+                value="true"
+                onChange={(e) => {
+                  setUseCustomBackground(e.target.checked);
+                  setIsDirty(true);
+                }}
+                className="mt-0.5 h-4 w-4 rounded border-white/20 bg-black text-[#4F8CFF] checked:bg-[#4F8CFF] focus:ring-[#4F8CFF]"
+              />
+              <div className="flex-1">
+                <span className="font-medium text-white block">Override Global Background</span>
+                <span className="text-xs text-zinc-500 block mt-0.5">Use a specific background color for this project page.</span>
+              </div>
+            </label>
+            
+            {useCustomBackground && (
+              <div className="flex items-center gap-4 pl-7">
+                <input
+                  type="color"
+                  name="customBackground"
+                  value={customBackground}
+                  onChange={(e) => {
+                    setCustomBackground(e.target.value);
+                    setIsDirty(true);
+                  }}
+                  className="h-10 w-16 rounded cursor-pointer bg-transparent border border-white/10 p-1"
+                />
+                <input
+                  type="text"
+                  value={customBackground}
+                  onChange={(e) => {
+                    setCustomBackground(e.target.value);
+                    setIsDirty(true);
+                  }}
+                  className="h-10 w-32 rounded-lg border border-white/10 bg-black/40 px-3 text-sm text-white uppercase font-mono outline-none focus:border-[#4F8CFF]"
+                  placeholder="#000000"
+                />
+              </div>
+            )}
+            {!useCustomBackground && (
+               <input type="hidden" name="customBackground" value="" />
+            )}
+          </div>
+        </section>
+
+        {/* ── 07. STICKY ACTION BAR ── */}
         <div className="sticky bottom-6 z-40 flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-[#0e0f12]/90 p-4 shadow-2xl backdrop-blur-md">
           <Link
             href="/dashboard/personal-projects"

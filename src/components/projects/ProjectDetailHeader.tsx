@@ -24,12 +24,14 @@ interface ProjectDetailHeaderProps {
   };
   backHref?: string;
   backLabel?: string;
+  customGlowColor?: string | null;
 }
 
 export function ProjectDetailHeader({
   project,
   backHref = '/works',
   backLabel = 'Back to Works',
+  customGlowColor,
 }: ProjectDetailHeaderProps) {
   const [previewState, setPreviewState] = useState<{ isOpen: boolean; url: string; title: string } | null>(null);
 
@@ -38,31 +40,47 @@ export function ProjectDetailHeader({
   const year = project.year || '2025';
 
   return (
-    <header className="mb-10 sm:mb-14 md:mb-16">
-      {/* ── 01. Back Navigation ── */}
-      <div className="mb-8 md:mb-10">
-        <Link 
-          href={backHref} 
-          className="group inline-flex items-center gap-2 text-xs font-mono tracking-widest uppercase text-muted hover:text-foreground transition-colors"
-        >
-          <ArrowLeft size={13} className="transition-transform duration-200 group-hover:-translate-x-1" />
-          <span>{backLabel}</span>
-        </Link>
+    <>
+      {/* ── 00. Custom Ambient Radial Glow ── */}
+      {customGlowColor && (
+        <div 
+          className="pointer-events-none absolute inset-x-0 top-0 h-[800px] opacity-70 mix-blend-screen dark:mix-blend-lighten animate-pulse" 
+          style={{
+            background: `radial-gradient(circle 800px at 50% -100px, ${customGlowColor}, transparent 80%)`
+          }}
+          aria-hidden="true" 
+        />
+      )}
+
+      {/* ── 01. Sticky Top Navigation Bar ── */}
+      <div className="sticky top-0 z-50 w-full border-b border-border-subtle/50 bg-[var(--bg)]/90 backdrop-blur-md transition-all">
+        <div className="mx-auto flex h-[60px] max-w-6xl items-center justify-between px-4 sm:px-6 md:px-8">
+          <div className="flex-1 flex items-center gap-5">
+            <Link 
+              href={backHref} 
+              className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border-subtle/80 bg-[var(--card)] hover:bg-border-subtle/20 text-xs sm:text-sm font-semibold text-foreground transition-all shadow-sm shrink-0"
+            >
+              <ArrowLeft size={16} className="transition-transform duration-200 group-hover:-translate-x-0.5" />
+              <span className="hidden xs:inline">Back</span>
+              <span className="xs:hidden">Back</span>
+            </Link>
+            <div className="h-6 w-px bg-border-subtle/50 hidden sm:block" />
+          </div>
+          
+          <div className="hidden sm:flex flex-1 justify-center px-3 text-center overflow-hidden">
+            <span className="block truncate text-sm font-semibold text-muted tracking-wide max-w-[200px] sm:max-w-[360px] md:max-w-[480px]">
+              {project.title}
+            </span>
+          </div>
+          
+          <div className="flex-1 flex justify-end items-center gap-5">
+            <div className="h-6 w-px bg-border-subtle/50 hidden sm:block" />
+            <span className="text-sm font-semibold text-muted">{year}</span>
+          </div>
+        </div>
       </div>
 
-      <div className="max-w-3xl mx-auto text-center flex flex-col items-center space-y-5 sm:space-y-6">
-        {/* ── 02. Taxonomy / Type & Year ── */}
-        <div className="flex items-center justify-center gap-2.5 font-mono text-xs tracking-wider uppercase text-accent font-semibold">
-          <span>{category}</span>
-          <span className="text-muted/40">&bull;</span>
-          <span className="text-muted/80">{year}</span>
-          {project.client && (
-            <>
-              <span className="text-muted/40">&bull;</span>
-              <span className="text-muted/80">{project.client}</span>
-            </>
-          )}
-        </div>
+      <header className="mb-10 sm:mb-14 md:mb-16 pt-10 sm:pt-12 md:pt-14">
 
         {/* ── 03. Large Editorial Title ── */}
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-display font-semibold tracking-tight text-foreground leading-[1.08] text-center">
@@ -76,34 +94,49 @@ export function ProjectDetailHeader({
           </p>
         )}
 
-        {/* ── 05. Tech Stack Pills with Central Stack SVG Logos ── */}
-        {project.technologies && project.technologies.length > 0 && (
-          <div className="flex flex-wrap items-center justify-center gap-2 pt-1">
-            {project.technologies.map((tech) => {
-              const logo = getTechLogo(tech);
+        {/* ── 05. Structured Metadata Grid ── */}
+        <div className="w-full max-w-4xl pt-8 pb-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 text-left border-y border-border-subtle/50 py-8">
+            
+            {/* Role */}
+            <div className="space-y-2">
+              <h4 className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-muted/80">Role</h4>
+              <p className="text-sm sm:text-base font-medium text-foreground">{project.role || 'Lead Designer & Developer'}</p>
+            </div>
 
-              return (
-                <span
-                  key={tech}
-                  className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[var(--card)] border border-border-subtle/80 text-xs font-mono text-foreground shadow-xs"
-                >
-                  {logo && (
-                    /* eslint-disable-next-line @next/next/no-img-element */
-                    <img
-                      src={logo.url}
-                      alt=""
-                      width={13}
-                      height={13}
-                      className="w-3.5 h-3.5 object-contain shrink-0"
-                      style={logo.filter ? { filter: logo.filter } : undefined}
-                    />
-                  )}
-                  <span>{tech}</span>
-                </span>
-              );
-            })}
+            {/* Timeline */}
+            <div className="space-y-2">
+              <h4 className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-muted/80">Timeline</h4>
+              <p className="text-sm sm:text-base font-medium text-foreground">{project.year || '2024'}</p>
+            </div>
+
+            {/* Platform / Client */}
+            <div className="space-y-2">
+              <h4 className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-muted/80">{project.client ? 'Client' : 'Platform'}</h4>
+              <p className="text-sm sm:text-base font-medium text-foreground">{project.client || category}</p>
+            </div>
+
+            {/* Tools & Tech */}
+            <div className="space-y-2">
+              <h4 className="text-[10px] sm:text-xs font-mono uppercase tracking-widest text-muted/80">Tools & Tech</h4>
+              <div className="flex flex-wrap gap-x-3 gap-y-1">
+                {project.technologies && project.technologies.length > 0 ? (
+                  project.technologies.slice(0, 4).map((tech) => (
+                    <span key={tech} className="text-sm sm:text-base font-medium text-foreground inline-flex items-center gap-1.5">
+                      {tech}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-sm sm:text-base font-medium text-muted">Various</span>
+                )}
+                {project.technologies && project.technologies.length > 4 && (
+                  <span className="text-sm font-medium text-muted/60">+{project.technologies.length - 4}</span>
+                )}
+              </div>
+            </div>
+
           </div>
-        )}
+        </div>
 
         {/* ── 06. Action Buttons: Live Project & GitHub ── */}
         <div className="flex flex-wrap items-center justify-center gap-3 pt-3">
@@ -142,7 +175,7 @@ export function ProjectDetailHeader({
             </button>
           )}
         </div>
-      </div>
+      </header>
 
       {/* Interactive In-App Browser & Prototype Preview Modal */}
       {previewState && previewState.isOpen && (
@@ -154,6 +187,6 @@ export function ProjectDetailHeader({
           defaultDevice="desktop"
         />
       )}
-    </header>
+    </>
   );
 }

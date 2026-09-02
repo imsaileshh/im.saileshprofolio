@@ -42,6 +42,8 @@ export async function createCaseStudyAction(
     const githubUrl = String(formData.get('githubUrl') ?? '').trim() || null;
     const rawSections = String(formData.get('sectionsJson') ?? '[]');
     const submitAction = formData.get('action');
+    const useCustomBackground = formData.get('useCustomBackground') === 'true' || formData.get('useCustomBackground') === 'on';
+    const customBackground = String(formData.get('customBackground') ?? '').trim() || null;
 
     if (!title) return { error: 'Case study title is required' };
 
@@ -103,6 +105,8 @@ export async function createCaseStudyAction(
         coverImage,
         status: status as any,
         publishedAt: status === 'PUBLISHED' ? new Date() : null,
+        useCustomBackground,
+        customBackground,
         metadata: {
           client,
           role,
@@ -165,6 +169,8 @@ export async function updateCaseStudyAction(
     const githubUrl = String(formData.get('githubUrl') ?? '').trim() || null;
     const rawSections = String(formData.get('sectionsJson') ?? '[]');
     const submitAction = formData.get('action');
+    const useCustomBackground = formData.get('useCustomBackground') === 'true' || formData.get('useCustomBackground') === 'on';
+    const customBackground = String(formData.get('customBackground') ?? '').trim() || null;
 
     if (!title) return { error: 'Case study title is required' };
 
@@ -188,6 +194,8 @@ export async function updateCaseStudyAction(
         slug,
         description,
         coverImage,
+        useCustomBackground,
+        customBackground,
         ...(status ? { status: status as any, publishedAt: status === 'PUBLISHED' ? new Date() : null } : {}),
         metadata: {
           client,

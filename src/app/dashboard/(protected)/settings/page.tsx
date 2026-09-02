@@ -2,6 +2,7 @@ import { prisma } from '@/lib/database/prisma';
 import { updateSettingsAction } from './actions';
 
 import { HomeContentForm } from '@/components/dashboard/settings/HomeContentForm';
+import { ThemeSettingsForm } from '@/components/dashboard/settings/ThemeSettingsForm';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,6 +15,7 @@ export default async function DashboardSettingsPage() {
     sessionTimeoutMinutes: 5,
     heroContent: null,
     aboutContent: null,
+    themeConfig: null,
   };
 
   return (
@@ -22,6 +24,9 @@ export default async function DashboardSettingsPage() {
         <h1 className="text-2xl font-bold tracking-tight text-white">Settings & Content</h1>
         <p className="mt-1 text-sm text-zinc-400">Manage site configuration and homepage content.</p>
       </header>
+
+      {/* THEME SETTINGS FORM */}
+      <ThemeSettingsForm themeConfig={settings.themeConfig as any} />
 
       {/* HOMEPAGE CONTENT FORM */}
       <HomeContentForm 

@@ -172,3 +172,8 @@ body {
   box-shadow: none !important;
 }
 
+@media (hover: none) {
+  .sidebar-tooltip {
+    display: none !important;
+  }
+}

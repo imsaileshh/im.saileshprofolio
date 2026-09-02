@@ -25,6 +25,7 @@ export interface ProjectDetailData {
     slug: string;
     status: string;
   } | null;
+  customGlowColor?: string | null;
 }
 
 export interface AdjacentProject {
@@ -57,41 +58,53 @@ export function ProjectDetailTemplate({
     <div className="relative min-h-screen bg-[var(--bg)] text-foreground selection:bg-accent/20">
       
       {/* ── 01. Subtle Ambient Radial Background Glow ── */}
-      <div 
-        className="pointer-events-none absolute inset-x-0 top-0 h-[480px] bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(79,140,255,0.04),transparent)] dark:bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(255,255,255,0.03),transparent)]" 
-        aria-hidden="true" 
-      />
+      {project.customGlowColor ? (
+        <div 
+          className="pointer-events-none absolute inset-x-0 top-0 h-[800px] opacity-70 mix-blend-screen dark:mix-blend-lighten animate-pulse" 
+          style={{
+            background: `radial-gradient(circle 800px at 50% -100px, ${project.customGlowColor}, transparent 80%)`
+          }}
+          aria-hidden="true" 
+        />
+      ) : (
+        <div 
+          className="pointer-events-none absolute inset-x-0 top-0 h-[480px] bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(79,140,255,0.04),transparent)] dark:bg-[radial-gradient(ellipse_80%_50%_at_50%_0%,rgba(255,255,255,0.03),transparent)]" 
+          aria-hidden="true" 
+        />
+      )}
 
-      {/* ── 02. Top Project Bar (Horizontal Bar matching Reference) ── */}
-      <div className="sticky top-0 z-30 w-full border-b border-border-subtle/80 bg-[var(--bg)]/90 backdrop-blur-md transition-all">
-        <div className="mx-auto flex h-14 max-w-[1180px] items-center justify-between px-5 sm:px-8 md:px-12 lg:px-16">
+      {/* ── 02. Sticky Top Project Bar ── */}
+      <div className="sticky top-0 z-50 w-full border-b border-border-subtle/80 bg-[var(--bg)]/90 backdrop-blur-md transition-all">
+        <div className="mx-auto flex h-[60px] max-w-[1180px] items-center justify-between px-5 sm:px-8 md:px-12 lg:px-16">
           
           {/* Left: Back Button */}
-          <Link
-            href={backHref}
-            className="group inline-flex items-center gap-2 rounded-lg border border-border-subtle bg-[var(--card)] px-3 py-1.5 text-[11px] font-mono tracking-widest uppercase text-muted transition-all hover:border-foreground/30 hover:bg-[var(--nav-active)] hover:text-foreground shrink-0 shadow-xs"
-          >
-            <ArrowLeft size={12} className="transition-transform duration-200 group-hover:-translate-x-1" />
-            <span className="hidden xs:inline">{backLabel}</span>
-            <span className="xs:hidden">Back</span>
-          </Link>
+          <div className="flex-1 flex items-center gap-5">
+            <Link
+              href={backHref}
+              className="group inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-border-subtle/80 bg-[var(--card)] hover:bg-border-subtle/20 text-xs sm:text-sm font-semibold text-foreground transition-all shadow-sm shrink-0"
+            >
+              <ArrowLeft size={16} className="transition-transform duration-200 group-hover:-translate-x-0.5" />
+              <span className="hidden xs:inline">{backLabel.replace('Back to ', 'Back')}</span>
+              <span className="xs:hidden">Back</span>
+            </Link>
+            <div className="h-6 w-px bg-border-subtle/50 hidden sm:block" />
+          </div>
 
           {/* Center: Project Title */}
-          <div className="px-3 text-center overflow-hidden">
-            <span className="block truncate font-mono text-xs sm:text-[13px] font-medium tracking-tight text-foreground/90 max-w-[200px] sm:max-w-[360px] md:max-w-[480px]">
+          <div className="hidden sm:flex flex-1 justify-center px-3 text-center overflow-hidden">
+            <span className="block truncate text-sm font-semibold text-muted tracking-wide max-w-[200px] sm:max-w-[360px] md:max-w-[480px]">
               {project.title}
             </span>
           </div>
 
           {/* Right: Year / Category Meta */}
-          <div className="flex items-center gap-2 text-right shrink-0">
-            <span className="hidden sm:inline font-mono text-[11px] uppercase tracking-wider text-muted/80">
-              {category}
-            </span>
-            <span className="hidden sm:inline text-muted/40 font-mono text-xs">&bull;</span>
-            <span className="font-mono text-[11px] text-muted/70">
-              {year}
-            </span>
+          <div className="flex-1 flex justify-end items-center gap-5">
+            <div className="h-6 w-px bg-border-subtle/50 hidden sm:block" />
+            <div className="flex items-center gap-2 text-right shrink-0">
+              <span className="font-semibold text-sm text-muted">
+                {year}
+              </span>
+            </div>
           </div>
 
         </div>
@@ -187,8 +200,8 @@ export function ProjectDetailTemplate({
 
         {/* ── 04. Hero / Main Project Image (Compact Framed Showcase Container) ── */}
         {project.coverUrl && (
-          <section className="w-full max-w-[960px] mx-auto rounded-2xl sm:rounded-3xl border border-border-subtle/80 bg-[var(--card)] p-2.5 sm:p-4 shadow-sm">
-            <div className="relative aspect-[16/10] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-black/5 dark:bg-black/50 border border-border-subtle/40">
+          <section className="w-full max-w-[960px] mx-auto rounded-2xl border border-border-subtle/80 bg-[var(--card)] p-1.5 shadow-sm">
+            <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-black/5 dark:bg-black/50 border border-border-subtle/40">
               <Image
                 src={project.coverUrl}
                 alt={project.title}
@@ -309,7 +322,7 @@ export function ProjectDetailTemplate({
 
             <div className="space-y-5 max-w-[960px] mx-auto">
               {/* Primary large image */}
-              <div className="w-full rounded-2xl border border-border-subtle/80 bg-[var(--card)] p-2.5 sm:p-3 shadow-xs">
+              <div className="w-full rounded-2xl border border-border-subtle/80 bg-[var(--card)] p-1.5 shadow-sm">
                 <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-black/5 dark:bg-black/50 border border-border-subtle/40">
                   <Image
                     src={gallery[0]}
@@ -326,9 +339,9 @@ export function ProjectDetailTemplate({
                   {gallery.slice(1).map((imgUrl, idx) => (
                     <div
                       key={idx}
-                      className="rounded-xl border border-border-subtle/80 bg-[var(--card)] p-2 sm:p-2.5 shadow-xs"
+                      className="rounded-2xl border border-border-subtle/80 bg-[var(--card)] p-1.5 shadow-sm"
                     >
-                      <div className="relative aspect-[16/10] w-full rounded-lg overflow-hidden bg-black/5 dark:bg-black/50 border border-border-subtle/40">
+                      <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-black/5 dark:bg-black/50 border border-border-subtle/40">
                         <Image
                           src={imgUrl}
                           alt={`${project.title} preview ${idx + 2}`}
