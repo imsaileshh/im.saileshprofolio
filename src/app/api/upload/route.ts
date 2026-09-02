@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     
     const { error: uploadError } = await supabase
       .storage
-      .from('uploads')
+      .from('portfolio-images')
       .upload(fileName, buffer, {
         contentType: file.type || 'application/octet-stream',
         upsert: false
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to upload to storage' }, { status: 500 });
     }
 
-    const { data: { publicUrl } } = supabase.storage.from('uploads').getPublicUrl(fileName);
+    const { data: { publicUrl } } = supabase.storage.from('portfolio-images').getPublicUrl(fileName);
     const url = publicUrl;
 
     let type = 'image';
