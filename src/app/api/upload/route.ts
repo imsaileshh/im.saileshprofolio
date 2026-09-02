@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { requireAdmin } from '@/lib/dashboard/auth';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
+import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
 export async function POST(request: NextRequest) {
@@ -30,16 +29,36 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    await mkdir(uploadDir, { recursive: true });
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+    // Use service role key to bypass RLS for admin uploads
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
     
+    if (!supabaseUrl || !supabaseKey) {
+      console.error('Supabase credentials missing');
+      return NextResponse.json({ error: 'Storage configuration missing' }, { status: 500 });
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const hash = crypto.createHash('md5').update(buffer).digest('hex').substring(0, 8);
     const safeName = file.name.replace(/[^a-zA-Z0-9.\-_]/g, '-');
     const fileName = `${Date.now()}-${hash}-${safeName}`;
-    const filePath = path.join(uploadDir, fileName);
-    const url = `/uploads/${fileName}`;
     
-    await writeFile(filePath, buffer);
+    const { error: uploadError } = await supabase
+      .storage
+      .from('uploads')
+      .upload(fileName, buffer, {
+        contentType: file.type || 'application/octet-stream',
+        upsert: false
+      });
+
+    if (uploadError) {
+      console.error('Supabase upload error:', uploadError);
+      return NextResponse.json({ error: 'Failed to upload to storage' }, { status: 500 });
+    }
+
+    const { data: { publicUrl } } = supabase.storage.from('uploads').getPublicUrl(fileName);
+    const url = publicUrl;
 
     let type = 'image';
     if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
