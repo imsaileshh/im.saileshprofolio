@@ -1,33 +1,41 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence, Variants } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
-// Sequence phases
-// 0: "HELLO"
-// 1: "I'M SAILESH"
-// 2: "UI/UX DESIGNER"
-// 3: "FRONTEND DEVELOPER"
-// 4: "SHOPIFY • AI • DIGITAL"
-// 5: Exit / Reveal
+/**
+ * Official Portfolio Favicon / Logo (SVG).
+ * Preserves exact original shapes, coordinates, and colors from public/favicon.svg.
+ */
+function FaviconLogo({ className = 'w-14 h-14' }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 32 32"
+      className={className}
+      fill="none"
+      aria-hidden="true"
+    >
+      <text
+        x="3"
+        y="26"
+        fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+        fontSize="26"
+        fontWeight="900"
+        fill="#FFFFFF"
+      >
+        S
+      </text>
+      <circle cx="25" cy="23.5" r="3.2" fill="#2DD4BF" />
+    </svg>
+  );
+}
 
-const maskSlideVariants: Variants = {
-  initial: { y: '115%', opacity: 0 },
-  animate: {
-    y: '0%',
-    opacity: 1,
-    transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const },
-  },
-  exit: {
-    y: '-115%',
-    opacity: 0,
-    transition: { duration: 0.35, ease: [0.76, 0, 0.24, 1] as const },
-  },
-};
+const ease = [0.16, 1, 0.3, 1] as const;
 
 export function Preloader() {
-  const [phase, setPhase] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(true);
+  const [isContentExiting, setIsContentExiting] = useState(false);
 
   // Safety unlock scroll function
   const unlockScroll = useCallback(() => {
@@ -35,47 +43,72 @@ export function Preloader() {
     document.documentElement.style.overflow = '';
     const mobileScroll = document.querySelector('[data-mobile-scroll]') as HTMLElement | null;
     if (mobileScroll) mobileScroll.style.overflow = '';
+    const desktopScroll = document.getElementById('scroll-container');
+    if (desktopScroll) {
+      desktopScroll.style.overflowY = 'auto';
+    }
   }, []);
 
   useEffect(() => {
-    // Check reduced motion preference
+    // 1. Respect prefers-reduced-motion
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) {
       setIsVisible(false);
       return;
     }
 
-    // Lock scroll during intro
+    // 2. Show only on initial visit / session (not on every internal route navigation)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const forcePreloader = urlParams.has('intro') || urlParams.has('preloader');
+      const hasSeen = sessionStorage.getItem('hasSeenPreloader');
+      if (hasSeen === 'true' && !forcePreloader) {
+        setIsVisible(false);
+        return;
+      }
+      sessionStorage.setItem('hasSeenPreloader', 'true');
+    } catch {
+      // Fallback for strict browser privacy modes
+    }
+
+    // 3. Lock scroll during intro with zero position jump
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
+    window.scrollTo(0, 0);
+
     const mobileScroll = document.querySelector('[data-mobile-scroll]') as HTMLElement | null;
-    if (mobileScroll) mobileScroll.style.overflow = 'hidden';
+    if (mobileScroll) {
+      mobileScroll.scrollTop = 0;
+      mobileScroll.style.overflow = 'hidden';
+    }
 
-    // Sequence timing (total ~2.9s before curtain exit)
-    setPhase(0); // HELLO (0ms)
+    const desktopScroll = document.getElementById('scroll-container');
+    if (desktopScroll) {
+      desktopScroll.scrollTop = 0;
+      desktopScroll.style.overflowY = 'hidden';
+    }
 
-    const t1 = setTimeout(() => setPhase(1), 600);   // I'M SAILESH (600ms)
-    const t2 = setTimeout(() => setPhase(2), 1400);  // UI/UX DESIGNER (1400ms)
-    const t3 = setTimeout(() => setPhase(3), 1950);  // FRONTEND DEVELOPER (1950ms)
-    const t4 = setTimeout(() => setPhase(4), 2500);  // SHOPIFY • AI • DIGITAL (2500ms)
-    const t5 = setTimeout(() => {
-      setPhase(5); // Trigger curtain slide up
+    // 4. Fast & Premium Sequence Timing (Total ~2.2s maximum)
+    // At 1.75s: Start smooth lift & fade of center typography
+    const tContentExit = setTimeout(() => {
+      setIsContentExiting(true);
+    }, 1750);
+
+    // At 1.9s: Trigger upward curtain wipe (duration ~550ms, revealing homepage smoothly)
+    const tCurtainExit = setTimeout(() => {
       setIsVisible(false);
       unlockScroll();
-    }, 3100);
+    }, 1900);
 
-    // Hard fallback timeout so it never gets stuck
+    // Reduced safety fallback timeout (~3.0s)
     const safetyTimeout = setTimeout(() => {
       setIsVisible(false);
       unlockScroll();
-    }, 4200);
+    }, 3000);
 
     return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
-      clearTimeout(t5);
+      clearTimeout(tContentExit);
+      clearTimeout(tCurtainExit);
       clearTimeout(safetyTimeout);
       unlockScroll();
     };
@@ -85,19 +118,19 @@ export function Preloader() {
     <AnimatePresence onExitComplete={unlockScroll}>
       {isVisible && (
         <motion.div
-          key="cinematic-intro-curtain"
+          key="portfolio-preloader-curtain"
           initial={{ y: '0%' }}
           exit={{
             y: '-100%',
             transition: {
-              duration: 0.85,
-              ease: [0.76, 0, 0.24, 1] as const,
+              duration: 0.55,
+              ease: [0.76, 0, 0.24, 1],
             },
           }}
-          className="fixed inset-0 z-[9999] flex flex-col justify-between items-center bg-[#090A0C] text-[#F4F4F4] select-none pointer-events-auto overflow-hidden px-6 py-8 md:p-12"
+          className="fixed inset-0 z-[9999] flex flex-col justify-between items-center bg-[#090A0C] text-[#F4F4F4] select-none pointer-events-auto overflow-hidden px-6 py-8 md:p-12 will-change-transform"
         >
-          {/* Top subtle coordinates header */}
-          <div className="w-full flex justify-between items-center text-[10px] font-mono tracking-[0.2em] text-[#9A9CA2]/40 uppercase">
+          {/* Top subtle brand header */}
+          <div className="w-full flex justify-between items-center text-[10px] font-mono tracking-[0.2em] text-[#9A9CA2]/40 uppercase pointer-events-none">
             <span>SAILESH P</span>
             <span className="flex items-center gap-1.5">
               <span className="w-1.5 h-1.5 rounded-full bg-[#2DD4BF] animate-pulse" />
@@ -105,127 +138,80 @@ export function Preloader() {
             </span>
           </div>
 
-          {/* Central Cinematic Typography Sequence */}
-          <div className="relative flex flex-col items-center justify-center text-center my-auto min-h-[140px] md:min-h-[180px] w-full max-w-2xl px-4">
-            <AnimatePresence mode="wait">
-              {/* PHASE 0: HELLO */}
-              {phase === 0 && (
-                <div key="phase-hello" className="overflow-hidden py-2">
-                  <motion.h1
-                    variants={maskSlideVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className="text-4xl sm:text-5xl md:text-7xl font-display font-semibold tracking-tight text-[#F4F4F4]"
-                  >
-                    HELLO
-                  </motion.h1>
-                </div>
-              )}
+          {/* Central Logo & Typography Sequence */}
+          <motion.div
+            animate={isContentExiting ? { opacity: 0, y: -14 } : { opacity: 1, y: 0 }}
+            transition={{ duration: 0.25, ease: [0.32, 0, 0.67, 0] }}
+            className="relative flex flex-col items-center justify-center text-center my-auto w-full max-w-xl px-4 will-change-[transform,opacity]"
+          >
+            {/* Favicon Logo with smooth cinematic scale (0.82 → 1) + opacity entrance (0–700ms) */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.82, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.05, ease }}
+              className="relative flex flex-col items-center mb-5"
+            >
+              <div className="relative p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.5),0_0_24px_rgba(45,212,191,0.08)]">
+                {/* Subtle glow / opacity pulse */}
+                <motion.div
+                  animate={{ opacity: [0.88, 1, 0.88] }}
+                  transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+                >
+                  <FaviconLogo className="w-12 h-12 md:w-14 md:h-14" />
+                </motion.div>
+              </div>
 
-              {/* PHASE 1: I'M SAILESH */}
-              {phase === 1 && (
-                <div key="phase-name" className="overflow-hidden py-2">
-                  <motion.h1
-                    variants={maskSlideVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className="text-3xl sm:text-5xl md:text-7xl font-display font-semibold tracking-tight flex items-center justify-center gap-2 md:gap-3.5 flex-wrap"
-                  >
-                    <span className="text-[#9A9CA2]/70 font-light">I&apos;M</span>
-                    <span className="text-[#F4F4F4] font-bold">SAILESH</span>
-                    <motion.span
-                      initial={{ scale: 0, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ delay: 0.2, duration: 0.3 }}
-                      className="w-2.5 h-2.5 md:w-3.5 md:h-3.5 rounded-full bg-[#2DD4BF] shadow-[0_0_14px_#2DD4BF] inline-block"
-                    />
-                  </motion.h1>
-                </div>
-              )}
+              {/* Natural loading progress indicator beneath favicon (~1.5–1.8s) */}
+              <div className="w-14 h-[2px] bg-white/[0.08] rounded-full overflow-hidden mt-3.5 relative">
+                <motion.div
+                  initial={{ width: '0%' }}
+                  animate={{ width: '100%' }}
+                  transition={{
+                    duration: 1.65,
+                    delay: 0.15,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  className="h-full bg-[#2DD4BF] rounded-full shadow-[0_0_8px_rgba(45,212,191,0.6)]"
+                />
+              </div>
+            </motion.div>
 
-              {/* PHASE 2: UI/UX DESIGNER */}
-              {phase === 2 && (
-                <div key="phase-uiux" className="overflow-hidden py-2">
-                  <motion.div
-                    variants={maskSlideVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className="flex flex-col items-center gap-1.5"
-                  >
-                    <span className="text-[10px] md:text-xs font-mono tracking-[0.25em] text-[#2DD4BF] uppercase font-semibold">
-                      01 / SPECIALTY
-                    </span>
-                    <h2 className="text-2xl sm:text-4xl md:text-6xl font-display font-semibold tracking-tight text-[#F4F4F4]">
-                      UI/UX DESIGNER
-                    </h2>
-                  </motion.div>
-                </div>
-              )}
+            {/* Smooth masked text reveal */}
+            <div className="flex flex-col items-center gap-1.5">
+              {/* Line 1: HELLO, I'M (500–1000ms) */}
+              <div className="overflow-hidden py-0.5">
+                <motion.span
+                  initial={{ y: '115%', opacity: 0 }}
+                  animate={{ y: '0%', opacity: 1 }}
+                  transition={{ duration: 0.48, delay: 0.5, ease }}
+                  className="block text-[11px] sm:text-[12px] md:text-[13px] font-mono tracking-[0.28em] text-[#9A9CA2] uppercase font-medium"
+                >
+                  HELLO, I&apos;M
+                </motion.span>
+              </div>
 
-              {/* PHASE 3: FRONTEND DEVELOPER */}
-              {phase === 3 && (
-                <div key="phase-frontend" className="overflow-hidden py-2">
-                  <motion.div
-                    variants={maskSlideVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className="flex flex-col items-center gap-1.5"
-                  >
-                    <span className="text-[10px] md:text-xs font-mono tracking-[0.25em] text-[#2DD4BF] uppercase font-semibold">
-                      02 / SPECIALTY
-                    </span>
-                    <h2 className="text-2xl sm:text-4xl md:text-6xl font-display font-semibold tracking-tight text-[#F4F4F4]">
-                      FRONTEND DEVELOPER
-                    </h2>
-                  </motion.div>
-                </div>
-              )}
+              {/* Line 2: SAILESH P. (800–1400ms) */}
+              <div className="overflow-hidden py-0.5">
+                <motion.h1
+                  initial={{ y: '115%', opacity: 0 }}
+                  animate={{ y: '0%', opacity: 1 }}
+                  transition={{ duration: 0.55, delay: 0.8, ease }}
+                  className="block text-3xl sm:text-4xl md:text-5xl font-display font-bold tracking-tight text-[#F4F4F4]"
+                >
+                  SAILESH P<span className="text-[#2DD4BF]">.</span>
+                </motion.h1>
+              </div>
+            </div>
+          </motion.div>
 
-              {/* PHASE 4: SHOPIFY • AI • DIGITAL */}
-              {phase === 4 && (
-                <div key="phase-digital" className="overflow-hidden py-2">
-                  <motion.div
-                    variants={maskSlideVariants}
-                    initial="initial"
-                    animate="animate"
-                    exit="exit"
-                    className="flex flex-col items-center gap-2"
-                  >
-                    <span className="text-[10px] md:text-xs font-mono tracking-[0.25em] text-[#2DD4BF] uppercase font-semibold">
-                      03 / WORKFLOWS
-                    </span>
-                    <h2 className="text-xl sm:text-3xl md:text-5xl font-display font-semibold tracking-tight text-[#F4F4F4] flex items-center justify-center gap-2 md:gap-3 flex-wrap">
-                      <span>SHOPIFY</span>
-                      <span className="text-[#2DD4BF] text-sm md:text-xl font-mono">•</span>
-                      <span>AI</span>
-                      <span className="text-[#2DD4BF] text-sm md:text-xl font-mono">•</span>
-                      <span>DIGITAL</span>
-                    </h2>
-                  </motion.div>
-                </div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Bottom subtle bar indicator */}
-          <div className="w-full flex justify-between items-center text-[10px] font-mono tracking-[0.2em] text-[#9A9CA2]/40 uppercase">
-            <span>UI/UX Designer │ Product Designer</span>
+          {/* Bottom subtle metadata */}
+          <div className="w-full flex justify-between items-center text-[10px] font-mono tracking-[0.2em] text-[#9A9CA2]/40 uppercase pointer-events-none">
+            <span>UI/UX &amp; PRODUCT DESIGNER</span>
             <span className="text-[#2DD4BF]/80 font-semibold">INITIALIZING</span>
           </div>
-
-          {/* Bottom subtle progress line */}
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: 3.1, ease: 'linear' }}
-            className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#2DD4BF] to-transparent origin-left"
-          />
         </motion.div>
       )}
     </AnimatePresence>
   );
 }
+

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { FileText } from 'lucide-react';
 import Link from 'next/link';
@@ -11,7 +11,7 @@ const navItems = [
   ...navigation.map((item) => ({
     id: item.label.toLowerCase().replace(/\s+/g, '-'),
     icon: item.icon,
-    label: item.label === 'Personal Projects' ? 'Projects' : item.label,
+    label: item.label === 'Personal Projects' ? 'Projects' : item.label === 'Experience' ? 'Exp.' : item.label,
     ariaLabel: item.label,
     href: item.href,
   })),
@@ -22,8 +22,6 @@ interface MobileBottomNavProps {
   onOpenResume: () => void;
   onOpenHireMe?: () => void;
 }
-
-const ease = [0.22, 1, 0.36, 1] as const;
 
 export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
   const pathname = usePathname();
@@ -69,20 +67,21 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
       if (!isMouseOverRef.current) {
         // Top of page -> Collapsed (minimal single dot)
         if (currentScrollY < 24) {
-          setIsExpanded(false);
-        } else if (Math.abs(delta) > 6) {
-          // Scrolling DOWN -> Full menu open
+          setIsExpanded((prev) => (prev ? false : prev));
+          lastScrollY.current = currentScrollY;
+        } else if (Math.abs(delta) >= 25) {
+          // 20-30px threshold (25px) before changing navbar state
           if (delta > 0) {
-            setIsExpanded(true);
+            // Scrolling DOWN -> Full menu open
+            setIsExpanded((prev) => (!prev ? true : prev));
+          } else {
+            // Scrolling UP -> Full menu closed
+            setIsExpanded((prev) => (prev ? false : prev));
           }
-          // Scrolling UP -> Full menu closed
-          else {
-            setIsExpanded(false);
-          }
+          lastScrollY.current = currentScrollY;
         }
       }
 
-      lastScrollY.current = Math.max(0, currentScrollY);
       ticking.current = false;
     };
 
@@ -130,38 +129,38 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
     };
   }, []);
 
-  // Hover handlers for the floating island container
-  const handleContainerMouseEnter = () => {
+  // Hover handlers for the floating island container (with stable debounce to prevent flicker)
+  const handleContainerMouseEnter = useCallback(() => {
     isMouseOverRef.current = true;
     if (closeTimeoutRef.current) {
       clearTimeout(closeTimeoutRef.current);
       closeTimeoutRef.current = null;
     }
     setIsExpanded(true);
-  };
+  }, []);
 
-  const handleContainerMouseLeave = () => {
+  const handleContainerMouseLeave = useCallback(() => {
     isMouseOverRef.current = false;
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
     closeTimeoutRef.current = setTimeout(() => {
       setIsExpanded(false);
       setHoveredId(null);
     }, 280);
-  };
+  }, []);
 
   // Auto-close timer for touch devices
-  const resetTouchTimer = () => {
+  const resetTouchTimer = useCallback(() => {
     if (touchTimerRef.current) clearTimeout(touchTimerRef.current);
     touchTimerRef.current = setTimeout(() => {
       setIsExpanded(false);
       setHoveredId(null);
     }, 4500);
-  };
+  }, []);
 
-  const handleDotClick = () => {
+  const handleDotClick = useCallback(() => {
     setIsExpanded(true);
     resetTouchTimer();
-  };
+  }, [resetTouchTimer]);
 
   if (!hasMounted) return null;
 
@@ -170,30 +169,22 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
       className="md:hidden fixed z-[90] bottom-4 left-0 right-0 flex justify-center items-center pointer-events-none px-3"
       style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
     >
-      <motion.nav
+      <nav
         ref={containerRef}
-        layout
         onMouseEnter={handleContainerMouseEnter}
         onMouseLeave={handleContainerMouseLeave}
         onClick={() => {
           if (!isExpanded) handleDotClick();
         }}
-        transition={{
-          type: 'spring',
-          stiffness: 380,
-          damping: 30,
-        }}
         aria-label="Mobile Navigation"
-        className={`pointer-events-auto relative flex items-center justify-center rounded-full bg-[var(--panel)]/95 border border-[var(--border)] shadow-[0_12px_36px_rgba(0,0,0,0.35)] backdrop-blur-[20px] select-none ${
+        className={`pointer-events-auto relative flex items-center justify-center bg-[var(--panel)]/95 border border-[var(--border)] shadow-[0_12px_36px_rgba(0,0,0,0.35)] backdrop-blur-[14px] select-none transition-all duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-[width,height,border-radius] ${
           isExpanded
-            ? 'max-w-[calc(100vw-20px)] p-1 overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden'
-            : 'cursor-pointer hover:border-[var(--accent)]/50'
+            ? 'h-[54px] w-auto max-w-[calc(100vw-20px)] p-1 rounded-2xl'
+            : 'h-[44px] w-[44px] rounded-full cursor-pointer hover:border-[var(--accent)]/50'
         }`}
         style={{
           boxShadow:
             '0 12px 32px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06)',
-          height: isExpanded ? '48px' : '44px',
-          width: isExpanded ? 'auto' : '44px',
         }}
       >
         <AnimatePresence mode="wait" initial={false}>
@@ -201,24 +192,17 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
             /* Minimal State: Single Floating Dot */
             <motion.div
               key="minimal-dot"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.5 }}
-              transition={{ duration: 0.16 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.15 }}
               className="relative w-11 h-11 flex items-center justify-center cursor-pointer"
               aria-label="Open navigation"
             >
               {/* Ripple pulse ring */}
-              <motion.span
-                className="absolute inset-1 rounded-full border border-[var(--accent)] pointer-events-none"
-                initial={{ opacity: 0.55, scale: 0.8 }}
-                animate={{ opacity: 0, scale: 2 }}
-                transition={{
-                  duration: 1.8,
-                  repeat: Infinity,
-                  ease: 'easeOut',
-                  repeatDelay: 0.2,
-                }}
+              <span
+                className="absolute inset-1 rounded-full border border-[var(--accent)] pointer-events-none animate-ping opacity-60"
+                style={{ animationDuration: '2.4s' }}
               />
               {/* Glowing single dot */}
               <div className="w-2.5 h-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]" />
@@ -227,11 +211,11 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
             /* Maximal State: Full Navigation Menu */
             <motion.div
               key="maximal-menu"
-              initial={{ opacity: 0, scale: 0.92 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.92 }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.2, ease }}
-              className="flex items-center gap-0.5 sm:gap-1"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: shouldReduceMotion ? 0 : 0.18 }}
+              className="flex items-center gap-0.5"
               onTouchStart={resetTouchTimer}
             >
               {navItems.map((item) => {
@@ -244,61 +228,30 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                 }
 
                 const isHovered = hoveredId === item.id;
-                // Active label remains visible; hovered item also expands with label
+                // Active label remains visible; hovered item also reveals label directly underneath
                 const showLabel = isActive || isHovered;
 
                 const itemContent = (
-                  <motion.div
-                    layout
-                    transition={{
-                      type: 'spring',
-                      stiffness: 450,
-                      damping: 35,
-                    }}
-                    className={`relative flex items-center h-9 rounded-full transition-colors duration-200 select-none ${
-                      showLabel ? 'px-2.5 gap-1.5' : 'w-9 justify-center'
-                    }`}
-                  >
-                    {/* Active pill background */}
-                    {isActive && (
-                      <motion.div
-                        layoutId="mobile-nav-active-pill"
-                        className="absolute inset-0 rounded-full bg-[var(--nav-active)] border border-[var(--border)]"
-                        style={{
-                          boxShadow:
-                            '0 2px 8px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.08)',
-                        }}
-                        transition={{
-                          type: 'spring',
-                          stiffness: 400,
-                          damping: 32,
-                        }}
-                      />
-                    )}
+                  <div className="relative flex flex-col items-center justify-center w-[44px] h-[46px] rounded-xl select-none overflow-hidden">
+                    {/* Active & Hover pill background with hardware-accelerated opacity */}
+                    <div
+                      className={`absolute inset-0 rounded-xl border transition-all duration-200 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] pointer-events-none ${
+                        isActive
+                          ? 'bg-[var(--nav-active)] border-[var(--border)] opacity-100 shadow-[0_2px_8px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.08)]'
+                          : isHovered
+                          ? 'bg-foreground/[0.06] border-border-subtle/30 opacity-100'
+                          : 'opacity-0 border-transparent'
+                      }`}
+                    />
 
-                    {/* Hover pill background (for inactive items) */}
-                    {isHovered && !isActive && (
-                      <motion.div
-                        layoutId="mobile-nav-hover-pill"
-                        className="absolute inset-0 rounded-full bg-foreground/[0.06] border border-border-subtle/30"
-                        transition={{
-                          type: 'spring',
-                          stiffness: 450,
-                          damping: 35,
-                        }}
-                      />
-                    )}
-
-                    {/* Icon */}
-                    <motion.div
-                      className="relative z-10 flex items-center justify-center shrink-0"
-                      animate={{
-                        scale: isActive ? 1.05 : isHovered ? 1.05 : 1,
-                      }}
-                      transition={{ duration: 0.18 }}
+                    {/* Icon - on top, with transform (y) animation only */}
+                    <div
+                      className={`relative z-10 flex items-center justify-center shrink-0 transition-transform duration-200 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
+                        showLabel && !shouldReduceMotion ? '-translate-y-1' : 'translate-y-0'
+                      }`}
                     >
                       <item.icon
-                        size={17}
+                        size={19}
                         strokeWidth={isActive ? 2.2 : 1.75}
                         className={`transition-colors duration-200 ${
                           isActive
@@ -308,28 +261,21 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                             : 'text-[var(--muted)]'
                         }`}
                       />
-                    </motion.div>
+                    </div>
 
-                    {/* Label text */}
-                    <AnimatePresence initial={false}>
-                      {showLabel && (
-                        <motion.span
-                          initial={{ opacity: 0, width: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, width: 'auto', scale: 1 }}
-                          exit={{ opacity: 0, width: 0, scale: 0.95 }}
-                          transition={{
-                            duration: shouldReduceMotion ? 0 : 0.2,
-                            ease,
-                          }}
-                          className={`relative z-10 text-[11.5px] whitespace-nowrap overflow-hidden tracking-tight font-medium ${
-                            isActive ? 'text-[var(--text)] font-semibold' : 'text-[var(--text)]'
-                          }`}
-                        >
-                          {item.label}
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
-                  </motion.div>
+                    {/* Page label - directly underneath icon with transform (y) + opacity only (200ms ease) */}
+                    <span
+                      className={`absolute bottom-1 z-10 text-[9px] font-medium tracking-tight leading-none text-center whitespace-nowrap pointer-events-none select-none transition-all duration-200 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-[transform,opacity] ${
+                        showLabel
+                          ? 'opacity-100 translate-y-0'
+                          : 'opacity-0 translate-y-1'
+                      } ${
+                        isActive ? 'text-[var(--text)] font-semibold' : 'text-[var(--muted)]'
+                      }`}
+                    >
+                      {item.label}
+                    </span>
+                  </div>
                 );
 
                 if (item.id === 'resume') {
@@ -346,7 +292,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                       onBlur={() => setHoveredId(null)}
                       type="button"
                       aria-label={item.ariaLabel}
-                      className="relative flex items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] shrink-0"
+                      className="relative flex items-center justify-center rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] shrink-0 cursor-pointer"
                     >
                       {itemContent}
                     </button>
@@ -374,7 +320,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                     onBlur={() => setHoveredId(null)}
                     aria-label={item.ariaLabel}
                     aria-current={isActive ? 'page' : undefined}
-                    className="relative flex items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] shrink-0"
+                    className="relative flex items-center justify-center rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] shrink-0 cursor-pointer"
                   >
                     {itemContent}
                   </Link>
@@ -383,7 +329,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
             </motion.div>
           )}
         </AnimatePresence>
-      </motion.nav>
+      </nav>
     </div>
   );
 }

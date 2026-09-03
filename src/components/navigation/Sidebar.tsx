@@ -90,13 +90,13 @@ export function Sidebar({
       <div className="sidebar-island absolute inset-0 overflow-hidden rounded-[20px] bg-[var(--sidebar)] flex flex-col transition-colors duration-200">
         
         {/* Profile Header (sidebar-header) */}
-        <div className={`sidebar-header relative shrink-0 pt-10 pb-6 ${isCollapsed ? 'flex justify-center px-0' : 'px-6'}`}>
+        <div className={`sidebar-header relative shrink-0 pt-7 pb-8 ${isCollapsed ? 'flex justify-center px-0' : 'px-6'}`}>
           <div 
 
           className={`flex items-center relative ${isCollapsed ? 'justify-center' : 'gap-3'}`}
         >
           <motion.div 
-            className="relative w-[52px] h-[52px] rounded-full overflow-hidden border border-border-subtle bg-[var(--card)] shrink-0 z-20 cursor-pointer transition-colors duration-300 hover:border-accent hover:shadow-[0_0_15px_rgba(0,229,255,0.15)]"
+            className="relative w-[48px] h-[48px] rounded-full overflow-hidden border border-border-subtle bg-[var(--card)] shrink-0 z-20 cursor-pointer transition-colors duration-300 hover:border-accent hover:shadow-[0_0_15px_rgba(0,229,255,0.15)]"
             animate={isCollapsed && showBubble && !prefersReducedMotion ? { scale: 1.04 } : { scale: 1 }}
             whileHover={!prefersReducedMotion ? { scale: 1.04 } : undefined}
             transition={{ duration: 0.3, ease: "easeOut" }}
@@ -142,7 +142,7 @@ export function Sidebar({
                 className="flex flex-col justify-center overflow-hidden min-w-0 pl-0.5"
               >
                 <div className="flex items-center gap-1">
-                  <h2 className="text-[16.5px] font-display font-bold tracking-tight text-foreground whitespace-nowrap">
+                  <h2 className="text-[16px] font-display font-bold tracking-tight text-foreground whitespace-nowrap">
                     Sailesh P
                   </h2>
                   <span className="text-accent font-bold text-[16px] leading-none">.</span>
@@ -151,16 +151,6 @@ export function Sidebar({
                 <span className="text-[11.5px] font-medium text-foreground/80 tracking-tight whitespace-nowrap mt-0.5">
                   UI/UX &amp; Product Designer
                 </span>
-
-                <div className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-full bg-accent/[0.08] border border-accent/20 w-fit">
-                  <span className="relative flex h-1.5 w-1.5 shrink-0">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
-                    <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-accent" />
-                  </span>
-                  <span className="text-[10px] font-medium text-accent tracking-wide whitespace-nowrap">
-                    Available for work
-                  </span>
-                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -169,8 +159,8 @@ export function Sidebar({
       </div>
 
       {/* Navigation (sidebar-nav) */}
-      <div className={`sidebar-nav flex-1 min-h-0 py-2 flex flex-col justify-start overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] ${isCollapsed ? 'px-2' : 'px-6'}`}>
-        <nav className="flex flex-col gap-[4px]">
+      <div className={`sidebar-nav flex-1 min-h-0 pt-2 pb-1 flex flex-col justify-start overflow-hidden ${isCollapsed ? 'px-2' : 'px-6'}`}>
+        <nav className="flex flex-col gap-1.5" style={{ gap: '6px' }}>
           {navigation.map((link) => {
             // Exact match for home, sub-paths for others
             const isActive = link.href === '/' 
@@ -193,8 +183,8 @@ export function Sidebar({
                       }
                     }
                   }}
-                  className={`flex items-center h-[44px] rounded-xl transition-all duration-200 group relative overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                    isCollapsed ? 'justify-center w-full px-0' : 'gap-3 px-4 w-full'
+                  className={`flex items-center h-[39px] rounded-xl transition-all duration-200 group relative overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                    isCollapsed ? 'justify-center w-full px-0' : 'gap-3 px-3.5 w-full'
                   } ${
                     isActive 
                       ? 'bg-nav-active text-foreground font-medium' 
@@ -209,7 +199,7 @@ export function Sidebar({
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
                   )}
-                  <link.icon size={18} className={`shrink-0 ${isActive ? 'text-foreground' : 'text-muted group-hover:text-foreground transition-colors'}`} />
+                  <link.icon size={17} className={`shrink-0 ${isActive ? 'text-foreground' : 'text-muted group-hover:text-foreground transition-colors'}`} />
                   <AnimatePresence>
                     {!isCollapsed && (
                       <motion.span 
@@ -217,7 +207,7 @@ export function Sidebar({
                         animate={{ opacity: 1, width: "auto" }}
                         exit={{ opacity: 0, width: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="text-sm overflow-hidden"
+                        className="text-[13.5px] overflow-hidden"
                       >
                         {link.label}
                       </motion.span>
@@ -237,11 +227,11 @@ export function Sidebar({
           <div className="relative group/nav-tooltip w-full">
             <button
               onClick={() => onOpenHireMe?.()}
-              className={`flex items-center h-[44px] rounded-xl transition-all duration-200 group relative overflow-hidden text-muted hover:text-foreground hover:bg-border-subtle/10 w-full text-left whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
+              className={`flex items-center h-[39px] rounded-xl transition-all duration-200 group relative overflow-hidden text-muted hover:text-foreground hover:bg-border-subtle/10 w-full text-left whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                isCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'
               }`}
             >
-              <Mail size={18} className="shrink-0 text-muted group-hover:text-foreground transition-colors" />
+              <Mail size={17} className="shrink-0 text-muted group-hover:text-foreground transition-colors" />
               <AnimatePresence>
                 {!isCollapsed && (
                   <motion.span 
@@ -249,7 +239,7 @@ export function Sidebar({
                     animate={{ opacity: 1, width: "auto" }}
                     exit={{ opacity: 0, width: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="text-sm overflow-hidden"
+                    className="text-[13.5px] overflow-hidden"
                   >
                     Hire me
                   </motion.span>
@@ -267,11 +257,11 @@ export function Sidebar({
           <div className="relative group/nav-tooltip w-full">
             <button
               onClick={() => onOpenResume?.()}
-              className={`flex items-center h-[44px] rounded-xl transition-all duration-200 group relative overflow-hidden text-muted hover:text-foreground hover:bg-border-subtle/10 w-full text-left whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                isCollapsed ? 'justify-center px-0' : 'gap-3 px-4'
+              className={`flex items-center h-[39px] rounded-xl transition-all duration-200 group relative overflow-hidden text-muted hover:text-foreground hover:bg-border-subtle/10 w-full text-left whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                isCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'
               }`}
             >
-              <FileText size={18} className="shrink-0 text-muted group-hover:text-foreground transition-colors" />
+              <FileText size={17} className="shrink-0 text-muted group-hover:text-foreground transition-colors" />
               <AnimatePresence>
                 {!isCollapsed && (
                   <motion.span 
@@ -279,7 +269,7 @@ export function Sidebar({
                     animate={{ opacity: 1, width: "auto" }}
                     exit={{ opacity: 0, width: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="text-sm overflow-hidden"
+                    className="text-[13.5px] overflow-hidden"
                   >
                     Resume
                   </motion.span>
@@ -296,7 +286,7 @@ export function Sidebar({
       </div>
 
       {/* Bottom Controls (Unified Flex Layout for Narrow and Wide) */}
-      <div className={`mt-auto shrink-0 pt-5 pb-6 flex flex-col w-full ${isCollapsed ? 'px-0 items-center justify-center' : 'px-6 gap-3'}`}>
+      <div className={`mt-auto shrink-0 pt-2 pb-3.5 flex flex-col w-full ${isCollapsed ? 'px-0 items-center justify-center pb-4' : 'px-6 gap-2'}`}>
         {isCollapsed ? (
           /* Narrow: Three-dot Social Button and Expand Button */
           <div className="flex flex-col items-center gap-4">
@@ -333,7 +323,7 @@ export function Sidebar({
           </div>
         ) : (
           /* Wide: Socials and Collapse Button */
-          <div className="flex flex-col gap-6 w-full pt-2">
+          <div className="flex flex-col gap-2.5 w-full">
             <div className="flex items-center justify-between w-full">
               <span className="text-[11px] font-bold text-foreground uppercase tracking-[0.15em]">Socials</span>
               {onToggleCollapse && (
@@ -373,9 +363,9 @@ export function Sidebar({
               ))}
             </div>
 
-            <div className="mt-4 text-center w-full">
-              <span className="text-[10px] font-mono tracking-[0.15em] text-accent font-medium opacity-80">
-                10.5276° N, 76.2144° E
+            <div className="mt-1 text-center w-full">
+              <span className="text-[9px] font-mono tracking-[0.16em] uppercase text-accent font-medium opacity-80">
+                India, Kerala
               </span>
             </div>
           </div>

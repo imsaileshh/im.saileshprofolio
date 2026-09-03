@@ -40,6 +40,25 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
+  // ── ANCHOR LINK SMOOTH SCROLLING ──────────────────────────────────────────
+  useEffect(() => {
+    const handleAnchorClick = (e: MouseEvent) => {
+      const target = (e.target as HTMLElement).closest('a[href^="#"]');
+      if (!target) return;
+      const href = target.getAttribute('href');
+      if (!href || href === '#') return;
+
+      const targetElement = document.querySelector(href);
+      if (targetElement) {
+        e.preventDefault();
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    };
+
+    document.addEventListener('click', handleAnchorClick);
+    return () => document.removeEventListener('click', handleAnchorClick);
+  }, []);
+
   // ── SCROLL TO TOP ON ROUTE CHANGE ───────────────────────────────────────
   useEffect(() => {
     if (mainPanelRef.current) {
@@ -126,7 +145,6 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
             id="scroll-container"
             ref={mainPanelRef}
             className="main-panel rounded-2xl w-full h-full min-h-0 overflow-y-auto overflow-x-hidden relative"
-            style={{ scrollBehavior: 'smooth' }}
           >
             <AnimatePresence mode="wait">
               <motion.div
