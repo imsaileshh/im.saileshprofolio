@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { useReducedMotion } from 'framer-motion';
 import { FileText } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -33,20 +33,27 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
   const touchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const lastScrollY = useRef(0);
-  const ticking = useRef(false);
+  const rafId = useRef<number | null>(null);
+  const isExpandedRef = useRef(false);
   const isMouseOverRef = useRef(false);
 
   useEffect(() => {
     setHasMounted(true);
   }, []);
 
+  // Sync ref with state
+  useEffect(() => {
+    isExpandedRef.current = isExpanded;
+  }, [isExpanded]);
+
   // Reset state on route change
   useEffect(() => {
     setIsExpanded(false);
+    isExpandedRef.current = false;
     setHoveredId(null);
   }, [pathname]);
 
-  // ── Scroll direction detection (scroll down -> open full menu, scroll up -> close full menu) ──
+  // ── High-performance scroll direction detection (cancelable RAF, passive, zero duplicate ticks) ──
   useEffect(() => {
     if (!hasMounted) return;
 
@@ -60,35 +67,40 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
     };
 
     const updateScrollDirection = () => {
+      rafId.current = null;
       const currentScrollY = getScrollY();
       const delta = currentScrollY - lastScrollY.current;
 
-      // Don't auto-collapse if mouse is actively hovering over the island
+      // Don't auto-collapse if user is interacting with the island
       if (!isMouseOverRef.current) {
         // Top of page -> Collapsed (minimal single dot)
         if (currentScrollY < 24) {
-          setIsExpanded((prev) => (prev ? false : prev));
-          lastScrollY.current = currentScrollY;
-        } else if (Math.abs(delta) >= 25) {
-          // 20-30px threshold (25px) before changing navbar state
-          if (delta > 0) {
-            // Scrolling DOWN -> Full menu open
-            setIsExpanded((prev) => (!prev ? true : prev));
-          } else {
-            // Scrolling UP -> Full menu closed
-            setIsExpanded((prev) => (prev ? false : prev));
+          if (isExpandedRef.current) {
+            isExpandedRef.current = false;
+            setIsExpanded(false);
           }
           lastScrollY.current = currentScrollY;
+        } else if (Math.abs(delta) >= 25) {
+          // 25px threshold before changing state — only update when state actually flips
+          if (delta > 0 && !isExpandedRef.current) {
+            // Scrolling DOWN -> Full menu open
+            isExpandedRef.current = true;
+            setIsExpanded(true);
+            lastScrollY.current = currentScrollY;
+          } else if (delta < 0 && isExpandedRef.current) {
+            // Scrolling UP -> Full menu closed
+            isExpandedRef.current = false;
+            setIsExpanded(false);
+            lastScrollY.current = currentScrollY;
+          }
         }
       }
-
-      ticking.current = false;
     };
 
     const onScroll = () => {
-      if (!ticking.current) {
-        window.requestAnimationFrame(updateScrollDirection);
-        ticking.current = true;
+      // Deduplicate: schedule only one RAF callback per animation frame regardless of how many scroll events fire
+      if (rafId.current === null) {
+        rafId.current = window.requestAnimationFrame(updateScrollDirection);
       }
     };
 
@@ -98,6 +110,10 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
     }
 
     return () => {
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+        rafId.current = null;
+      }
       window.removeEventListener('scroll', onScroll);
       if (scrollContainer) {
         scrollContainer.removeEventListener('scroll', onScroll);
@@ -110,6 +126,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
     const handleTouchOutside = (e: TouchEvent | MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsExpanded(false);
+        isExpandedRef.current = false;
         setHoveredId(null);
       }
     };
@@ -137,6 +154,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
       closeTimeoutRef.current = null;
     }
     setIsExpanded(true);
+    isExpandedRef.current = true;
   }, []);
 
   const handleContainerMouseLeave = useCallback(() => {
@@ -144,6 +162,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
     closeTimeoutRef.current = setTimeout(() => {
       setIsExpanded(false);
+      isExpandedRef.current = false;
       setHoveredId(null);
     }, 280);
   }, []);
@@ -153,12 +172,14 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
     if (touchTimerRef.current) clearTimeout(touchTimerRef.current);
     touchTimerRef.current = setTimeout(() => {
       setIsExpanded(false);
+      isExpandedRef.current = false;
       setHoveredId(null);
     }, 4500);
   }, []);
 
   const handleDotClick = useCallback(() => {
     setIsExpanded(true);
+    isExpandedRef.current = true;
     resetTouchTimer();
   }, [resetTouchTimer]);
 
@@ -177,47 +198,33 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
           if (!isExpanded) handleDotClick();
         }}
         aria-label="Mobile Navigation"
-        className={`pointer-events-auto relative flex items-center justify-center bg-[var(--panel)]/95 border border-[var(--border)] shadow-[0_12px_36px_rgba(0,0,0,0.35)] backdrop-blur-[14px] select-none transition-all duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-[width,height,border-radius] ${
+        className={`pointer-events-auto relative flex items-center justify-center bg-[var(--panel)]/95 border border-[var(--border)] shadow-[0_12px_32px_rgba(0,0,0,0.32),0_2px_8px_rgba(0,0,0,0.2)] backdrop-blur-[8px] select-none transition-[width,height,border-radius,padding,border-color,background-color] duration-350 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] [contain:layout_style] overflow-hidden ${
           isExpanded
-            ? 'h-[54px] w-auto max-w-[calc(100vw-20px)] p-1 rounded-2xl'
+            ? 'h-[54px] w-[376px] max-w-[calc(100vw-20px)] p-1 rounded-[20px]'
             : 'h-[44px] w-[44px] rounded-full cursor-pointer hover:border-[var(--accent)]/50'
         }`}
-        style={{
-          boxShadow:
-            '0 12px 32px rgba(0,0,0,0.32), 0 2px 8px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.06)',
-        }}
       >
-        <AnimatePresence mode="wait" initial={false}>
-          {!isExpanded ? (
-            /* Minimal State: Single Floating Dot */
-            <motion.div
-              key="minimal-dot"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.15 }}
-              className="relative w-11 h-11 flex items-center justify-center cursor-pointer"
-              aria-label="Open navigation"
-            >
-              {/* Ripple pulse ring */}
-              <span
-                className="absolute inset-1 rounded-full border border-[var(--accent)] pointer-events-none animate-ping opacity-60"
-                style={{ animationDuration: '2.4s' }}
-              />
-              {/* Glowing single dot */}
-              <div className="w-2.5 h-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_10px_var(--accent)]" />
-            </motion.div>
-          ) : (
-            /* Maximal State: Full Navigation Menu */
-            <motion.div
-              key="maximal-menu"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: shouldReduceMotion ? 0 : 0.18 }}
-              className="flex items-center gap-0.5"
-              onTouchStart={resetTouchTimer}
-            >
+        {/* Minimal Collapsed State: Single Floating Dot (in same container) */}
+        <div
+          className={`absolute inset-0 flex items-center justify-center transition-[opacity,transform] duration-200 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] pointer-events-none ${
+            isExpanded ? 'opacity-0 scale-50' : 'opacity-100 scale-100'
+          }`}
+          aria-hidden={isExpanded}
+        >
+          <span className="absolute w-4 h-4 rounded-full bg-[var(--accent)]/20 pointer-events-none" />
+          <div className="w-2.5 h-2.5 rounded-full bg-[var(--accent)] shadow-[0_0_8px_var(--accent)]" />
+        </div>
+
+        {/* Expanded State: Full Navigation Menu (fades/slides in after container expands) */}
+        <div
+          className={`flex items-center gap-0.5 transition-[opacity,transform] duration-300 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] ${
+            isExpanded
+              ? 'opacity-100 scale-100 pointer-events-auto delay-100'
+              : 'opacity-0 scale-95 pointer-events-none'
+          }`}
+          onTouchStart={resetTouchTimer}
+          aria-hidden={!isExpanded}
+        >
               {navItems.map((item) => {
                 let isActive = false;
                 if (item.id !== 'resume') {
@@ -235,7 +242,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                   <div className="relative flex flex-col items-center justify-center w-[44px] h-[46px] rounded-xl select-none overflow-hidden">
                     {/* Active & Hover pill background with hardware-accelerated opacity */}
                     <div
-                      className={`absolute inset-0 rounded-xl border transition-all duration-200 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] pointer-events-none ${
+                      className={`absolute inset-0 rounded-xl border transition-[opacity,border-color,background-color] duration-[160ms] [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] pointer-events-none ${
                         isActive
                           ? 'bg-[var(--nav-active)] border-[var(--border)] opacity-100 shadow-[0_2px_8px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.08)]'
                           : isHovered
@@ -244,16 +251,16 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                       }`}
                     />
 
-                    {/* Icon - on top, with transform (y) animation only */}
+                    {/* Icon - on top, with transform (y) animation only (160ms) */}
                     <div
-                      className={`relative z-10 flex items-center justify-center shrink-0 transition-transform duration-200 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
+                      className={`relative z-10 flex items-center justify-center shrink-0 transition-transform duration-[160ms] [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
                         showLabel && !shouldReduceMotion ? '-translate-y-1' : 'translate-y-0'
                       }`}
                     >
                       <item.icon
                         size={19}
                         strokeWidth={isActive ? 2.2 : 1.75}
-                        className={`transition-colors duration-200 ${
+                        className={`transition-colors duration-[160ms] ${
                           isActive
                             ? 'text-[var(--accent)]'
                             : isHovered
@@ -263,9 +270,9 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                       />
                     </div>
 
-                    {/* Page label - directly underneath icon with transform (y) + opacity only (200ms ease) */}
+                    {/* Page label - directly underneath icon with transform (y) + opacity only (160ms) */}
                     <span
-                      className={`absolute bottom-1 z-10 text-[9px] font-medium tracking-tight leading-none text-center whitespace-nowrap pointer-events-none select-none transition-all duration-200 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-[transform,opacity] ${
+                      className={`absolute bottom-1 z-10 text-[9px] font-medium tracking-tight leading-none text-center whitespace-nowrap pointer-events-none select-none transition-[transform,opacity] duration-[160ms] [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] ${
                         showLabel
                           ? 'opacity-100 translate-y-0'
                           : 'opacity-0 translate-y-1'
@@ -326,9 +333,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                   </Link>
                 );
               })}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        </div>
       </nav>
     </div>
   );

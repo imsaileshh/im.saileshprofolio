@@ -489,37 +489,6 @@ export function Sidebar({
               <ThemeToggle />
             </div>
           </div>
-          
-          {/* Mobile Floating Social Button */}
-          <div className="fixed bottom-[104px] right-4 z-50 md:hidden flex flex-row items-center gap-3 pointer-events-none">
-            <AnimatePresence>
-              {showSocials && (
-                <motion.div 
-                  className="flex flex-row-reverse gap-2 items-center pointer-events-auto"
-                >
-                  {socials.map((social, i) => (
-                    <motion.a 
-                      key={i}
-                      href={social.href} target="_blank" rel="noreferrer"
-                      initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: 15, scale: 0.8 }}
-                      animate={{ opacity: 1, x: 0, scale: 1 }}
-                      exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, x: 15, scale: 0.8 }}
-                      transition={{ duration: 0.3, delay: i * 0.04, ease: [0.22, 1, 0.36, 1] }}
-                      className="w-[40px] h-[40px] flex shrink-0 items-center justify-center rounded-full bg-[var(--sidebar)] border border-border-subtle text-foreground active:scale-95 transition-all"
-                    >
-                      <social.icon size={18} className="opacity-90" />
-                    </motion.a>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <button
-              onClick={() => setShowSocials(!showSocials)}
-              className={`w-[50px] h-[50px] flex shrink-0 items-center justify-center rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.2)] active:scale-95 transition-all duration-300 pointer-events-auto ${showSocials ? 'bg-[var(--card)] border border-border-subtle text-foreground rotate-90' : 'bg-foreground text-[var(--bg)] rotate-0'}`}
-            >
-              <MoreHorizontal size={24} className="opacity-90" />
-            </button>
-          </div>
         </>
       ) : (
         <aside className="sidebar w-full h-full flex flex-col relative z-30">
