@@ -9,8 +9,17 @@ export function AboutHero({ data }: { data?: any }) {
     heading1: 'Designing.',
     heading2: 'Building.',
     heading3: 'Improving digital experiences.',
-    role: "I'm a UI/UX Designer, Frontend Developer, Shopify Developer and Vibe Coder.",
-    paragraph: 'I combine design thinking, frontend development, e-commerce expertise and AI-assisted workflows to create intuitive interfaces, responsive websites and scalable digital products.'
+    role: 'UI/UX Designer • Frontend Developer • Vibe Coder',
+    paragraph: (
+      <>
+        <p className="mb-4">
+          I&apos;m a UI/UX Designer and Frontend Developer passionate about creating intuitive digital experiences, interactive interfaces, and modern web applications that look great, feel seamless, and perform well.
+        </p>
+        <p>
+          When I&apos;m not designing or building, I&apos;m exploring new technologies, experimenting with AI-powered development, and refining user experiences. My work blends creative design with frontend development — clean interfaces, smooth interactions, and experiences that feel alive.
+        </p>
+      </>
+    )
   };
 
   return (
@@ -33,9 +42,9 @@ export function AboutHero({ data }: { data?: any }) {
             <p className="text-lg md:text-xl text-foreground leading-[1.6] font-medium">
               {intro.role}
             </p>
-            <p className="text-[15px] md:text-[16px] text-muted leading-[1.7] font-light">
+            <div className="text-[15px] md:text-[16px] text-muted leading-[1.7] font-light">
               {intro.paragraph}
-            </p>
+            </div>
           </div>
         </div>
 

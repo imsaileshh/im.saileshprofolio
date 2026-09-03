@@ -11,6 +11,7 @@ import { MobileFooter } from './MobileFooter';
 import { ResumeModal } from '../resume/ResumeModal';
 import { HireMeModal } from '../hire/HireMeModal';
 import { Preloader } from '../ui/Preloader';
+import { MoltenCursor } from '../ui/MoltenCursor';
 
 export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -79,6 +80,7 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
 
   return (
     <>
+      <MoltenCursor />
       <Preloader />
       <ResumeModal isOpen={isResumeOpen} onClose={() => setIsResumeOpen(false)} />
       <HireMeModal isOpen={isHireMeOpen} onClose={() => setIsHireMeOpen(false)} />

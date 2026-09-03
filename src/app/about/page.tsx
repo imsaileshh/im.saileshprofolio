@@ -2,7 +2,6 @@ import { prisma } from '@/lib/database/prisma';
 import { AboutHero } from '@/components/about/AboutHero';
 import { AboutApproach } from '@/components/about/AboutApproach';
 import { AboutCapabilities } from '@/components/about/AboutCapabilities';
-import { AboutBento } from '@/components/about/AboutBento';
 import { AboutPhilosophy } from '@/components/about/AboutPhilosophy';
 import { AboutValues } from '@/components/about/AboutValues';
 
@@ -18,7 +17,6 @@ export default async function AboutPage() {
       <AboutHero data={settings?.aboutPageIntro as any} />
       <AboutApproach data={(settings?.aboutApproach as any) || undefined} />
       <AboutCapabilities data={(settings?.aboutBring as any) || undefined} />
-      <AboutBento data={(settings?.aboutEnjoy as any) || undefined} />
       <AboutPhilosophy data={(settings?.aboutPhilosophy as any) || undefined} />
       <AboutValues data={(settings?.aboutValues as any) || undefined} />
     </div>

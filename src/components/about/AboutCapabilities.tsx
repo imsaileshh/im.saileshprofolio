@@ -7,11 +7,12 @@ import { SectionHeader } from '@/components/ui/SectionHeader';
 
 export function AboutCapabilities({ data }: { data?: any[] }) {
   const capabilities = data || [
-    { category: '01', title: 'Frontend Development', desc: 'Responsive and interactive web experiences.' },
-    { category: '02', title: 'UI/UX Focus', desc: 'Clear, intuitive and user-focused interfaces.' },
-    { category: '03', title: 'AI-Assisted Development', desc: 'Faster ideation, prototyping and implementation.' },
-    { category: '04', title: 'Shopify Development', desc: 'Customized and conversion-focused e-commerce.' },
-    { category: '05', title: 'Continuous Learning', desc: 'Constantly exploring new tools and workflows.' },
+    { category: '01', title: 'UI/UX Design', desc: 'Clear, intuitive, and user-focused interfaces.' },
+    { category: '02', title: 'Frontend Development', desc: 'Scalable, performant, and modern web applications.' },
+    { category: '03', title: 'Responsive Web Design', desc: 'Flawless experiences across all devices and screen sizes.' },
+    { category: '04', title: 'Shopify Development', desc: 'Customized and conversion-focused e-commerce solutions.' },
+    { category: '05', title: 'AI-Powered Development', desc: 'Faster ideation, prototyping, and smart implementation.' },
+    { category: '06', title: 'Interactive UI & Motion', desc: 'Smooth animations and engaging micro-interactions.' },
   ];
 
   return (

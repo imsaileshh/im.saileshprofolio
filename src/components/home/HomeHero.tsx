@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { TypeWriter } from '@/components/ui/TypeWriter';
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -13,17 +14,13 @@ export function HomeHero({ heroContent }: { heroContent?: any }) {
   const [isDesktop, setIsDesktop] = useState(false);
 
   const content = {
-    eyebrow: heroContent?.eyebrow || 'UI/UX DESIGNER + FRONTEND',
-    heading1: heroContent?.heading1 || "Hey, I'm",
-    heading2: heroContent?.heading2 || 'Sailesh',
-    description1:
-      heroContent?.description1 ||
-      'I design interfaces with intention — then build them to perform.',
-    description2:
-      heroContent?.description2 ||
-      'Based in Kerala, India. Available for selected freelance work.',
-    primaryCtaText: heroContent?.primaryCtaText || 'View Projects',
-    primaryCtaLink: heroContent?.primaryCtaLink || '/projects',
+    eyebrow: 'UI/UX DESIGNER • FRONTEND DEVELOPER • VIBE CODER',
+    heading1: "Hey, I'm",
+    heading2: 'Sailesh',
+    description1: 'I’m a UI/UX Designer & Frontend Developer',
+    description2: "I'm passionate about turning ideas into intuitive digital experiences. From designing user-focused interfaces to building responsive web applications, I blend creative design, frontend development, and AI-powered workflows to create experiences that feel alive.",
+    primaryCtaText: 'Explore My Work',
+    primaryCtaLink: '#projects',
     secondaryCtaText: heroContent?.secondaryCtaText || 'Hire Me',
     secondaryCtaLink: heroContent?.secondaryCtaLink || '#hire',
     profileName: 'SAILESH P.',
@@ -131,14 +128,14 @@ export function HomeHero({ heroContent }: { heroContent?: any }) {
 
           {/* Supporting Statement & Location */}
           <div className="flex flex-col gap-2 mb-8 sm:mb-9 max-w-[540px]">
-            <motion.p
+            <motion.div
               initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 14 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.55, delay: 0.3, ease }}
-              className="text-base sm:text-lg md:text-[19px] text-foreground/90 font-light leading-[1.5] tracking-tight"
+              className="text-base sm:text-lg md:text-[19px] text-foreground/90 font-light leading-[1.5] tracking-tight flex items-center flex-wrap"
             >
-              {content.description1}
-            </motion.p>
+              I&apos;m a&nbsp;<TypeWriter words={['UI/UX Designer', 'Frontend Developer', 'Vibe Coder']} />
+            </motion.div>
             
             <motion.p
               initial={{ opacity: 0, y: shouldReduceMotion ? 0 : 14 }}
@@ -157,15 +154,18 @@ export function HomeHero({ heroContent }: { heroContent?: any }) {
             transition={{ duration: 0.5, delay: 0.45, ease }}
             className="flex flex-row items-center gap-3.5 sm:gap-4 w-full sm:w-auto"
           >
-            {/* Primary CTA (Resume) */}
+            {/* Primary CTA (Explore Projects) */}
             <button
-              onClick={() => window.dispatchEvent(new CustomEvent('open-resume'))}
+              onClick={() => {
+                const el = document.getElementById('projects');
+                if (el) el.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="group relative inline-flex items-center justify-center gap-2 bg-accent text-white px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-[14px] sm:text-[15px] font-medium tracking-wide hover:bg-accent/90 active:scale-[0.98] transition-all duration-200 shadow-[0_0_20px_rgba(45,212,191,0.15)] hover:shadow-[0_0_25px_rgba(45,212,191,0.25)] focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
             >
-              <span>Resume</span>
-              <ArrowUpRight
+              <span>{content.primaryCtaText}</span>
+              <ArrowRight
                 size={16}
-                className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                className="transition-transform duration-200 group-hover:translate-x-1"
               />
             </button>
 

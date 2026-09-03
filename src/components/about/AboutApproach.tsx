@@ -7,12 +7,12 @@ import { SectionReveal } from '@/components/ui/SectionReveal';
 
 export function AboutApproach({ data }: { data?: any[] }) {
   const processSteps = data || [
-    { step: '01', title: 'UNDERSTAND', desc: 'Problem · Users · Goals' },
-    { step: '02', title: 'DESIGN', desc: 'Structure · UX · Interface' },
-    { step: '03', title: 'BUILD', desc: 'Components · Interactions · Logic' },
-    { step: '04', title: 'TEST', desc: 'Usability · Quality · Performance' },
-    { step: '05', title: 'OPTIMIZE', desc: 'Speed · Accessibility · Experience' },
-    { step: '06', title: 'LAUNCH', desc: 'Polish · Deploy · Improve' },
+    { step: '01', title: 'UNDERSTAND', desc: 'Research the problem, users, and project goals.' },
+    { step: '02', title: 'DESIGN', desc: 'Create intuitive user experiences and visually engaging interfaces.' },
+    { step: '03', title: 'BUILD', desc: 'Transform ideas and designs into responsive, modern web experiences.' },
+    { step: '04', title: 'TEST', desc: 'Check usability, responsiveness, performance, and functionality.' },
+    { step: '05', title: 'OPTIMIZE', desc: 'Refine interactions, accessibility, and overall performance.' },
+    { step: '06', title: 'LAUNCH', desc: 'Deliver polished digital experiences ready for users.' },
   ];
 
   return (

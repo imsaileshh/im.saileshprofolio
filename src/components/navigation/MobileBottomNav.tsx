@@ -200,7 +200,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
         aria-label="Mobile Navigation"
         className={`pointer-events-auto relative flex items-center justify-center bg-[var(--panel)]/95 border border-[var(--border)] shadow-[0_12px_32px_rgba(0,0,0,0.32),0_2px_8px_rgba(0,0,0,0.2)] backdrop-blur-[8px] select-none transition-[width,height,border-radius,padding,border-color,background-color] duration-350 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] [contain:layout_style] overflow-hidden ${
           isExpanded
-            ? 'h-[54px] w-[376px] max-w-[calc(100vw-20px)] p-1 rounded-[20px]'
+            ? 'h-[54px] w-[376px] max-w-[calc(100vw-20px)] p-1 rounded-full'
             : 'h-[44px] w-[44px] rounded-full cursor-pointer hover:border-[var(--accent)]/50'
         }`}
       >
@@ -235,14 +235,14 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                 }
 
                 const isHovered = hoveredId === item.id;
-                // Active label remains visible; hovered item also reveals label directly underneath
-                const showLabel = isActive || isHovered;
+                // Active label remains visible; hovered item shows a dot underneath
+                const moveIconUp = isActive || isHovered;
 
                 const itemContent = (
-                  <div className="relative flex flex-col items-center justify-center w-[44px] h-[46px] rounded-xl select-none overflow-hidden">
+                  <div className="relative flex flex-col items-center justify-center w-[44px] h-[46px] rounded-full select-none overflow-hidden">
                     {/* Active & Hover pill background with hardware-accelerated opacity */}
                     <div
-                      className={`absolute inset-0 rounded-xl border transition-[opacity,border-color,background-color] duration-[160ms] [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] pointer-events-none ${
+                      className={`absolute inset-0 rounded-full border transition-[opacity,border-color,background-color] duration-[160ms] [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] pointer-events-none ${
                         isActive
                           ? 'bg-[var(--nav-active)] border-[var(--border)] opacity-100 shadow-[0_2px_8px_rgba(0,0,0,0.12),inset_0_1px_0_rgba(255,255,255,0.08)]'
                           : isHovered
@@ -254,7 +254,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                     {/* Icon - on top, with transform (y) animation only (160ms) */}
                     <div
                       className={`relative z-10 flex items-center justify-center shrink-0 transition-transform duration-[160ms] [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] will-change-transform ${
-                        showLabel && !shouldReduceMotion ? '-translate-y-1' : 'translate-y-0'
+                        moveIconUp && !shouldReduceMotion ? '-translate-y-1' : 'translate-y-0'
                       }`}
                     >
                       <item.icon
@@ -273,7 +273,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                     {/* Page label - directly underneath icon with transform (y) + opacity only (160ms) */}
                     <span
                       className={`absolute bottom-1 z-10 text-[9px] font-medium tracking-tight leading-none text-center whitespace-nowrap pointer-events-none select-none transition-[transform,opacity] duration-[160ms] [transition-timing-function:cubic-bezier(0.22,1,0.36,1)] ${
-                        showLabel
+                        isActive
                           ? 'opacity-100 translate-y-0'
                           : 'opacity-0 translate-y-1'
                       } ${
@@ -282,6 +282,15 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                     >
                       {item.label}
                     </span>
+
+                    {/* Hover Dot */}
+                    <span
+                      className={`absolute bottom-1.5 w-1 h-1 rounded-full bg-[var(--text)] transition-[transform,opacity] duration-[160ms] pointer-events-none ${
+                        isHovered && !isActive
+                          ? 'opacity-100 scale-100'
+                          : 'opacity-0 scale-50'
+                      }`}
+                    />
                   </div>
                 );
 
@@ -299,7 +308,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                       onBlur={() => setHoveredId(null)}
                       type="button"
                       aria-label={item.ariaLabel}
-                      className="relative flex items-center justify-center rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] shrink-0 cursor-pointer"
+                      className="relative flex items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] shrink-0 cursor-pointer"
                     >
                       {itemContent}
                     </button>
@@ -327,7 +336,7 @@ export function MobileBottomNav({ onOpenResume }: MobileBottomNavProps) {
                     onBlur={() => setHoveredId(null)}
                     aria-label={item.ariaLabel}
                     aria-current={isActive ? 'page' : undefined}
-                    className="relative flex items-center justify-center rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] shrink-0 cursor-pointer"
+                    className="relative flex items-center justify-center rounded-full outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] shrink-0 cursor-pointer"
                   >
                     {itemContent}
                   </Link>

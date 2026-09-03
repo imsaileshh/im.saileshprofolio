@@ -142,13 +142,13 @@ export function Sidebar({
                 className="flex flex-col justify-center overflow-hidden min-w-0 pl-0.5"
               >
                 <div className="flex items-center gap-1">
-                  <h2 className="text-[16px] font-display font-bold tracking-tight text-foreground whitespace-nowrap">
+                  <h2 className="text-[18px] font-display font-bold tracking-tight text-foreground whitespace-nowrap">
                     Sailesh P
                   </h2>
-                  <span className="text-accent font-bold text-[16px] leading-none">.</span>
+                  <span className="text-accent font-bold text-[18px] leading-none">.</span>
                 </div>
                 
-                <span className="text-[11.5px] font-medium text-foreground/80 tracking-tight whitespace-nowrap mt-0.5">
+                <span className="text-[12.5px] font-medium text-foreground/80 tracking-tight whitespace-nowrap mt-0.5">
                   UI/UX &amp; Product Designer
                 </span>
               </motion.div>
@@ -183,8 +183,8 @@ export function Sidebar({
                       }
                     }
                   }}
-                  className={`flex items-center h-[39px] rounded-xl transition-all duration-200 group relative overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                    isCollapsed ? 'justify-center w-full px-0' : 'gap-3 px-3.5 w-full'
+                  className={`flex items-center h-[42px] rounded-xl transition-all duration-200 group relative overflow-hidden whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                    isCollapsed ? 'justify-center w-full px-0' : 'gap-3.5 px-4 w-full'
                   } ${
                     isActive 
                       ? 'bg-nav-active text-foreground font-medium' 
@@ -199,7 +199,7 @@ export function Sidebar({
                       transition={{ type: "spring", stiffness: 300, damping: 30 }}
                     />
                   )}
-                  <link.icon size={17} className={`shrink-0 ${isActive ? 'text-foreground' : 'text-muted group-hover:text-foreground transition-colors'}`} />
+                  <link.icon size={20} className={`shrink-0 ${isActive ? 'text-foreground' : 'text-muted group-hover:text-foreground transition-colors'}`} />
                   <AnimatePresence>
                     {!isCollapsed && (
                       <motion.span 
@@ -207,7 +207,7 @@ export function Sidebar({
                         animate={{ opacity: 1, width: "auto" }}
                         exit={{ opacity: 0, width: 0 }}
                         transition={{ duration: 0.2 }}
-                        className="text-[13.5px] overflow-hidden"
+                        className="text-[15px] overflow-hidden"
                       >
                         {link.label}
                       </motion.span>
@@ -227,11 +227,11 @@ export function Sidebar({
           <div className="relative group/nav-tooltip w-full">
             <button
               onClick={() => onOpenHireMe?.()}
-              className={`flex items-center h-[39px] rounded-xl transition-all duration-200 group relative overflow-hidden text-muted hover:text-foreground hover:bg-border-subtle/10 w-full text-left whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                isCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'
+              className={`flex items-center h-[42px] rounded-xl transition-all duration-200 group relative overflow-hidden text-muted hover:text-foreground hover:bg-border-subtle/10 w-full text-left whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                isCollapsed ? 'justify-center px-0' : 'gap-3.5 px-4'
               }`}
             >
-              <Mail size={17} className="shrink-0 text-muted group-hover:text-foreground transition-colors" />
+              <Mail size={20} className="shrink-0 text-muted group-hover:text-foreground transition-colors" />
               <AnimatePresence>
                 {!isCollapsed && (
                   <motion.span 
@@ -239,7 +239,7 @@ export function Sidebar({
                     animate={{ opacity: 1, width: "auto" }}
                     exit={{ opacity: 0, width: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="text-[13.5px] overflow-hidden"
+                    className="text-[15px] overflow-hidden"
                   >
                     Hire me
                   </motion.span>
@@ -257,11 +257,11 @@ export function Sidebar({
           <div className="relative group/nav-tooltip w-full">
             <button
               onClick={() => onOpenResume?.()}
-              className={`flex items-center h-[39px] rounded-xl transition-all duration-200 group relative overflow-hidden text-muted hover:text-foreground hover:bg-border-subtle/10 w-full text-left whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                isCollapsed ? 'justify-center px-0' : 'gap-3 px-3.5'
+              className={`flex items-center h-[42px] rounded-xl transition-all duration-200 group relative overflow-hidden text-muted hover:text-foreground hover:bg-border-subtle/10 w-full text-left whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                isCollapsed ? 'justify-center px-0' : 'gap-3.5 px-4'
               }`}
             >
-              <FileText size={17} className="shrink-0 text-muted group-hover:text-foreground transition-colors" />
+              <FileText size={20} className="shrink-0 text-muted group-hover:text-foreground transition-colors" />
               <AnimatePresence>
                 {!isCollapsed && (
                   <motion.span 
@@ -269,7 +269,7 @@ export function Sidebar({
                     animate={{ opacity: 1, width: "auto" }}
                     exit={{ opacity: 0, width: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="text-[13.5px] overflow-hidden"
+                    className="text-[15px] overflow-hidden"
                   >
                     Resume
                   </motion.span>
@@ -325,7 +325,7 @@ export function Sidebar({
           /* Wide: Socials and Collapse Button */
           <div className="flex flex-col gap-2.5 w-full">
             <div className="flex items-center justify-between w-full">
-              <span className="text-[11px] font-bold text-foreground uppercase tracking-[0.15em]">Socials</span>
+              <span className="text-[12px] font-bold text-foreground uppercase tracking-[0.15em]">Socials</span>
               {onToggleCollapse && (
                 <div className="relative group/tooltip shrink-0 z-50">
                   <button 
@@ -353,7 +353,7 @@ export function Sidebar({
                   className="w-8 h-8 flex shrink-0 items-center justify-center bg-transparent text-[#888] hover:text-foreground transition-all duration-200 group relative focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                   aria-label={social.label}
                 >
-                  <social.icon size={16} className="opacity-80 group-hover:opacity-100 group-hover:-translate-y-0.5 transition-all duration-200" />
+                  <social.icon size={18} className="opacity-80 group-hover:opacity-100 group-hover:-translate-y-0.5 transition-all duration-200" />
                   
                   {/* Tooltip for social icons */}
                   <div className="sidebar-tooltip absolute bottom-[calc(100%+12px)] left-1/2 -translate-x-1/2 bg-foreground text-[var(--bg)] text-[10px] font-medium px-2 py-1 rounded opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-[60]">

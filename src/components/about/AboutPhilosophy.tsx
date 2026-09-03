@@ -6,10 +6,12 @@ import { ArrowUpRight } from 'lucide-react';
 
 export function AboutPhilosophy({ data }: { data?: any[] }) {
   const philosophies = data || [
-    { num: '01', title: 'CLEAN DESIGN', desc: 'Simple, purposeful interfaces with clear visual hierarchy.' },
-    { num: '02', title: 'QUALITY CODE', desc: 'Maintainable, scalable and performance-focused development.' },
-    { num: '03', title: 'USER FIRST', desc: 'Every design and technical decision should improve the experience.' },
-    { num: '04', title: 'KEEP IMPROVING', desc: 'Technology evolves, and so do my skills and workflow.' },
+    { num: '01', title: 'USER FIRST', desc: 'Every design and technical decision must improve the user experience.' },
+    { num: '02', title: 'DESIGN WITH PURPOSE', desc: 'Simple, intentional interfaces with clear visual hierarchy.' },
+    { num: '03', title: 'CLEAN & MAINTAINABLE CODE', desc: 'Writing scalable, organized, and future-proof code.' },
+    { num: '04', title: 'SMOOTH & MEANINGFUL INTERACTIONS', desc: 'Using motion to guide users, not distract them.' },
+    { num: '05', title: 'PERFORMANCE MATTERS', desc: 'Optimizing speed and accessibility for a seamless experience.' },
+    { num: '06', title: 'CONTINUOUS LEARNING', desc: 'Constantly exploring new tools, frameworks, and workflows.' },
   ];
 
   return (
