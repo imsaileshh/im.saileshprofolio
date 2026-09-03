@@ -51,6 +51,18 @@ export function Sidebar({
     }
   };
 
+  const playClickSound = () => {
+    if (mobile) return;
+    try {
+      const audio = new Audio('/sounds/navigation-click.mp3');
+      audio.volume = 0.2;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {});
+      }
+    } catch (e) {}
+  };
+
   const openBubble = (autoHide = false) => {
     setShowBubble(true);
     setIsTyping(true);
@@ -172,6 +184,7 @@ export function Sidebar({
                 <Link
                   href={link.href}
                   onClick={(e) => {
+                    playClickSound();
                     if (pathname === link.href) {
                       const scrollContainer = document.getElementById('scroll-container');
                       if (scrollContainer) {
@@ -226,7 +239,10 @@ export function Sidebar({
           {/* Resume Button */}
           <div className="relative group/nav-tooltip w-full">
             <button
-              onClick={() => onOpenResume?.()}
+              onClick={() => {
+                playClickSound();
+                onOpenResume?.();
+              }}
               className={`flex items-center h-[42px] rounded-xl transition-all duration-200 group relative overflow-hidden text-muted hover:text-foreground hover:bg-border-subtle/10 w-full text-left whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
                 isCollapsed ? 'justify-center px-0' : 'gap-3.5 px-4'
               }`}
@@ -262,7 +278,10 @@ export function Sidebar({
           <div className="flex flex-col items-center gap-4">
             <div className="relative group/tooltip">
               <button
-                onClick={() => setShowSocials(!showSocials)}
+                onClick={() => {
+                  playClickSound();
+                  setShowSocials(!showSocials);
+                }}
                 aria-label="Toggle Socials"
                 className={`w-[38px] h-[38px] flex items-center justify-center rounded-xl bg-[var(--card)] border border-border-subtle text-muted hover:text-foreground hover:bg-border-subtle hover:border-muted/50 transition-all duration-300 shadow-[0_4px_16px_rgba(0,0,0,0.15)] relative z-[110] ${showSocials ? 'bg-border-subtle/50 text-foreground shadow-[0_0_12px_rgba(0,0,0,0.05)]' : ''}`}
               >
@@ -279,7 +298,10 @@ export function Sidebar({
             {onToggleCollapse && (
               <div className="relative group/tooltip">
                 <button
-                  onClick={onToggleCollapse}
+                  onClick={() => {
+                    playClickSound();
+                    if (onToggleCollapse) onToggleCollapse();
+                  }}
                   aria-label="Expand Sidebar"
                   className="w-[32px] h-[32px] flex items-center justify-center rounded-xl bg-transparent border border-transparent text-muted hover:text-foreground hover:bg-border-subtle transition-all duration-300"
                 >
@@ -299,7 +321,10 @@ export function Sidebar({
               {onToggleCollapse && (
                 <div className="relative group/tooltip shrink-0 z-50">
                   <button 
-                    onClick={onToggleCollapse}
+                    onClick={() => {
+                      playClickSound();
+                      if (onToggleCollapse) onToggleCollapse();
+                    }}
                     aria-label="Collapse Sidebar"
                     className="w-[28px] h-[28px] flex items-center justify-center rounded-lg bg-transparent text-muted hover:text-foreground hover:bg-border-subtle transition-all duration-300"
                   >
