@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import { SectionReveal } from '@/components/ui/SectionReveal';
+import { TypeWriter } from '@/components/ui/TypeWriter';
 
 export function AboutHero({ data }: { data?: any }) {
   const intro = data || {
@@ -33,14 +34,13 @@ export function AboutHero({ data }: { data?: any }) {
           </h2>
           
           <h1 className="text-3xl md:text-4xl lg:text-[3rem] font-display font-medium leading-[1.1] tracking-tight mb-6">
-            <span className="block mb-2">{intro.heading1}</span>
-            <span className="block mb-2">{intro.heading2}</span>
+            <span className="block mb-2">{intro.heading1} {intro.heading2}</span>
             <span className="block text-accent">{intro.heading3}</span>
           </h1>
           
           <div className="flex flex-col gap-4 max-w-xl">
-            <p className="text-lg md:text-xl text-foreground leading-[1.6] font-medium">
-              {intro.role}
+            <p className="text-lg md:text-xl text-foreground leading-[1.6] font-medium h-[1.6em]">
+              <TypeWriter words={[intro.role]} enableSound={true} loop={false} typingSpeed={60} />
             </p>
             <div className="text-[15px] md:text-[16px] text-muted leading-[1.7] font-light">
               {intro.paragraph}

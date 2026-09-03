@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Sidebar } from './Sidebar';
+import { MessageCircle } from 'lucide-react';
 import { ThemeToggle } from '../theme/ThemeToggle';
 import { ReactLenis } from 'lenis/react';
 import { MobileBottomNav } from './MobileBottomNav';
@@ -115,6 +116,18 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
             </AnimatePresence>
           </div>
           <MobileFooter />
+          
+          {/* Mobile FAB */}
+          <div className="fixed bottom-[100px] right-4 z-50">
+            <button
+              onClick={() => setIsHireMeOpen(true)}
+              className="flex items-center justify-center w-12 h-12 rounded-full bg-accent text-white shadow-[0_8px_16px_rgba(45,212,191,0.25)] hover:shadow-[0_12px_24px_rgba(45,212,191,0.4)] active:scale-95 transition-all duration-300 focus:outline-none"
+              aria-label="Contact Me"
+              title="Contact Me"
+            >
+              <MessageCircle size={22} strokeWidth={2.5} />
+            </button>
+          </div>
         </main>
         <MobileBottomNav
           onOpenResume={() => setIsResumeOpen(true)}
@@ -142,6 +155,16 @@ export function RootLayoutWrapper({ children }: { children: React.ReactNode }) {
         <main className="flex-1 min-w-0 min-h-0 h-full flex flex-col overflow-hidden relative">
           <div className="absolute top-5 right-5 lg:top-6 lg:right-6 z-50">
             <ThemeToggle />
+          </div>
+          <div className="absolute bottom-5 right-5 lg:bottom-8 lg:right-8 z-50">
+            <button
+              onClick={() => setIsHireMeOpen(true)}
+              className="flex items-center justify-center w-12 h-12 lg:w-14 lg:h-14 rounded-full bg-accent text-white shadow-[0_8px_16px_rgba(45,212,191,0.25)] hover:shadow-[0_12px_24px_rgba(45,212,191,0.4)] hover:-translate-y-1 transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+              aria-label="Contact Me"
+              title="Contact Me"
+            >
+              <MessageCircle size={22} className="lg:w-6 lg:h-6" strokeWidth={2.5} />
+            </button>
           </div>
           <div
             id="scroll-container"

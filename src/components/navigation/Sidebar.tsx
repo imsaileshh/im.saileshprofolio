@@ -223,36 +223,6 @@ export function Sidebar({
             );
           })}
           
-          {/* Contact Button */}
-          <div className="relative group/nav-tooltip w-full">
-            <button
-              onClick={() => onOpenHireMe?.()}
-              className={`flex items-center h-[42px] rounded-xl transition-all duration-200 group relative overflow-hidden text-muted hover:text-foreground hover:bg-border-subtle/10 w-full text-left whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
-                isCollapsed ? 'justify-center px-0' : 'gap-3.5 px-4'
-              }`}
-            >
-              <Mail size={20} className="shrink-0 text-muted group-hover:text-foreground transition-colors" />
-              <AnimatePresence>
-                {!isCollapsed && (
-                  <motion.span 
-                    initial={{ opacity: 0, width: 0 }}
-                    animate={{ opacity: 1, width: "auto" }}
-                    exit={{ opacity: 0, width: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-[15px] overflow-hidden"
-                  >
-                    Hire me
-                  </motion.span>
-                )}
-              </AnimatePresence>
-            </button>
-            {isCollapsed && (
-              <div className="sidebar-tooltip absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2 bg-foreground text-[var(--bg)] text-[11px] font-medium px-2.5 py-1.5 rounded opacity-0 -translate-x-1 group-hover/nav-tooltip:opacity-100 group-hover/nav-tooltip:translate-x-0 transition-all duration-200 pointer-events-none whitespace-nowrap z-50">
-                Hire me
-              </div>
-            )}
-          </div>
-          
           {/* Resume Button */}
           <div className="relative group/nav-tooltip w-full">
             <button
@@ -477,15 +447,6 @@ export function Sidebar({
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => onOpenHireMe?.()}
-                aria-label="Hire me"
-                className="flex items-center gap-1.5 h-8 px-3 rounded-full text-[11px] font-medium tracking-wide border border-border-subtle bg-[var(--card)] text-muted hover:text-foreground hover:border-accent/40 hover:bg-[var(--nav-active)] transition-all duration-200 active:scale-95"
-              >
-                <Mail size={12} className="shrink-0" />
-                Hire me
-              </button>
               <ThemeToggle />
             </div>
           </div>

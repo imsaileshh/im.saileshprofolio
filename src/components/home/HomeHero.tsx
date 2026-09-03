@@ -21,7 +21,7 @@ export function HomeHero({ heroContent }: { heroContent?: any }) {
     description2: "I'm passionate about turning ideas into intuitive digital experiences. From designing user-focused interfaces to building responsive web applications, I blend creative design, frontend development, and AI-powered workflows to create experiences that feel alive.",
     primaryCtaText: 'Explore My Work',
     primaryCtaLink: '#projects',
-    secondaryCtaText: heroContent?.secondaryCtaText || 'Hire Me',
+    secondaryCtaText: heroContent?.secondaryCtaText || 'Contact Me',
     secondaryCtaLink: heroContent?.secondaryCtaLink || '#hire',
     profileName: 'SAILESH P.',
     profileMeta: 'DESIGN / CODE / MOTION',
@@ -169,12 +169,12 @@ export function HomeHero({ heroContent }: { heroContent?: any }) {
               />
             </button>
 
-            {/* Secondary CTA (Hire Me) */}
+            {/* Secondary CTA (Contact Me) */}
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('open-hire-me'))}
               className="group inline-flex items-center justify-center gap-2 bg-[var(--card)] text-foreground px-6 sm:px-8 py-3.5 sm:py-4 rounded-xl text-[14px] sm:text-[15px] font-medium hover:bg-foreground/5 active:scale-[0.98] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground/30 shadow-sm"
             >
-              <span>Hire Me</span>
+              <span>Contact Me</span>
               <ArrowRight
                 size={16}
                 className="transition-transform duration-200 group-hover:translate-x-1"

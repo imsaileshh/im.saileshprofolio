@@ -13,9 +13,26 @@ export function HireMeModal({ isOpen, onClose }: { isOpen: boolean, onClose: () 
     return () => { document.body.style.overflow = 'auto'; };
   }, [isOpen]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Simulate sending then close
+    
+    const formData = new FormData(e.currentTarget);
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const subject = formData.get('subject') as string;
+    const message = formData.get('message') as string;
+
+    if (!name || !email || !subject || !message) {
+      return;
+    }
+
+    const whatsappMessage = `Hi Sailesh 👋\n\nName: ${name}\nEmail: ${email}\nSubject: ${subject}\n\nMessage:\n${message}`;
+    const encodedMessage = encodeURIComponent(whatsappMessage);
+    const whatsappUrl = `https://wa.me/917592825012?text=${encodedMessage}`;
+
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+    
+    e.currentTarget.reset();
     onClose();
   };
 
@@ -49,7 +66,7 @@ export function HireMeModal({ isOpen, onClose }: { isOpen: boolean, onClose: () 
 
             {/* Left Info Panel */}
             <div className="w-full md:w-2/5 bg-[var(--sidebar)] p-8 md:p-12 flex flex-col shrink-0 border-b md:border-b-0 md:border-r border-border-subtle">
-              <h2 className="text-3xl font-display font-medium text-foreground mb-4">Hire me</h2>
+              <h2 className="text-3xl font-display font-medium text-foreground mb-4">Contact me</h2>
               <p className="text-muted mb-10">I'm currently available for freelance work and full-time roles. Let's build something great together.</p>
               
               <div className="flex flex-col gap-6 mt-auto">
@@ -59,7 +76,7 @@ export function HireMeModal({ isOpen, onClose }: { isOpen: boolean, onClose: () 
                   </div>
                   <div className="flex flex-col">
                     <span className="text-[11px] font-medium tracking-widest text-muted uppercase mb-0.5">Email</span>
-                    <a href="mailto:im.saileshhh@gmail.com" className="text-sm text-foreground hover:text-accent transition-colors font-medium">im.saileshhh@gmail.com</a>
+                    <a href="mailto:im.saileshh@gmail.com" className="text-sm text-foreground hover:text-accent transition-colors font-medium">im.saileshh@gmail.com</a>
                   </div>
                 </div>
                 
@@ -90,22 +107,22 @@ export function HireMeModal({ isOpen, onClose }: { isOpen: boolean, onClose: () 
               <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
                   <label htmlFor="name" className="text-[11px] font-medium tracking-widest text-muted uppercase">Name</label>
-                  <input type="text" id="name" required className="w-full bg-[var(--card)] border border-border-subtle rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-accent transition-colors" placeholder="Your name" />
+                  <input type="text" id="name" name="name" required className="w-full bg-[var(--card)] border border-border-subtle rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-accent transition-colors" placeholder="Your name" />
                 </div>
                 
                 <div className="flex flex-col gap-2">
                   <label htmlFor="email" className="text-[11px] font-medium tracking-widest text-muted uppercase">Email</label>
-                  <input type="email" id="email" required className="w-full bg-[var(--card)] border border-border-subtle rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-accent transition-colors" placeholder="your@email.com" />
+                  <input type="email" id="email" name="email" required className="w-full bg-[var(--card)] border border-border-subtle rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-accent transition-colors" placeholder="your@email.com" />
                 </div>
                 
                 <div className="flex flex-col gap-2">
                   <label htmlFor="subject" className="text-[11px] font-medium tracking-widest text-muted uppercase">Subject</label>
-                  <input type="text" id="subject" required className="w-full bg-[var(--card)] border border-border-subtle rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-accent transition-colors" placeholder="Project inquiry" />
+                  <input type="text" id="subject" name="subject" required className="w-full bg-[var(--card)] border border-border-subtle rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-accent transition-colors" placeholder="Project inquiry" />
                 </div>
                 
                 <div className="flex flex-col gap-2">
                   <label htmlFor="message" className="text-[11px] font-medium tracking-widest text-muted uppercase">Message</label>
-                  <textarea id="message" required rows={4} className="w-full bg-[var(--card)] border border-border-subtle rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-accent transition-colors resize-none" placeholder="Tell me about your project..."></textarea>
+                  <textarea id="message" name="message" required rows={4} className="w-full bg-[var(--card)] border border-border-subtle rounded-xl px-4 py-3 text-sm text-foreground focus:outline-none focus:border-accent transition-colors resize-none" placeholder="Tell me about your project..."></textarea>
                 </div>
                 
                 <button type="submit" className="group mt-2 inline-flex items-center justify-center gap-2 bg-foreground text-[var(--bg)] px-8 py-4 rounded-xl text-sm font-semibold hover:scale-[1.015] transition-transform duration-[300ms] w-full md:w-auto self-start">

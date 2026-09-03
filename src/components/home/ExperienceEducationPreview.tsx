@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef } from 'react';
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 
 import { SectionReveal, StaggerContainer } from '@/components/ui/SectionReveal';
@@ -36,11 +36,6 @@ export function ExperienceEducationPreview({
   const sectionRef = useRef<HTMLElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
   const hasTimelineData = experienceItems.length > 0 || educationItems.length > 0;
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start 80%', 'end 35%'],
-  });
-  const timelineScale = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
   return (
     <SectionReveal id="experience-preview" className="py-4 sm:py-6 md:py-8 relative px-5 sm:px-6 md:px-10 lg:px-16">
@@ -59,9 +54,11 @@ export function ExperienceEducationPreview({
         <div className="flex flex-col max-w-4xl relative mt-8">
           <div className="absolute left-[20px] md:left-[180px] top-2 bottom-0 w-[1px] bg-border-subtle origin-top" />
           <motion.div
-            data-home-experience-progress
             className="absolute left-[20px] md:left-[180px] top-2 bottom-0 w-[1px] bg-accent origin-top shadow-[0_0_18px_rgba(45,212,191,0.28)]"
-            style={{ scaleY: prefersReducedMotion ? 1 : timelineScale }}
+            initial={{ scaleY: 0 }}
+            whileInView={{ scaleY: 1 }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ duration: 1.5, ease: [0.22, 1, 0.36, 1], delay: 0.2 }}
           />
 
           <StaggerContainer className="flex flex-col">
@@ -130,16 +127,30 @@ function ExperienceRow({
 
       <div className="w-full md:flex-1 flex flex-col items-start md:border-none border-b border-border-subtle/50 pb-6 md:pb-0 transition-transform duration-300 ease-out group-hover:translate-x-[8px]">
         <div className="flex flex-wrap items-center gap-2 mb-1">
-          <h3 className="text-xl font-display font-medium text-foreground group-hover:text-accent transition-colors duration-300">
+          <motion.h3 
+            className="text-xl font-display font-medium text-foreground group-hover:text-accent transition-colors duration-300"
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.8 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
             {item.role}
-          </h3>
+          </motion.h3>
           {isTrending && (
             <span className="rounded-full border border-accent/25 bg-accent/10 px-2 py-0.5 text-[9px] font-mono font-semibold tracking-[0.14em] text-accent">
               TRENDING
             </span>
           )}
         </div>
-        <p className="text-sm text-foreground font-medium mb-3 uppercase tracking-wider">{item.company}</p>
+        <motion.p 
+          className="text-sm text-foreground font-medium mb-3 uppercase tracking-wider"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+        >
+          {item.company}
+        </motion.p>
         
         <ul className="text-sm text-muted opacity-70 group-hover:opacity-95 leading-relaxed transition-opacity duration-300 list-disc list-outside ml-4 space-y-1.5 mb-4">
           {item.description.map((desc, i) => (
